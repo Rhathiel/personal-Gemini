@@ -4,7 +4,7 @@ const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
 
 export default async function handler(request) {
   if (request.method !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
+    return new Response("Method Not Allowed", { status: 405 });
   }
 
   const { prompt } = await request.json();
