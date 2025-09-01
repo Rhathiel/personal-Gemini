@@ -11,6 +11,8 @@ function App() {
     const prompt = input.value;
     if (!prompt) return;
 
+    setInput("")
+
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
