@@ -1,12 +1,12 @@
 import { GoogleGenAI } from "@google/genai";
 
-const ai = new GoogleGenAI({apiKey: NETLIFY.env.GEMINI_API_KEY});
+const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
 
-export default async (request) => {  //event가 아니라 request
+export async function handler(event, context) {
     let prompt = ""; //사용자 질문
 
-    if(request.method === "POST"){
-      const body = await request.json();
+    if(event.httpMethod === "POST"){
+      const body = await JSON.parse(event.body);
       prompt = body.prompt;
     }
 
@@ -52,5 +52,9 @@ export default async (request) => {  //event가 아니라 request
     }
     })();
 
-    return new Response(readable, { headers });
+    return {
+      statusCode: 200,
+      headers: headers,
+      body: readable 
+    };
 }
