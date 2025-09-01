@@ -2,13 +2,12 @@ import { GoogleGenAI } from "@google/genai";
 
 const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
 
-export async function handler(event, context) {
-  if (event.httpMethod !== "POST") {
+export default async function handler(request) {
+  if (request.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
 
-  const body = JSON.parse(event.body || "{}");
-  const prompt = body.prompt;
+  const { prompt } = await request.json();
   
   const headers = {
     "Content-Type": "text/plain; charset=utf-8", 
@@ -43,9 +42,8 @@ export async function handler(event, context) {
     }
   })();
 
-  return {
-    statusCode: 200,
-    headers: headers,
-    body: readable 
-  };
+  return new Response(readable, {
+    status: 200,
+    headers: headers
+  });
 }
