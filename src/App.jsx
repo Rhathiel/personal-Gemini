@@ -20,13 +20,13 @@ function App() {
   }
 
   function streaming(){
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState("");
     const [done, setDone] = useState(false);
     useEffect(() => {
       const es = new EventSource("/api/stream");
 
       es.onmessage = (e) => {
-        setMessages((prev) => {return [...prev, e.data]});
+        setMessages((prev) => prev + e.data);
       };
 
       es.addEventListener("done", () => {
@@ -72,7 +72,9 @@ function App() {
       <main>
         <input id="chat-input" type="text"/>
         <button id="sendBtn" type="button">전송</button>
-        <div id="chat-output"></div>
+        <div id="chat-output">
+          {messages.map((msg) => (<p key={msg.id}> {msg.text} </p>))}
+        </div>
       </main>
     </>
   )
