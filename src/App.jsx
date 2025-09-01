@@ -12,12 +12,33 @@ function App() {
 
   function streamViewer(){
     const [messages, setMessages] = useState([]);
+    const [done, setDone] = useState(false);
 
     useEffect(() => {
-      const es = new EventSource("/.netlify/edge-functions/stream");
+      const es = new EventSource("/api/stream");
 
-      es.onmessage = (event)
-    })
+      es.onmessage = (e) => {
+        setMessages((prev) => {return [...prev, e.data]});
+      };
+
+      es.addEventListener("done", () => {
+        setDone(true);
+        es.close();
+      });
+
+      es.addEventListener("error", (event) => { 
+        console.error("서버 에러:", event.data);
+      });
+
+      es.onerror = (err) => {
+        console.error("네트워크 에러:", err);
+        es.close();
+      };
+
+      return () => {
+        es.close();
+      };
+    }, []);
   }
 
   return (

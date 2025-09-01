@@ -4,3 +4,6 @@
 [[edge_functions]]
 path = "/api/stream"
 function = "stream"  
+
+[dev]
+command = "vite"
