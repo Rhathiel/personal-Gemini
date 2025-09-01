@@ -16,7 +16,6 @@ function App() {
       },
       body: JSON.stringify({ prompt })
       });
-    }
   }
 
   function streamViewer(){
