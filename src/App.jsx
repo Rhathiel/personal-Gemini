@@ -5,12 +5,16 @@ import './App.css'
 function App() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState("");
-  const [done, setDone] = useState(false);
+  const [done, setDone] = useState(true);
 
   async function sendPrompt() {
-    const prompt = input.value;
+
+    if (!done) return;
+
+    const prompt = input;
     if (!prompt) return;
 
+    setDone(false);
     setInput("")
 
     const response = await fetch("/api/chat", {
@@ -48,7 +52,7 @@ function App() {
 
   return (
     <>
-      <div class="layout">
+      <div className="layout">
         <aside id="sidebar">
             <header>
                 <h1>LOGO</h1>
