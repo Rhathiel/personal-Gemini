@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ReactMarkdown from "react-markdown";
 import './App.css'
 
@@ -31,17 +31,14 @@ function App() {
 
   async function streaming(response){
     const reader = response.body.getReader();
-    const Dec = new TextDecoder("utf-8");
+    const dec = new TextDecoder("utf-8");
 
     while(true){
       const chunk = await reader.read();
       if(chunk.done){
-        const finalText = Dec.decode();
-        if (finalText) setMessages((prev) => prev + finalText);
-        setDone(true);
         break;
       }
-      const text = Dec.decode(chunk.value, { stream: true });
+      const text = dec.decode(chunk.value, { stream: true });
       setMessages((prev) => prev + text);
     }
   }
