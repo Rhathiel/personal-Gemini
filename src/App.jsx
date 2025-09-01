@@ -16,6 +16,7 @@ function App() {
 
     setDone(false);
     setInput("")
+    setMessages("")
 
     const response = await fetch("/api/chat", {
       method: "POST",
@@ -25,29 +26,24 @@ function App() {
       body: JSON.stringify({ prompt })
     });
 
-    streaming();
+    streaming(response);
   }
 
-  function streaming(){
-    const es = new EventSource("/api/chat");
+  async function streaming(response){
+    const reader = response.body.getReader();
+    const Dec = new TextDecoder("utf-8");
 
-    es.onmessage = (e) => {
-      setMessages((prev) => prev + e.data);
-    };
-
-    es.addEventListener("done", () => {
-      setDone(true);
-      es.close();
-    });
-
-    es.addEventListener("error", (event) => { 
-      console.error("서버 에러:", event.data);
-    });
-
-    es.onerror = (err) => {
-      console.error("네트워크 에러:", err);
-      es.close();
-    };
+    while(true){
+      const chunk = await reader.read();
+      if(chunk.done){
+        const finalText = Dec.decode(); // flush 남은 버퍼
+        if (finalText) setMessages((prev) => prev + finalText);
+        setDone(true);
+        break;
+      }
+      const text = Dec.decode(chunk.value, { stream: true });
+      setMessages((prev) => prev + text);
+    }
   }
 
   return (
