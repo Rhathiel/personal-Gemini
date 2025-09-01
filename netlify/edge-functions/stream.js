@@ -6,7 +6,7 @@ export async function handler(event, context) {
     let prompt = ""; //사용자 질문
 
     if(event.httpMethod === "POST"){
-      const body = await JSON.parse(event.body);
+      const body = JSON.parse(event.body || {});
       prompt = body.prompt;
     }
 
