@@ -14,6 +14,7 @@ export default async function handler(request) {
   const { readable, writable } = new TransformStream();
   const writer = writable.getWriter(); 
   const enc = new TextEncoder();
+  const dec = new TextDecoder("utf-8");
 
   (async () => {
     try {
@@ -25,20 +26,40 @@ export default async function handler(request) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             contents: [{ role: "user", parts: [{ text: prompt }] }],
-            config: { systemInstruction: "always answer in Markdown format." }
+            systemInstruction: {parts: [{ "text": "딱히없음" }]},
           })
         }
       );
 
       const reader = response.body.getReader();
+
+      let buffer = "";
+
       while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        await writer.write(value); // chunk 그대로 클라로 push
+        const chunk = await reader.read(); //chunk를 받아옴. 어떻게 들어올지는 모름.
+        if(chunk.done){
+          const finalText = dec.decode();
+          if (finalText) {
+            await writer.write(enc.encode(finalText));
+          }
+          break;
+        }
+        const decoded = dec.decode(chunk.value, { stream: true });
+        buffer += decoded;
+        const parts = buffer.split("\n"); //나누고 마지막꺼는 항상 버퍼에 다시 넣음.
+        buffer = parts.pop();
+
+        for(const line of parts){
+          if (!line.trim()) continue;
+          const text = JSON.parse(line)?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+          const encoded = enc.encode(text)
+          await writer.write(encoded);
+        }
       }
 
     } catch (e) {
-      await writer.write(enc.encode("ERROR: " + String(e))); 
+      console.error("Streaming error:", e);
+      await writer.write(enc.encode("ERROR")); 
     } finally {
       await writer.close();
     }

@@ -36,7 +36,7 @@ function App() {
     while(true){
       const chunk = await reader.read();
       if(chunk.done){
-        const finalText = Dec.decode(); // flush 남은 버퍼
+        const finalText = Dec.decode();
         if (finalText) setMessages((prev) => prev + finalText);
         setDone(true);
         break;
