@@ -26,7 +26,7 @@ export default async function handler(request) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             contents: [{ role: "user", parts: [{ text: prompt }] }],
-            systemInstruction: {parts: [{ "text": "딱히없음" }]},
+            systemInstruction: {parts: [{ "text": "마크 다운형식 대답하고. 마음대로 강조하고 사용해." }]},
           })
         }
       );
@@ -51,6 +51,9 @@ export default async function handler(request) {
 
         for(const line of parts){
           if (!line.trim()) continue;
+          console.log(line);
+          console.log(line);
+          console.log(line);
           const text = JSON.parse(line)?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
           const encoded = enc.encode(text)
           await writer.write(encoded);
