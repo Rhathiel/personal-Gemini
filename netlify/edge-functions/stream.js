@@ -36,9 +36,8 @@ export default async function handler(request) {
       let buffer = "";
 
       while (true) {
-        
-        const chunk = await reader.read();
-
+  
+        const chunk = await reader.read(); //chunk를 받아옴. 어떻게 들어올지는 모름.
         if(chunk.done){
           const finalText = dec.decode();
           if (finalText) {
@@ -49,12 +48,16 @@ export default async function handler(request) {
 
         const decoded = dec.decode(chunk.value, { stream: true });
         buffer += decoded;
-        
-        const parts = buffer.split("/},\s*{/"); //나누고 마지막꺼는 항상 버퍼에 다시 넣음.
+        console.log(buffer);
+    
+        const parts = buffer.split(/},\s*{/); //나누고 마지막꺼는 항상 버퍼에 다시 넣음.
         buffer = parts.pop();
 
         for(const line of parts){
           if (!line.trim()) continue;
+          console.log(line);
+          console.log(line);
+          console.log(line);
           const text = JSON.parse(line)?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
           const encoded = enc.encode(text)
           await writer.write(encoded);
