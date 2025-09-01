@@ -6,4 +6,5 @@ path = "/api/stream"
 function = "stream"  
 
 [dev]
-command = "vite"
+command = "npm run dev"
+port = 5173
