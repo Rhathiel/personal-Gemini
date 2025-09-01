@@ -2,12 +2,21 @@ import { useEffect, useState } from 'react';
 import './App.css'
 
 function App() {
-  function sendPrompt() {
-    const input = document.getElementById('chat-input');
+  const input = document.getElementById('chat-input');
+  const chatOutput = document.getElementById('chat-output');
+
+  async function sendPrompt() {
     const prompt = input.value;
     if (!prompt) return;
 
-    const chatOutput = document.getElementById('chat-output');
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt })
+      });
+    }
   }
 
   function streamViewer(){
