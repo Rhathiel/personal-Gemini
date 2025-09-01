@@ -1,33 +1,50 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react';
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  function sendPrompt() {
+    const input = document.getElementById('chat-input');
+    const prompt = input.value;
+    if (!prompt) return;
+
+    const chatOutput = document.getElementById('chat-output');
+  }
+
+  function streamViewer(){
+    const [messages, setMessages] = useState([]);
+
+    useEffect(() => {
+      const es = new EventSource("/.netlify/edge-functions/stream");
+
+      es.onmessage = (event)
+    })
+  }
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <div class="layout">
+        <aside id="sidebar">
+            <header>
+                <h1>LOGO</h1>
+                <button id="toggle-btn">☰</button>
+            </header>
+            <nav>
+                <button>새 채팅</button>
+                <button>채팅 검색</button>
+                <ul> 
+                    <li>주제A</li>
+                    <li>주제B</li>
+                    <li>주제C</li>
+                </ul>
+            </nav>
+        </aside>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+
+      <main>
+        <input id="chat-input" type="text"/>
+        <button id="sendBtn" type="button">전송</button>
+        <div id="chat-output"></div>
+      </main>
     </>
   )
 }
