@@ -17,7 +17,7 @@ function App() {
     setDone(false);
     setInput("")
 
-    const response = await fetch("/api/stream", {
+    const response = await fetch("/api/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -29,7 +29,7 @@ function App() {
   }
 
   function streaming(){
-    const es = new EventSource("/api/stream");
+    const es = new EventSource("/api/chat");
 
     es.onmessage = (e) => {
       setMessages((prev) => prev + e.data);
