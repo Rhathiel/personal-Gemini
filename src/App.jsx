@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import ReactMarkdown from "react-markdown";
 import './App.css'
 
 function App() {
@@ -73,7 +74,7 @@ function App() {
         <input id="chat-input" type="text"/>
         <button id="sendBtn" type="button">전송</button>
         <div id="chat-output">
-          {messages.map((msg) => (<p key={msg.id}> {msg.text} </p>))}
+          <ReactMarkdown>{messages}</ReactMarkdown>
         </div>
       </main>
     </>
