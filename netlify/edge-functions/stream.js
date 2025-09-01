@@ -36,7 +36,8 @@ export default async function handler(request) {
       let buffer = "";
 
       while (true) {
-        const chunk = await reader.read(); //chunk를 받아옴. 어떻게 들어올지는 모름.
+        do{   
+          const chunk = await reader.read(); //chunk를 받아옴. 어떻게 들어올지는 모름.
         if(chunk.done){
           const finalText = dec.decode();
           if (finalText) {
@@ -46,6 +47,8 @@ export default async function handler(request) {
         }
         const decoded = dec.decode(chunk.value, { stream: true });
         buffer += decoded;
+        } while(!buffer.include("\n"));
+     
         const parts = buffer.split("\n"); //나누고 마지막꺼는 항상 버퍼에 다시 넣음.
         buffer = parts.pop();
 
