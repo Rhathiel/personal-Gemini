@@ -3,7 +3,6 @@ import './App.css'
 
 function App() {
   const input = document.getElementById('chat-input');
-  const chatOutput = document.getElementById('chat-output');
 
   async function sendPrompt() {
     const prompt = input.value;
@@ -15,13 +14,14 @@ function App() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ prompt })
-      });
+    });
+
+    streaming();
   }
 
-  function streamViewer(){
+  function streaming(){
     const [messages, setMessages] = useState([]);
     const [done, setDone] = useState(false);
-
     useEffect(() => {
       const es = new EventSource("/api/stream");
 
