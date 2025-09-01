@@ -17,7 +17,7 @@ function App() {
     setDone(false);
     setInput("")
 
-    const response = await fetch("/api/chat", {
+    const response = await fetch("/api/stream", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
