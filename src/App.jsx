@@ -18,7 +18,7 @@ function App() {
     setInput("")
     setMessages("")
 
-    const response = await fetch("/api/chat", {
+    const response = await fetch("/.netlify/edge-functions/stream", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
