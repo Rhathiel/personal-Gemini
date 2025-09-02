@@ -5,7 +5,6 @@ import './App.css'
 function App() {
   const [input, setInput] = useState("");
   const [done, setDone] = useState(true);
-  const messages = useRef("");
   const boxRef = useRef(null);
 
   function delay(ms) {
@@ -48,9 +47,8 @@ function App() {
         break;
       }
       const text = dec.decode(chunk.value, { stream: true });
-      messages.current += text;
       if (boxRef.current) {
-        boxRef.current.textContent = messages.current; // 동기 반영
+        boxRef.current.textContent += text; // 동기 반영
       }
     }
     console.log("status", response.status);
