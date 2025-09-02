@@ -103,9 +103,6 @@ export default async function handler(request) {
             if (depth === 0 && start !== -1) {
               const jsonStr = buffer.slice(start, i+1);
               buffer = buffer.slice(i+1).trimStart();
-              while (buffer.startsWith(",") || buffer.startsWith("]")) {
-                buffer = buffer.slice(1).trimStart();
-              }
               const text = JSON.parse(jsonStr)?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
               const encoded = enc.encode(text);
               await writer.write(encoded);
