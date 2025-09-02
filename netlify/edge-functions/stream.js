@@ -44,7 +44,7 @@ export default async function handler(request) {
   (async () => {      
     try {
       const response = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?key=" +
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?key=" +
           Netlify.env.get("GEMINI_API_KEY"),
         {
           method: "POST",
@@ -57,7 +57,7 @@ export default async function handler(request) {
       );
 
       if (!response.ok) {
-        console.error("API Error:", await response.text()); // 🔴 여기서 실제 오류 메시지 확인 
+        console.error("API Error:", await response.text());
         return;
       }
 
