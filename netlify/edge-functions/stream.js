@@ -14,7 +14,14 @@ export default async function handler(request) {
   }
 
   //예외처리
-
+  if (request.method !== "POST") {
+    return new Response("Method Not Allowed", {
+      status: 405,
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      }
+    });
+  }
 
   //프롬프트 수신(문제x)
   const { prompt } = await request.json(); 
