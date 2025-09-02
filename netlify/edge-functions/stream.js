@@ -40,7 +40,7 @@ export default async function handler(request) {
       let depth = 0;
       let start = -1;
       while (true) {
-        const chunk = await reader.read();.
+        const chunk = await reader.read();
 
         if(chunk.done){
           const finalText = dec.decode();
