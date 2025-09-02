@@ -18,7 +18,7 @@ function App() {
     setInput("")
     setMessages("")
 
-    const response = await fetch("/.netlify/functions/stream.js", {
+    const response = await fetch("/.netlify/functions/stream", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
