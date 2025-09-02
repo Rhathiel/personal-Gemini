@@ -9,3 +9,6 @@
 [[edge_functions]]
   function = "stream"
   path = "/api/stream"
+
+[edge_functions.environment]
+  GEMINI_API_KEY = "your_api_key_here"
