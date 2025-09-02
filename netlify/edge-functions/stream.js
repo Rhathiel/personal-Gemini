@@ -41,24 +41,30 @@ export default async function handler(request) {
         const decoded = dec.decode(chunk.value, { stream: true }); //들어온 청크를 일단 처리. ? stream 단위로
         buffer += decoded; //버퍼에 더해줌
         buffer = buffer.replace(/\n/g, "");
+        console.log("buffer= " + buffer);
         for (let i = 0; i < buffer.length; i++) {
           const ch = buffer[i];
 
-          if(ch === "{" && depth === 0){
-            depth++; 
-            start = i; //시작 지점 체크
-          } else if(ch === "}" && depth === 1){
-            depth--;
-            const jsonStr = buffer.slice(start, i+1);
-            buffer = buffer.slice(i+1).trimStart;
-            const text = JSON.parse(jsonStr)?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-            const encoded = enc.encode(text);
-            await writer.write(encoded);
-            start = -1;
-          } else if(ch === "{"){
+          if(ch === "{"){
+            if (depth === 0){
+              start = i;
+            }
             depth++;
           } else if(ch === "}"){
             depth--;
+            if (depth === 0 && start !== -1) {
+              const jsonStr = buffer.slice(start, i+1);
+              while (buffer.startsWith(",") || buffer.startsWith("]")) {
+                console.log("ㅋㅋ");
+                buffer = buffer.slice(1).trimStart();
+              }
+              const text = JSON.parse(jsonStr)?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+              console.log("text= " + text);
+              const encoded = enc.encode(text);
+              await writer.write(encoded);
+              start = -1;
+              i = -1;
+            }
           }
         }
       }
