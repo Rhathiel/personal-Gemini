@@ -44,6 +44,10 @@ function App() {
     while(true){
       const chunk = await reader.read();
       if(chunk.done){
+        const finalText = dec.decode(undefined, { stream: false });
+        if (finalText) {
+          await writer.write(enc.encode(finalText));
+        }
         break;
       }
       const text = dec.decode(chunk.value, { stream: true });
