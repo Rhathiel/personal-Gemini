@@ -38,10 +38,18 @@ export default async function handler(request) {
       let start = -1;
       while (true) {
         const chunk = await reader.read(); //chunk를 받아옴. 어떻게 들어올지는 모름.
+
+        if(chunk.done){
+          const finalText = dec.decode();
+          if (finalText) {
+            await writer.write(enc.encode(finalText));
+          }
+          break;
+        }
+
         const decoded = dec.decode(chunk.value, { stream: true }); //들어온 청크를 일단 처리. ? stream 단위로
         buffer += decoded; //버퍼에 더해줌
         buffer = buffer.replace(/\n/g, "");
-        console.log("buffer= " + buffer);
         for (let i = 0; i < buffer.length; i++) {
           const ch = buffer[i];
 
@@ -54,11 +62,11 @@ export default async function handler(request) {
             depth--;
             if (depth === 0 && start !== -1) {
               const jsonStr = buffer.slice(start, i+1);
+              buffer = buffer.slice(i+1).trimStart();
               while (buffer.startsWith(",") || buffer.startsWith("]")) {
                 buffer = buffer.slice(1).trimStart();
               }
               const text = JSON.parse(jsonStr)?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
-              console.log("text= " + text);
               const encoded = enc.encode(text);
               await writer.write(encoded);
               start = -1;
