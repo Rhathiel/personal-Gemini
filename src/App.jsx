@@ -38,8 +38,10 @@ function App() {
     const dec = new TextDecoder("utf-8");
 
     while(true){
+      console.log("ㅎㅇㅎㅇ");
       const chunk = await reader.read();
       if(chunk.done){
+        console.log("방가방가");
         break;
       }
       console.log("text: " + text);
