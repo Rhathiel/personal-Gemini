@@ -1,6 +1,10 @@
 export default async function handler(request) {
+   const apiKey = Netlify.env.get("GEMINI_API_KEY");
+  console.log("DEBUG: GEMINI_API_KEY =", apiKey);
 
   if (request.method === "OPTIONS") {
+     const apiKey = Netlify.env.get("GEMINI_API_KEY");
+    console.log("DEBUG: GEMINI_API_KEY =", apiKey);
     return new Response(null, {
       status: 200,
       headers: {
