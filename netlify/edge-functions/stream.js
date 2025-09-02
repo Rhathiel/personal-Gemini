@@ -34,19 +34,32 @@ export default async function handler(request) {
       const reader = response.body.getReader();
 
       let buffer = "";
+      let depth = 0;
+      let start = -1;
       while (true) {
-          const chunk = await reader.read(); //chunk를 받아옴. 어떻게 들어올지는 모름.
-          const decoded = dec.decode(chunk.value, { stream: true }); //들어온 청크를 일단 처리. ? stream 단위로
-          buffer += decoded; //버퍼에 더해줌
-        try{
-          const text = JSON.parse(buffer)?.candidates?.[0]?.content?.parts?.[0]?.text ?? ""; //?? <- null 또는 undefined라면 ""를 대입
-          //실패하면 catch문으로 넘어감.
-          const encoded = enc.encode(text)
-          await writer.write(encoded);
+        const chunk = await reader.read(); //chunk를 받아옴. 어떻게 들어올지는 모름.
+        const decoded = dec.decode(chunk.value, { stream: true }); //들어온 청크를 일단 처리. ? stream 단위로
+        buffer += decoded; //버퍼에 더해줌
+        buffer = buffer.replace(/\n/g, "");
+        for (let i = 0; i < buffer.length; i++) {
+          const ch = buffer[i];
 
-        } catch (e) {
-          continue; 
-          //버퍼에는 실패한 애가 계속 남아있는 상태.
+          if(ch === "{" && depth === 0){
+            depth++; 
+            start = i; //시작 지점 체크
+          } else if(ch === "}" && depth === 1){
+            depth--;
+            const jsonStr = buffer.slice(start, i+1);
+            buffer = buffer.slice(i+1).trimStart;
+            const text = JSON.parse(jsonStr)?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+            const encoded = enc.encode(text);
+            await writer.write(encoded);
+            start = -1;
+          } else if(ch === "{"){
+            depth++;
+          } else if(ch === "}"){
+            depth--;
+          }
         }
       }
 
