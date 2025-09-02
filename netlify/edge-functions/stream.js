@@ -1,6 +1,23 @@
 export default async function handler(request) {
+
+  if (request.method === "OPTIONS") {
+    return new Response(null, {
+      status: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type"
+      }
+    });
+  }
+
   if (request.method !== "POST") {
-    return new Response("Method Not Allowed", { status: 405 });
+    return new Response("Method Not Allowed", {
+      status: 405,
+      headers: {
+        "Access-Control-Allow-Origin": "*"
+      }
+    });
   }
 
   //프롬프트 수신
@@ -8,6 +25,7 @@ export default async function handler(request) {
   
   //헤더
   const headers = {
+    "Access-Control-Allow-Origin": "*",
     "Content-Type": "text/plain; charset=utf-8", 
     "Cache-Control": "no-cache, no-transform",  
     "Connection": "keep-alive"          
