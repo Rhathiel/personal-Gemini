@@ -45,6 +45,9 @@ function App() {
       const text = dec.decode(chunk.value, { stream: true });
       setMessages((prev) => prev + text);
     }
+    console.log("status", response.status);
+    console.log("ok?", response.ok);
+    console.log("headers", [...response.headers]);
   }
 
   return (
