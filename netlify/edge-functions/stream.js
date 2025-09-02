@@ -69,7 +69,6 @@ export default async function handler(request) {
         const chunk = await reader.read();
 
         if(chunk.done){
-          console.log("종료종료종료종료종료종료종료종료종료종료종료종료종료종료종료종료종료종료");
           const finalText = dec.decode();
           if (finalText) {
             await writer.write(enc.encode(finalText));
