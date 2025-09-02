@@ -21,7 +21,7 @@ function App() {
 
     setDone(false);
     setInput("")
-    setMessages("")
+    boxRef.current.textContent = "";
 
     const response = await fetch("https://431641535202.netlify.app/api/stream", {
       method: "POST",
