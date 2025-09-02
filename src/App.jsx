@@ -22,7 +22,6 @@ function App() {
     setDone(false);
     setInput("");
     setFinalText("");
-    boxRef.current.textContent = "";
 
     const response = await fetch("https://431641535202.netlify.app/api/stream", {
       method: "POST",
@@ -53,7 +52,7 @@ function App() {
       buffer += dec.decode(chunk.value, { stream: true });
 
       if (boxRef.current) {
-        boxRef.current.textContent = text;
+        boxRef.current.textContent = buffer;
       }
     }
 
