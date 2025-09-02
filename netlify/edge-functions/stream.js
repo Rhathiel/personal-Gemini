@@ -33,34 +33,25 @@ export default async function handler(request) {
 
       const reader = response.body.getReader();
 
-      let buffer = "";
-
       while (true) {
-  
-        const chunk = await reader.read(); //chunk를 받아옴. 어떻게 들어올지는 모름.
-        if(chunk.done){
-          const finalText = dec.decode();
-          if (finalText) {
-            await writer.write(enc.encode(finalText));
+        try{
+          const chunk = await reader.read(); //chunk를 받아옴. 어떻게 들어올지는 모름.
+          if(chunk.done){
+            const finalText = dec.decode();
+            if (finalText) {
+              await writer.write(enc.encode(finalText));
+            }
+            break;
           }
-          break;
-        }
 
-        const decoded = dec.decode(chunk.value, { stream: true });
-        buffer += decoded;
-        console.log(buffer);
-    
-        const parts = buffer.split(/},\s*{/); //나누고 마지막꺼는 항상 버퍼에 다시 넣음.
-        buffer = parts.pop();
+          const decoded = dec.decode(chunk.value, { stream: true });
 
-        for(const line of parts){
-          if (!line.trim()) continue;
-          console.log(line);
-          console.log(line);
-          console.log(line);
-          const text = JSON.parse(line)?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
+          const text = JSON.parse(line)?.candidates?.[0]?.content?.parts?.[0]?.text ?? ""; //?? <- null 또는 undefined라면 ""를 대입
           const encoded = enc.encode(text)
           await writer.write(encoded);
+        } catch (e) {
+          console.error("JSON.parse error:", e);
+          continue; 
         }
       }
 
