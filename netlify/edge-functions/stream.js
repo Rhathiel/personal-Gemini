@@ -13,7 +13,7 @@ export default async function handler(request) {
     });
   }
 
-  //예외처리
+  //주소로 바로 접근하는거 방지
   if (request.method !== "POST") {
     return new Response("Method Not Allowed", {
       status: 405,
