@@ -55,7 +55,6 @@ export default async function handler(request) {
             if (depth === 0 && start !== -1) {
               const jsonStr = buffer.slice(start, i+1);
               while (buffer.startsWith(",") || buffer.startsWith("]")) {
-                console.log("ㅋㅋ");
                 buffer = buffer.slice(1).trimStart();
               }
               const text = JSON.parse(jsonStr)?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
