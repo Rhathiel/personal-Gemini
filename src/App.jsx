@@ -5,6 +5,7 @@ import './App.css'
 function App() {
   const [input, setInput] = useState("");
   const [done, setDone] = useState(true);
+  const [finalText, setFinalText] = useState("");
   const boxRef = useRef(null);
 
   function delay(ms) {
@@ -19,7 +20,8 @@ function App() {
     if (!prompt) return;
 
     setDone(false);
-    setInput("")
+    setInput("");
+    setFinalText("");
     boxRef.current.textContent = "";
 
     const response = await fetch("https://431641535202.netlify.app/api/stream", {
@@ -52,9 +54,10 @@ function App() {
       }
       const text = dec.decode(chunk.value, { stream: true });
       if (boxRef.current) {
-        boxRef.current.textContent += text; // 동기 반영
+        boxRef.current.insertAdjacentText("beforeend", text);
       }
     }
+    setFinalText(boxRef.current);
     console.log("status", response.status);
     console.log("ok?", response.ok);
     console.log("headers", [...response.headers]);
@@ -84,6 +87,7 @@ function App() {
         <input type="text" value={input} onChange={(e) => setInput(e.target.value)}/>
         <button id="sendBtn" type="button" onClick={sendPrompt}>전송</button>
         <div id="chat-output" ref={boxRef}>
+          <ReactMarkdown>{finalText}</ReactMarkdown>
         </div>
       </main>
     </>
