@@ -33,25 +33,20 @@ export default async function handler(request) {
 
       const reader = response.body.getReader();
 
+      let buffer = "";
       while (true) {
-        try{
           const chunk = await reader.read(); //chunk를 받아옴. 어떻게 들어올지는 모름.
-          if(chunk.done){
-            const finalText = dec.decode();
-            if (finalText) {
-              await writer.write(enc.encode(finalText));
-            }
-            break;
-          }
-
-          const decoded = dec.decode(chunk.value, { stream: true });
-
-          const text = JSON.parse(line)?.candidates?.[0]?.content?.parts?.[0]?.text ?? ""; //?? <- null 또는 undefined라면 ""를 대입
+          const decoded = dec.decode(chunk.value, { stream: true }); //들어온 청크를 일단 처리. ? stream 단위로
+          buffer += decoded; //버퍼에 더해줌
+        try{
+          const text = JSON.parse(buffer)?.candidates?.[0]?.content?.parts?.[0]?.text ?? ""; //?? <- null 또는 undefined라면 ""를 대입
+          //실패하면 catch문으로 넘어감.
           const encoded = enc.encode(text)
           await writer.write(encoded);
+
         } catch (e) {
-          console.error("JSON.parse error:", e);
           continue; 
+          //버퍼에는 실패한 애가 계속 남아있는 상태.
         }
       }
 
