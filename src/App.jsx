@@ -27,7 +27,7 @@ function App() {
     });
 
     await streaming(response);
-    setDone(false);
+    setDone(true);
   }
 
   async function streaming(response){
