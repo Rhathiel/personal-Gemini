@@ -81,9 +81,8 @@ function App() {
       <main>
         <input type="text" value={input} onChange={(e) => setInput(e.target.value)}/>
         <button id="sendBtn" type="button" onClick={sendPrompt}>전송</button>
-        <div id="chat-output">
-          <ReactMarkdown ref={boxRef}>
-          </ReactMarkdown>
+        <div id="chat-output" ref={boxRef}>
+          <ReactMarkdown>{content}</ReactMarkdown>
         </div>
       </main>
     </>
