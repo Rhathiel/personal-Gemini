@@ -54,7 +54,7 @@ function App() {
       }
       const text = dec.decode(chunk.value, { stream: true });
       if (boxRef.current) {
-        boxRef.current.insertAdjacentText("beforeend", text);
+        boxRef.current.textContent += text;
       }
     }
     setFinalText(boxRef.current);
