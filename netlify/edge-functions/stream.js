@@ -39,7 +39,7 @@ export default async function handler(request) {
   const dec = new TextDecoder("utf-8");
 
   //청크 수신 및 해석
-  (async () => {
+  (async () => {      
     try {
       const response = await fetch(
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?key=" +
