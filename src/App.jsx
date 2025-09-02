@@ -18,7 +18,7 @@ function App() {
     setInput("")
     setMessages("")
 
-    const response = await fetch("https://431641535202.netlify.app/api/stream", {
+    const response = await fetch("http://localhost:8888/api/stream", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
