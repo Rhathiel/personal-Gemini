@@ -1,5 +1,6 @@
 export default async function handler(request) {
 
+  //클라이언트 요청
   if (request.method === "OPTIONS") {
     return new Response(null, {
       status: 200,
@@ -12,6 +13,7 @@ export default async function handler(request) {
     });
   }
 
+  //예외처리
   if (request.method !== "POST") {
     return new Response("Method Not Allowed", {
       status: 405,
@@ -21,8 +23,8 @@ export default async function handler(request) {
     });
   }
 
-  //프롬프트 수신
-  const { prompt } = await request.json();
+  //프롬프트 수신(문제x)
+  const { prompt } = await request.json(); 
   
   //헤더
   const headers = {
@@ -42,17 +44,22 @@ export default async function handler(request) {
   (async () => {      
     try {
       const response = await fetch(
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:streamGenerateContent?key=" +
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?key=" +
           Netlify.env.get("GEMINI_API_KEY"),
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             contents: [{ role: "user", parts: [{ text: prompt }] }],
-            systemInstruction: {parts: [{ "text": "마크 다운형식 대답하고. 마음대로 강조하고 사용해." }]},
+            systemInstruction: {parts: [{ text: "마크 다운형식 대답하고. 마음대로 강조하고 사용해." }]},
           })
         }
       );
+
+      if (!response.ok) {
+        console.error("API Error:", await response.text()); // 🔴 여기서 실제 오류 메시지 확인 
+        return;
+      }
 
       const reader = response.body.getReader();
       let buffer = "";

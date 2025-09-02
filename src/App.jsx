@@ -38,17 +38,13 @@ function App() {
     const dec = new TextDecoder("utf-8");
 
     while(true){
-      console.log("ㅎㅇㅎㅇ");
       const chunk = await reader.read();
       if(chunk.done){
-        console.log("방가방가");
         break;
       }
-      console.log("text: " + text);
       const text = dec.decode(chunk.value, { stream: true });
       setMessages((prev) => prev + text);
     }
-    console.log("메시지: " + messages);
     console.log("status", response.status);
     console.log("ok?", response.ok);
     console.log("headers", [...response.headers]);
