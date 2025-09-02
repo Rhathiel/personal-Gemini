@@ -42,6 +42,7 @@ function App() {
       if(chunk.done){
         break;
       }
+      console.log("text: " + text);
       const text = dec.decode(chunk.value, { stream: true });
       setMessages((prev) => prev + text);
     }
