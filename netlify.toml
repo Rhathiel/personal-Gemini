@@ -11,4 +11,4 @@
   path = "/api/stream"
 
 [edge_functions.environment]
-  GEMINI_API_KEY = "your_api_key_here"
+  GEMINI_API_KEY = "AIzaSyDyI3v_Aw0HY3QvFaDBE10goPYvpmQCcTY"
