@@ -3,19 +3,23 @@ export default async function handler(request) {
     return new Response("Method Not Allowed", { status: 405 });
   }
 
+  //프롬프트 수신
   const { prompt } = await request.json();
   
+  //헤더
   const headers = {
     "Content-Type": "text/plain; charset=utf-8", 
     "Cache-Control": "no-cache, no-transform",  
     "Connection": "keep-alive"          
   };
 
+  //선언
   const { readable, writable } = new TransformStream();
   const writer = writable.getWriter(); 
   const enc = new TextEncoder();
   const dec = new TextDecoder("utf-8");
 
+  //청크 수신 및 해석
   (async () => {
     try {
       const response = await fetch(
@@ -32,12 +36,11 @@ export default async function handler(request) {
       );
 
       const reader = response.body.getReader();
-
       let buffer = "";
       let depth = 0;
       let start = -1;
       while (true) {
-        const chunk = await reader.read(); //chunk를 받아옴. 어떻게 들어올지는 모름.
+        const chunk = await reader.read();.
 
         if(chunk.done){
           const finalText = dec.decode();
@@ -47,8 +50,8 @@ export default async function handler(request) {
           break;
         }
 
-        const decoded = dec.decode(chunk.value, { stream: true }); //들어온 청크를 일단 처리. ? stream 단위로
-        buffer += decoded; //버퍼에 더해줌
+        const decoded = dec.decode(chunk.value, { stream: true });
+        buffer += decoded;
         buffer = buffer.replace(/\n/g, "");
         for (let i = 0; i < buffer.length; i++) {
           const ch = buffer[i];
@@ -84,6 +87,7 @@ export default async function handler(request) {
     }
   })();
 
+  //파이프라인 전달
   return new Response(readable, {
     status: 200,
     headers: headers
