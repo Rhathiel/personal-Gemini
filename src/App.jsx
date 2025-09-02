@@ -42,24 +42,25 @@ function App() {
   async function streaming(response){
     const reader = response.body.getReader();
     const dec = new TextDecoder("utf-8");
+    let buffer = "";
 
     while(true){
       const chunk = await reader.read();
       if(chunk.done){
-        const finalText = dec.decode(undefined, { stream: false });
-        if (finalText) {
-          await writer.write(enc.encode(finalText));
-        }
+        buffer += dec.decode(undefined, { stream: false });
         break;
       }
-      const text = dec.decode(chunk.value, { stream: true });
+      buffer += dec.decode(chunk.value, { stream: true });
+
       if (boxRef.current) {
-        boxRef.current.textContent += text;
+        boxRef.current.textContent = text;
       }
     }
-    setFinalText(boxRef.current);
-    boxRef.current.textContent = "";
-    console.log("update?" + "yes2222");2
+
+    setFinalText(buffer);
+    if (boxRef.current) boxRef.current.textContent = "";
+
+    console.log("update?" + "yes3333");2
     console.log("status", response.status);
     console.log("ok?", response.ok);
     console.log("headers", [...response.headers]);
