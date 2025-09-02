@@ -7,6 +7,10 @@ function App() {
   const [messages, setMessages] = useState("");
   const [done, setDone] = useState(true);
 
+  function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   async function sendPrompt() {
 
     if (!done) return;
@@ -43,6 +47,7 @@ function App() {
         break;
       }
       const text = dec.decode(chunk.value, { stream: true });
+      delay(200);
       setMessages((prev) => prev + text);
     }
     console.log("status", response.status);
