@@ -58,6 +58,7 @@ function App() {
       }
     }
     setFinalText(boxRef.current);
+    console.log("update?" + "yes");
     console.log("status", response.status);
     console.log("ok?", response.ok);
     console.log("headers", [...response.headers]);
