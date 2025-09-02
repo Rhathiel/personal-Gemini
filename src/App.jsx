@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import ReactMarkdown from "react-markdown";
 import './App.css'
 
 function App() {
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState("");
   const [done, setDone] = useState(true);
+  const messages = useRef("");
+  const boxRef = useRef(null);
 
   function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -47,8 +48,10 @@ function App() {
         break;
       }
       const text = dec.decode(chunk.value, { stream: true });
-      delay(200);
-      setMessages((prev) => prev + text);
+      messages.current += text;
+      if (boxRef.current) {
+        boxRef.current.textContent = messages.current; // 동기 반영
+      }
     }
     console.log("status", response.status);
     console.log("ok?", response.ok);
@@ -79,7 +82,8 @@ function App() {
         <input type="text" value={input} onChange={(e) => setInput(e.target.value)}/>
         <button id="sendBtn" type="button" onClick={sendPrompt}>전송</button>
         <div id="chat-output">
-          <ReactMarkdown>{messages}</ReactMarkdown>
+          <ReactMarkdown ref={boxRef}>
+          </ReactMarkdown>
         </div>
       </main>
     </>
