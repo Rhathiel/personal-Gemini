@@ -77,8 +77,8 @@ export default async function handler(request) {
         }
 
         const decoded = dec.decode(chunk.value, { stream: true });
+        console.log(decoded);
         buffer += decoded;
-        console.log(buffer);
         for (let i = 0; i < buffer.length; i++) {
           const ch = buffer[i];
 
@@ -97,7 +97,6 @@ export default async function handler(request) {
               }
               const text = JSON.parse(jsonStr)?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
               const encoded = enc.encode(text);
-              console.log(text);
               await writer.write(encoded);
               start = -1;
               i = -1;
