@@ -26,7 +26,8 @@ function App() {
       body: JSON.stringify({ prompt })
     });
 
-    streaming(response);
+    await streaming(response);
+    setDone(false);
   }
 
   async function streaming(response){
