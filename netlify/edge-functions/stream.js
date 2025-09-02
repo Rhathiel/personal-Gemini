@@ -97,6 +97,7 @@ export default async function handler(request) {
               }
               const text = JSON.parse(jsonStr)?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
               const encoded = enc.encode(text);
+              console.log(dec.decode(encoded));
               await writer.write(encoded);
               start = -1;
               i = -1;
