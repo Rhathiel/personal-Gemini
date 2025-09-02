@@ -26,6 +26,7 @@ export default async function handler(request) {
   
   //헤더
   const headers = {
+    "Access-Control-Allow-Origin": "*",
     "Content-Type": "text/plain; charset=utf-8", 
     "Cache-Control": "no-cache, no-transform",  
     "Connection": "keep-alive"          
