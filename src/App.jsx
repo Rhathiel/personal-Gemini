@@ -58,7 +58,8 @@ function App() {
       }
     }
     setFinalText(boxRef.current);
-    console.log("update?" + "yes");
+    boxRef.current.textContent = "";
+    console.log("update?" + "yes2222");2
     console.log("status", response.status);
     console.log("ok?", response.ok);
     console.log("headers", [...response.headers]);
