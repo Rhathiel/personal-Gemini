@@ -77,6 +77,7 @@ export default async function handler(request) {
         }
 
         const decoded = dec.decode(chunk.value, { stream: true });
+        console.log(decoded);
         buffer += decoded;
         buffer = buffer.replace(/\n/g, "");
         for (let i = 0; i < buffer.length; i++) {
