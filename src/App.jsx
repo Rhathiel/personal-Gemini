@@ -15,7 +15,7 @@ function App() {
     const prompt = input;
     if (!prompt) return;
 
-    setMessages([...messages, buffer]);
+    setMessages([...messages, { role: "user", parts: [{ text: prompt }] }]);
     setHistory([...history, { role: "user", parts: [{ text: prompt }] }]);
 
     setDone(false);
@@ -47,7 +47,7 @@ function App() {
         break;
       }
       buffer += dec.decode(chunk.value, { stream: true });
-      setMessages([...messages, buffer]);
+      setMessages([...messages, { role: "model", parts: [{ text: buffer }] }]);
     }
 
     setHistory([...history, { role: "model", parts: [{ text: buffer }] }]);
@@ -80,9 +80,14 @@ function App() {
       <main>
         <input type="text" value={input} onChange={(e) => setInput(e.target.value)}/>
         <button id="sendBtn" type="button" onClick={sendPrompt}>전송</button>
-        <div id="chat-output">
-          <ReactMarkdown>{messages}</ReactMarkdown>
-        </div>
+          <ul id="messages">
+            {messages.map((msg, i) => (
+              <li key={i}>
+                {msg.role === user ? <b>나:</b> : <b>AI:</b>}{" "} 
+                {msg.parts[0].text || (msg.role === "assistant" ? <i>생각 중...</i> : null)}
+              </li>
+            ))}
+          </ul>
       </main>
     </>
   )
