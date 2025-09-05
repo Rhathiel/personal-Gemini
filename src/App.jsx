@@ -48,6 +48,7 @@ function App() {
     }
 
     setHistory([...history, { role: "model", parts: [{ text: buffer }] }]);
+    console.log(buffer);
     console.log("...done!");
     
     console.log("status", response.status);
