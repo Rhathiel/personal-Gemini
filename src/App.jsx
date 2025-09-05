@@ -83,7 +83,7 @@ function App() {
           <ul id="messages">
             {messages.map((msg, i) => (
               <li key={i}>
-                {msg.role === user ? <b>나:</b> : <b>AI:</b>}{" "} 
+                {msg.role === "user" ? <b>나:</b> : <b>AI:</b>}{" "} 
                 {msg.parts[0].text || (msg.role === "assistant" ? <i>생각 중...</i> : null)}
               </li>
             ))}
