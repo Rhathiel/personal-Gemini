@@ -17,8 +17,8 @@ function App() {
     const prompt = input;
     if (!prompt) return;
 
-    setMessages(prev => [...prev, {role: "user", parts: [{ text: prompt }]}]);
-    setHistory(prev => [...prev, {role: "user", parts: [{ text: prompt }]}]);
+    setMessages([...messages, {role: "user", parts: [{ text: prompt }]}]);
+    setHistory([...history, {role: "user", parts: [{ text: prompt }]}]);
 
     setDone(false);
     setInput("");
