@@ -81,8 +81,6 @@ export default async function handler(req) {
         });
     } //주소로 바로 접근하는 경우 차단
 
-
-
     const { prompt, history } = await req.json(); 
     const chat = initAI(history, false);
 
