@@ -28,7 +28,7 @@ function App() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ text: prompt, history: history })
+      body: JSON.stringify({ prompt: prompt, history: history })
     });
 
     try {
