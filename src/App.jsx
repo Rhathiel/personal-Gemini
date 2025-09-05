@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import ReactMarkdown from "react-markdown";
 import './App.css'
 
@@ -6,10 +6,6 @@ function App() {
   const [input, setInput] = useState("");
   const [done, setDone] = useState(true);
   const [messages, setMessages] = useState("");
-
-  function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
 
   async function sendPrompt() {
 
@@ -22,7 +18,7 @@ function App() {
     setInput("");
     setFinalText("");
 
-    const response = await fetch("https://431641535202.netlify.app/api/stream", {
+    const response = await fetch("/api/stream", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
