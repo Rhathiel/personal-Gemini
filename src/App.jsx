@@ -17,8 +17,8 @@ function App() {
     const prompt = input;
     if (!prompt) return;
 
-    setMessages([...messages, { role: "user", parts: [{ text: prompt }] }]);
-    setHistory([...history, { role: "user", parts: [{ text: prompt }] }]);
+    setMessages(prev => [...prev, {role: "user", parts: [{ text: prompt }]}]);
+    setHistory(prev => [...prev, {role: "user", parts: [{ text: prompt }]}]);
 
     setDone(false);
     setInput("");
@@ -43,11 +43,11 @@ function App() {
     let buffer = "";
 
     for await (const chunk of response.body){
-      buffer += dec.decode(chunk, { stream: true });
-      setMessages([...messages, { role: "model", parts: [{ text: buffer }] }]);
+      const { role, text } = JSON.parse(dec.decode(chunk, { stream: true }));
+      setMessages(prev => [...prev, {role: role, parts: [{ text: text }]}]);
     }
 
-    setHistory([...history, { role: "model", parts: [{ text: buffer }] }]);
+    setHistory(prev => [...prev, {role: role, parts: [{ text: text }]}]);
     console.log(buffer);
     console.log("...done!");
     
