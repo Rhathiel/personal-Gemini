@@ -17,7 +17,7 @@ function App() {
     const prompt = input;
     if (!prompt) return;
 
-    setMessages([...messages, {role: "user", parts: [{ text: prompt }]}]);
+    setMessages(prev => [...prev, { role: "user", parts: [{ text: prompt }]}]);
     setHistory(prev => [...prev, { role: "user", parts: [{ text: prompt }]}]);
 
     setDone(false);
@@ -33,7 +33,10 @@ function App() {
 
     try {
       await streaming(response); //stream 호츨 done 받을 때 까지 대기
-    } finally { 
+    } catch(e){
+      console.error(e);
+    }
+    finally { 
       setDone(true); 
     }
   }
@@ -43,14 +46,15 @@ function App() {
     
     let buffer = "";
     for await (const chunk of response.body){
-      const { role, parts } = JSON.parse(dec.decode(chunk, { stream: true }));
-      if(!buffer){
-        setMessages([...messages, {role: role, parts: [{ text: "" }]}]);
-      }
+      const { role, parts } = JSON.parse(dec.decode(chunk)).candidates[0].content;
       buffer += parts?.[0]?.text || "";
-      setMessages([...messages, { role: role, parts: [{ text: buffer }]}]);
-      setHistory(prev => [...prev, { role: role, parts: parts }]);
+      setMessages(prev => {
+        const newArr = [...prev];
+        newArr[newArr.length-1] = {...newArr[newArr.length-1], role: role, parts: [{text: buffer}]};
+        return newArr;
+      })
     }
+    setHistory(prev => [...prev, { role: "model", parts: [{ text: buffer }]}]);
 
     console.log("status", response.status);
     console.log("ok?", response.ok);

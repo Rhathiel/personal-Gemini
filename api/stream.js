@@ -85,9 +85,8 @@ export default async function handler(req) {
       async start(controller) {
         (async () => {
           const aiStream = await createOutput(chat, prompt);
-          for await (const chunk of aiStream) {
-            console.log(chunk.role);
-            controller.enqueue(enc.encode(JSON.stringify({role: chunk.role, parts: chunk.parts}))); //api에서 받은 청크를 스트림에 추가
+          for await (const chunk of aiStream) {;
+            controller.enqueue(enc.encode(JSON.stringify(chunk))); //api에서 받은 청크를 스트림에 추가
           }
           controller.close();
         })();
