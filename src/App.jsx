@@ -50,7 +50,7 @@ function App() {
       setMessages([...messages, {role: role, parts: [{ text: buffer }]}]);
     }
 
-    setHistory([...messages, {role: role, parts: [{ text: buffer }]}]);
+    setHistory([...history, {role: role, parts: [{ text: buffer }]}]);
 
     console.log("status", response.status);
     console.log("ok?", response.ok);
