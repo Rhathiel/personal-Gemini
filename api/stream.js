@@ -21,7 +21,7 @@ function initAI(history, showThoughts) {
       topP: 0.95,
       topK: 40,
       maxOutputTokens: 8192,
-      responseMimeType: "text/plain",
+      responseMimeType: "application/json",
       safetySettings: [
         { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
         { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
@@ -83,7 +83,7 @@ export default async function handler(req) {
         (async () => {
           const aiStream = await createOutput(chat, prompt);
           for await (const chunk of aiStream) {
-            controller.enqueue(enc.encode(chunk.text)); //api에서 받은 청크를 스트림에 추가
+            controller.enqueue(enc.encode(JSON.stringify(chunk))); //api에서 받은 청크를 스트림에 추가
           }
           controller.close();
         })();

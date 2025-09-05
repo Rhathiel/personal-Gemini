@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import './App.css'
 
 function App() {
-  console.log("version: 1.0.2");
+  console.log("version: 1.0.3");
 
   const [input, setInput] = useState("");
   const [done, setDone] = useState(true);
