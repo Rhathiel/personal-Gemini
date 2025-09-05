@@ -52,19 +52,11 @@ async function createOutput(chat, prompt) {
 export default async function handler(req) {
     const enc = new TextEncoder();
 
-    if (req.method === "OPTIONS"){
-        return new Response("ok",{
-            status: 200,
-            headers: {"Access-Control-Allow-Origin": "*",
-                     "Access-Control-Allow-Methods": "POST, OPTIONS",
-                     "Access-Control-Allow-Headers": "Content-Type, Authorization",
-            }
-        });
-    } //CORS preflight 요청 처리
-
-    if (req.method !== "POST") {
-        return new Response("Method Not Allowed", {status: 405});
-    } //주소로 바로 접근하는 경우 차단
+    const corsHeaders = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    };
 
     const headers = {
         "Access-Control-Allow-Origin": "*",
@@ -74,6 +66,22 @@ export default async function handler(req) {
         "Cache-Control": "no-cache",
         "Connection": "keep-alive"
     };
+
+    if (req.method === "OPTIONS"){
+        return new Response("ok",{
+            status: 200,
+            headers: corsHeaders
+        });
+    } //CORS preflight 요청 처리
+
+    if (req.method !== "POST") {
+        return new Response("Method Not Allowed", {
+          status: 405,
+          headers: corsHeaders
+        });
+    } //주소로 바로 접근하는 경우 차단
+
+
 
     const { prompt, history } = await req.json(); 
     const chat = initAI(history, false);
