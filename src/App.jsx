@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 import './App.css'
 
 function App() {
-  console.log("version: 1.0.0");
+  console.log("version: 1.0.1");
 
   const [input, setInput] = useState("");
   const [done, setDone] = useState(true);
@@ -48,6 +48,7 @@ function App() {
     }
 
     setHistory([...history, { role: "model", parts: [{ text: buffer }] }]);
+    console.log("...done!");
     
     console.log("status", response.status);
     console.log("ok?", response.ok);
