@@ -5,7 +5,8 @@ import './App.css'
 function App() {
   const [input, setInput] = useState("");
   const [done, setDone] = useState(true);
-  const [messages, setMessages] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [history, setHistory] = useState([]);
 
   async function sendPrompt() {
 
@@ -13,6 +14,9 @@ function App() {
 
     const prompt = input;
     if (!prompt) return;
+
+    setMessages([...messages, buffer]);
+    setHistory([...history, { role: "user", parts: [{ text: prompt }] }]);
 
     setDone(false);
     setInput("");
@@ -22,7 +26,7 @@ function App() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ prompt })
+      body: JSON.stringify({ text: prompt, history: history })
     });
 
     try {
@@ -43,8 +47,11 @@ function App() {
         break;
       }
       buffer += dec.decode(chunk.value, { stream: true });
-      setMessages(buffer);
+      setMessages([...messages, buffer]);
     }
+
+    setHistory([...history, { role: "model", parts: [{ text: buffer }] }]);
+    
     console.log("status", response.status);
     console.log("ok?", response.ok);
     console.log("headers", [...response.headers]);
