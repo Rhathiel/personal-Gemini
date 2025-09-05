@@ -41,16 +41,17 @@ function App() {
   async function streaming(response){
     const dec = new TextDecoder("utf-8");
     let buffer = "";
+    let role = "";
+    let text = "";
 
     for await (const chunk of response.body){
-      const { role, text } = JSON.parse(dec.decode(chunk, { stream: true }));
-      setMessages(prev => [...prev, {role: role, parts: [{ text: text }]}]);
+      ({ role, text } = JSON.parse(dec.decode(chunk, { stream: true })));
+      buffer += text;
+      setMessages([...messages, {role: role, parts: [{ text: buffer }]}]);
     }
 
-    setHistory(prev => [...prev, {role: role, parts: [{ text: text }]}]);
-    console.log(buffer);
-    console.log("...done!");
-    
+    setHistory([...messages, {role: role, parts: [{ text: buffer }]}]);
+
     console.log("status", response.status);
     console.log("ok?", response.ok);
     console.log("headers", [...response.headers]);
