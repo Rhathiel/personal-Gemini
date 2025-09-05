@@ -67,7 +67,7 @@ export default async function handler(req) {
     } //주소로 바로 접근하는 경우 차단
 
     const headers = {
-        "Content-Type": "text/event-stream",
+        "Content-Type": "text/plain",
         "Cache-Control": "no-cache",
         "Connection": "keep-alive"
     };

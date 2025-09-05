@@ -16,7 +16,6 @@ function App() {
 
     setDone(false);
     setInput("");
-    setFinalText("");
 
     const response = await fetch("https://personal-gemini.vercel.app/api/stream", {
       method: "POST",
@@ -27,9 +26,9 @@ function App() {
     });
 
     try {
-      await streaming(response);
-    } finally {
-      setDone(true);
+      await streaming(response); //stream 호츨 done 받을 때 까지 대기
+    } finally { 
+      setDone(true); 
     }
   }
 
@@ -39,19 +38,13 @@ function App() {
     let buffer = "";
 
     while(true){
-      const chunk = await reader.read();
+      const chunk = await reader.read(); 
       if(chunk.done){
-        buffer += dec.decode(undefined, { stream: false });
         break;
       }
       buffer += dec.decode(chunk.value, { stream: true });
-
-
+      setMessages(buffer);
     }
-
-
-
-    console.log("update?" + "yes3333");2
     console.log("status", response.status);
     console.log("ok?", response.ok);
     console.log("headers", [...response.headers]);
