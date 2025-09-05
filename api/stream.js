@@ -83,6 +83,7 @@ export default async function handler(req) {
         (async () => {
           const aiStream = await createOutput(chat, prompt);
           for await (const chunk of aiStream) {
+            console.log("aiStream chunk >>>", chunk);
             controller.enqueue(enc.encode(JSON.stringify(chunk))); //api에서 받은 청크를 스트림에 추가
           }
           controller.close();
