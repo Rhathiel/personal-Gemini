@@ -18,7 +18,7 @@ function App() {
     setInput("");
     setFinalText("");
 
-    const response = await fetch("/api/stream", {
+    const response = await fetch("https://personal-gemini.vercel.app/api/stream", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
