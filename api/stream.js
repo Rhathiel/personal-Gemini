@@ -67,6 +67,9 @@ export default async function handler(req) {
     } //주소로 바로 접근하는 경우 차단
 
     const headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
         "Content-Type": "text/plain",
         "Cache-Control": "no-cache",
         "Connection": "keep-alive"
