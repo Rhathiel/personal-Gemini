@@ -59,9 +59,7 @@ export default async function handler(req) {
     };
 
     const headers = {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        ...corsHeaders,
         "Content-Type": "text/plain",
         "Cache-Control": "no-cache",
         "Connection": "keep-alive"
@@ -96,5 +94,5 @@ export default async function handler(req) {
       },
     });
 
-    return new Response(stream, { headers });
+    return new Response(stream, { headers: headers });
 }
