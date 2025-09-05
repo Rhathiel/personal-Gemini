@@ -37,16 +37,11 @@ function App() {
   }
 
   async function streaming(response){
-    const reader = response.body.getReader();
     const dec = new TextDecoder("utf-8");
     let buffer = "";
 
-    while(true){
-      const chunk = await reader.read(); 
-      if(chunk.done){
-        break;
-      }
-      buffer += dec.decode(chunk.value, { stream: true });
+    for await (const chunk of response.body){
+      buffer += dec.decode(chunk, { stream: true });
       setMessages([...messages, { role: "model", parts: [{ text: buffer }] }]);
     }
 
@@ -84,7 +79,7 @@ function App() {
             {messages.map((msg, i) => (
               <li key={i}>
                 {msg.role === "user" ? <b>나:</b> : <b>AI:</b>}{" "} 
-                {msg.parts[0].text || (msg.role === "assistant" ? <i>생각 중...</i> : null)}
+                {msg.parts[0].text || (msg.role === "model" ? <i>생각 중...</i> : null)}
               </li>
             ))}
           </ul>
