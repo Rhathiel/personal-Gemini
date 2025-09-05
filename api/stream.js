@@ -44,13 +44,14 @@ async function createOutput(chat, prompt) {
 
     const stream = await chat.sendMessageStream({
         message: prompt,
-        responseFormat: "text/event-stream", 
     });
 
     return stream;
 }
 
 export default async function handler(req) {
+    const enc = new TextEncoder();
+
     if (req.method === "OPTIONS"){
         return new Response("ok",{
             status: 200,
@@ -61,12 +62,9 @@ export default async function handler(req) {
         });
     } //CORS preflight 요청 처리
 
-    if (req.mothod !== "POST") {
+    if (req.method !== "POST") {
         return new Response("Method Not Allowed", {status: 405});
     } //주소로 바로 접근하는 경우 차단
-
-    const { prompt } = await req.json(); 
-    const chat = initAI();
 
     const headers = {
         "Content-Type": "text/event-stream",
@@ -74,23 +72,20 @@ export default async function handler(req) {
         "Connection": "keep-alive"
     };
 
+    const { prompt } = await req.json(); 
+    const chat = initAI();
+
     const stream = new ReadableStream({
-    start(controller) {
+      async start(controller) {
         (async () => {
-
-
+          const aiStream = await createOutput(chat, prompt);
+          for await (const chunk of aiStream) {
+            controller.enqueue(enc.encode(chunk.text)); //api에서 받은 청크를 스트림에 추가
+          }
+          controller.close();
         })();
-    },
-
-    pull(controller) {
-        // 소비자(예: 브라우저 Response.body)가 데이터를 더 필요로 할 때 실행
-        // 일반 SSE에서는 잘 안 쓰고, on-demand 생산 스트림에서 활용
-    },
-
-    cancel(reason) {
-        // 소비자가 스트림 사용을 중단했을 때 실행
-        // 정리 작업(타이머 해제, 리소스 반환 등)을 여기서 수행
-    },
+      },
     });
 
+    return new Response(stream, { headers });
 }

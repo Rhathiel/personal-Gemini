@@ -5,8 +5,7 @@ import './App.css'
 function App() {
   const [input, setInput] = useState("");
   const [done, setDone] = useState(true);
-  const [finalText, setFinalText] = useState("");
-  const boxRef = useRef(null);
+  const [messages, setMessages] = useState("");
 
   function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
@@ -51,13 +50,10 @@ function App() {
       }
       buffer += dec.decode(chunk.value, { stream: true });
 
-      if (boxRef.current) {
-        boxRef.current.textContent = buffer;
-      }
+
     }
 
-    setFinalText(buffer);
-    if (boxRef.current) boxRef.current.textContent = "";
+
 
     console.log("update?" + "yes3333");2
     console.log("status", response.status);
@@ -88,8 +84,8 @@ function App() {
       <main>
         <input type="text" value={input} onChange={(e) => setInput(e.target.value)}/>
         <button id="sendBtn" type="button" onClick={sendPrompt}>전송</button>
-        <div id="chat-output" ref={boxRef}>
-          <ReactMarkdown>{finalText}</ReactMarkdown>
+        <div id="chat-output">
+          <ReactMarkdown>{messages}</ReactMarkdown>
         </div>
       </main>
     </>
