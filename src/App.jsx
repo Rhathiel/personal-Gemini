@@ -18,7 +18,7 @@ function App() {
     if (!prompt) return;
 
     setMessages([...messages, {role: "user", parts: [{ text: prompt }]}]);
-    setHistory([...history, {role: "user", parts: [{ text: prompt }]}]);
+    setHistory(prev => [...prev, { role: "user", parts: [{ text: prompt }]}]);
 
     setDone(false);
     setInput("");
@@ -40,17 +40,17 @@ function App() {
 
   async function streaming(response){
     const dec = new TextDecoder("utf-8");
+    
     let buffer = "";
-    let role = "";
-    let text = "";
-
     for await (const chunk of response.body){
-      ({ role, text } = JSON.parse(dec.decode(chunk, { stream: true })));
-      buffer += text;
-      setMessages([...messages, {role: role, parts: [{ text: buffer }]}]);
+      const { role, parts } = JSON.parse(dec.decode(chunk, { stream: true }));
+      if(!buffer){
+        setMessages([...messages, {role: role, parts: [{ text: "" }]}]);
+      }
+      buffer += parts?.[0]?.text || "";
+      setMessages([...messages, { role: role, parts: [{ text: buffer }]}]);
+      setHistory(prev => [...prev, { role: role, parts: parts }]);
     }
-
-    setHistory([...history, {role: role, parts: [{ text: buffer }]}]);
 
     console.log("status", response.status);
     console.log("ok?", response.ok);
@@ -84,7 +84,7 @@ function App() {
             {messages.map((msg, i) => (
               <li key={i}>
                 {msg.role === "user" ? <b>나:</b> : <b>AI:</b>}{" "} 
-                {msg.parts?.[0]?.text || (msg.role === "model" ? <i>생각 중...</i> : null)}
+                {msg.parts?.[0]?.text || (msg.role === "model" ? <i>...</i> : null)}
               </li>
             ))}
           </ul>
