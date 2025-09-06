@@ -18,7 +18,8 @@ function App() {
     if (!prompt) return;
 
     setMessages(prev => [...prev, { role: "user", parts: [{ text: prompt }]}]);
-    setHistory(prev => [...prev, { role: "user", parts: [{ text: prompt }]}]);
+    const newHistory = [...history, { role: "user", parts: [{ text: prompt }] }];
+    setHistory(prev => [...prev, { role: "user", parts: [{ text: prompt }] }]);
 
     setDone(false);
     setInput("");
@@ -28,7 +29,7 @@ function App() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ prompt: prompt, history: history })
+      body: JSON.stringify({ prompt: prompt, history: newHistory })
     });
 
     try {
@@ -54,7 +55,7 @@ function App() {
         return newArr;
       })
     }
-    setHistory(prev => [...prev, { role: "model", parts: [{ text: buffer }]}]);
+    history.push({ role: "model", parts: [{ text: buffer }] });
 
     console.log("status", response.status);
     console.log("ok?", response.ok);
