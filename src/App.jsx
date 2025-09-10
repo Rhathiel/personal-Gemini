@@ -17,9 +17,10 @@ function App() {
     const prompt = input;
     if (!prompt) return;
 
-    setMessages(prev => [...prev, { role: "user", parts: [{ text: prompt }]}]);
-    const newHistory = [...history, { role: "user", parts: [{ text: prompt }] }];
-    setHistory(prev => [...prev, { role: "user", parts: [{ text: prompt }] }]);
+    const userMsg = {role: "user", parts: [{ text: prompt}]};
+    setMessages(prev => [...prev, userMsg]);
+    const newHistory = [...history, userMsg];
+    setHistory(newHistory);
 
     setDone(false);
     setInput("");
@@ -50,12 +51,10 @@ function App() {
       const { role, parts } = JSON.parse(dec.decode(chunk)).candidates[0].content;
       buffer += parts?.[0]?.text || "";
       setMessages(prev => {
-        const newArr = [...prev];
-        newArr[newArr.length-1] = {...newArr[newArr.length-1], role: role, parts: [{text: buffer}]};
         return newArr;
       })
     }
-    history.push({ role: "model", parts: [{ text: buffer }] });
+    setHistory(prev => [...prev, { role: "model", parts: [{text: buffer}]}]);
 
     console.log("status", response.status);
     console.log("ok?", response.ok);
