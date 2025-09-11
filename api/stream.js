@@ -59,7 +59,7 @@ export default async function handler(req) {
 
     const headers = {
         ...corsHeaders,
-        "Content-Type": "text/plain",
+        "Content-Type": "application/json",
         "Cache-Control": "no-cache",
         "Connection": "keep-alive"
     };
