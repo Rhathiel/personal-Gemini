@@ -61,6 +61,13 @@ function App() {
       } catch {
         continue;
       }
+      if(decoded instanceof ApiError){
+        setMessages(prev => {
+          let newMessages = [...prev];
+          newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: "응답이 너무 많습니다! 다시 시도해주세요." }]};
+          return newMessages;
+        });
+      }
       const { role, parts } = decoded.candidates[0].content;
       buffer += parts?.[0]?.text || "";
       setMessages(prev => {
