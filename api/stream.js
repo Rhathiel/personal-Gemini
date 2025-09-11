@@ -93,6 +93,7 @@ export default async function handler(req) {
             console.log(e);
             controller.enqueue(enc.encode(JSON.stringify(e)));
           } finally{
+            console.log(" 김 대 중 ! ! ! ! ! ! ! ");
             controller.close();
           }
         })();
