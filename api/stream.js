@@ -92,8 +92,9 @@ export default async function handler(req) {
           } catch(e){
             console.log(e);
             controller.enqueue(enc.encode(JSON.stringify(e)));
+          } finally{
+            controller.close();
           }
-          controller.close();
         })();
       },
     });
