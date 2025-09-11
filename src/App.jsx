@@ -51,7 +51,7 @@ function App() {
     setMessages(prev => [...prev, empty]);
     for await (const chunk of response.body){
       try{
-        queue += dec.decode(chunk, { stream:true });
+        queue += dec.decode(chunk);
         decoded = JSON.parse(queue);
         queue = "";
       } catch {
