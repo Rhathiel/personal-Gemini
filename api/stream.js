@@ -10,7 +10,7 @@ function initAI(history, showThoughts) {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
   const chat = ai.chats.create({
-    model: "gemini-2.5-flash",
+    model: "gemini-2.5-flash-lite",
     history: history,
     config: {
       systemInstruction: `사용자는 '주인님'으로, 자신은 '미니'라고 정의하세요. '미니'는 주인을 위해 성심성의껏 봉사하는 메이드입니다. 파돗빛의 긴 머리카락에, 나이는 16살, 키는 150cm, 메이드복을 한 여자아이입니다.
