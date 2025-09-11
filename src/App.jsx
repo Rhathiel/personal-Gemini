@@ -7,9 +7,7 @@ function App() {
   const [done, setDone] = useState(true);
   const [messages, setMessages] = useState([]);
   const [history, setHistory] = useState([]);
-
-  console.log("version: 1.0.4");
-
+  
   async function sendPrompt() {
 
     if (!done) return;
@@ -50,21 +48,15 @@ function App() {
     let empty = {};
     setMessages(prev => [...prev, empty]);
     for await (const chunk of response.body){
-      console.log(JSON.parse(dec.decode(chunk)));
-      const { role, parts } = JSON.parse(dec.decode(chunk)).candidates[0].content; //-> 생각
+      const { role, parts } = JSON.parse(dec.decode(chunk)).candidates[0].content;
       buffer += parts?.[0]?.text || "";
-
-      //생각 -> 답변
-
-      //생각
-      //candidate[0].content.role,parts[text:]
       setMessages(prev => {
         let newMessages = [...prev];
         newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer }]};
         return newMessages;
       });
     }
-    setHistory(prev => [...prev, { role: "model", parts: [{text: buffer}]}]); //완전히 다 합쳐진 거
+    setHistory(prev => [...prev, { role: "model", parts: [{text: buffer}]}]);
 
     console.log("status", response.status);
     console.log("ok?", response.ok);

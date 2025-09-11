@@ -79,7 +79,7 @@ export default async function handler(req) {
     } //주소로 바로 접근하는 경우 차단
 
     const { prompt, history } = await req.json();
-    const chat = initAI(history, true);
+    const chat = initAI(history, false);
 
     const stream = new ReadableStream({
       async start(controller) {
@@ -87,7 +87,6 @@ export default async function handler(req) {
           chat.sendMessage
           const aiStream = await createOutput(chat, prompt);
           for await (const chunk of aiStream) {
-            console.log(chunk);
             controller.enqueue(enc.encode(JSON.stringify(chunk))); //api에서 받은 청크를 스트림에 추가
           }
           controller.close();
