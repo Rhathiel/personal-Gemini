@@ -59,7 +59,6 @@ function App() {
         decoded = JSON.parse(queue);
         queue = "";
       } catch {
-        console.log("파싱 실패!");
         continue;
       }
       const { role, parts } = decoded.candidates[0].content;
