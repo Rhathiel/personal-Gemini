@@ -29,7 +29,7 @@ function initAI(history, showThoughts) {
       ],
       thinkingConfig: {
         thinkingBudget: -1,
-        includeThoughts: showThoughts,
+        includeThoughts: showThoughts, 
       },
     },
     tools: [
@@ -79,19 +79,15 @@ export default async function handler(req) {
     } //주소로 바로 접근하는 경우 차단
 
     const { prompt, history } = await req.json();
-    const chat = initAI(history, false);
-    console.log("프 롬 프 트: " + prompt);
-    console.log("프 롬 프 트: " + prompt);
-    console.log("프 롬 프 트: " + prompt);
-    console.log("히 스 토 리: " + prompt);
+    const chat = initAI(history, true);
 
     const stream = new ReadableStream({
       async start(controller) {
         (async () => {
           chat.sendMessage
           const aiStream = await createOutput(chat, prompt);
-          for await (const chunk of aiStream) {;
-            console.log("청크=" + chunk.text);
+          for await (const chunk of aiStream) {
+            console.log(chunk);
             controller.enqueue(enc.encode(JSON.stringify(chunk))); //api에서 받은 청크를 스트림에 추가
           }
           controller.close();

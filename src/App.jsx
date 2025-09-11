@@ -47,14 +47,24 @@ function App() {
     const dec = new TextDecoder("utf-8");
     
     let buffer = "";
+    let empty = {};
+    setMessages(prev => [...prev, empty]);
     for await (const chunk of response.body){
-      const { role, parts } = JSON.parse(dec.decode(chunk)).candidates[0].content;
+      console.log(JSON.parse(dec.decode(chunk)));
+      const { role, parts } = JSON.parse(dec.decode(chunk)).candidates[0].content; //-> 생각
       buffer += parts?.[0]?.text || "";
+
+      //생각 -> 답변
+
+      //생각
+      //candidate[0].content.role,parts[text:]
       setMessages(prev => {
-        return newArr;
-      })
+        let newMessages = [...prev];
+        newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer }]};
+        return newMessages;
+      });
     }
-    setHistory(prev => [...prev, { role: "model", parts: [{text: buffer}]}]);
+    setHistory(prev => [...prev, { role: "model", parts: [{text: buffer}]}]); //완전히 다 합쳐진 거
 
     console.log("status", response.status);
     console.log("ok?", response.ok);
