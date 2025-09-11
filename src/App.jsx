@@ -48,7 +48,7 @@ function App() {
     let empty = {};
     setMessages(prev => [...prev, empty]);
     for await (const chunk of response.body){
-      const { role, parts } = JSON.parse(dec.decode(chunk)).candidates[0].content;
+      const { role, parts } = JSON.parse(dec.decode(chunk, { stream:true })).candidates[0].content;
       buffer += parts?.[0]?.text || "";
       setMessages(prev => {
         let newMessages = [...prev];
