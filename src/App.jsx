@@ -7,7 +7,7 @@ function App() {
   const [done, setDone] = useState(true);
   const [messages, setMessages] = useState([]);
   const [history, setHistory] = useState([]);
-  
+
   async function sendPrompt() {
 
     if (!done) return;
@@ -89,8 +89,9 @@ function App() {
           <ul id="messages">
             {messages.map((msg, i) => (
               <li key={i}>
-                {msg.role === "user" ? <b>나:</b> : <b>AI:</b>}{" "} 
-                {msg.parts?.[0]?.text || (msg.role === "model" ? <i>...</i> : null)}
+                <ReactMarkdown>
+                  {(msg.role === "user" ? "**나:**" : "**AI:**") + " " + (msg.parts?.[0]?.text || (msg.role === "model" ? "..." : null))}
+                </ReactMarkdown>
               </li>
             ))}
           </ul>
