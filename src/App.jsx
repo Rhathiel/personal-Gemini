@@ -4,7 +4,7 @@ import './App.css'
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.0.3");
+    console.log("version: 1.0.4");
   },[]);
 
   const [input, setInput] = useState("");
@@ -61,7 +61,7 @@ function App() {
       } catch {
         continue;
       }
-      if(decoded instanceof ApiError){
+      if(decoded.error){
         setMessages(prev => {
           let newMessages = [...prev];
           newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: "응답이 너무 많습니다! 다시 시도해주세요." }]};
