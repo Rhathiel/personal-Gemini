@@ -87,6 +87,7 @@ export default async function handler(req) {
           chat.sendMessage
           const aiStream = await createOutput(chat, prompt);
           for await (const chunk of aiStream) {
+            console.log(chunk.text);
             controller.enqueue(enc.encode(JSON.stringify(chunk)));
           } 
           controller.close();

@@ -4,7 +4,7 @@ import './App.css'
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.0.1");
+    console.log("version: 1.0.2");
   },[]);
 
   const [input, setInput] = useState("");
@@ -59,6 +59,7 @@ function App() {
         decoded = JSON.parse(queue);
         queue = "";
       } catch {
+        console.log("파싱 실패!");
         continue;
       }
       const { role, parts } = decoded.candidates[0].content;
