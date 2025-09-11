@@ -45,7 +45,7 @@ function App() {
     const dec = new TextDecoder("utf-8");
     
     let buffer = "";
-    let empty = { role: "model", parts: [{text: "생각중..."}]};
+    let empty = { role: "model", parts: [{text: ""}]};
     let queue = "";
     let decoded = {};
     setMessages(prev => [...prev, empty]);
@@ -55,8 +55,6 @@ function App() {
         decoded = JSON.parse(queue);
         queue = "";
       } catch {
-        console.log("파싱실패!");
-        console.log("queue");
         continue;
       }
       const { role, parts } = decoded.candidates[0].content;
