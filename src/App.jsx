@@ -45,7 +45,7 @@ function App() {
     const dec = new TextDecoder("utf-8");
     
     let buffer = "";
-    let empty = {};
+    let empty = { role: "model", parts: [{text: "생각중..."}]};
     let queue = "";
     let decoded = {};
     setMessages(prev => [...prev, empty]);
@@ -55,6 +55,8 @@ function App() {
         decoded = JSON.parse(queue);
         queue = "";
       } catch {
+        console.log("파싱실패!");
+        console.log("queue");
         continue;
       }
       const { role, parts } = decoded.candidates[0].content;
@@ -99,7 +101,7 @@ function App() {
             {messages.map((msg, i) => (
               <li key={i}>
                 <ReactMarkdown>
-                  {(msg.role === "user" ? "**나:**" : "**AI:**") + " " + (msg.parts?.[0]?.text || (msg.role === "model" ? "..." : null))}
+                  {(msg.role === "user" ? "**나:**" : "**AI:**") + " " + (msg.parts?.[0]?.text)}
                 </ReactMarkdown>
               </li>
             ))}
