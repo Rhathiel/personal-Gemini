@@ -1,11 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { Readable } from 'stream';
 
-// edge runtime 설정
-export const config = {
-  runtime: "edge", 
-};
-
 // Gemini AI 초기화 함수
 function initAI(history, showThoughts) {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
