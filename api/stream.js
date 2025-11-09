@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { Readable } from 'stream';
 
 // edge runtime 설정
 export const config = {
@@ -38,63 +39,62 @@ function initAI(history, showThoughts) {
 
 async function createOutput(chat, prompt) {
 
-    const stream = await chat.sendMessageStream({
-        message: prompt, 
-    });
+  const stream = await chat.sendMessageStream({
+      message: prompt, 
+  });
 
-    return stream;
+  return stream;
 }
 
-export default async function handler(req) {
-    const enc = new TextEncoder();
+export default async function handler(req, res) { //fetch 이후 동작
+  const enc = new TextEncoder(); 
+  const dec = new TextDecoder("utf-8");
+  //문자열 암호화, 복호화
 
-    const corsHeaders = {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    };
+  const corsHeaders = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  };
+  const headers = {
+      ...corsHeaders,
+      "Content-Type": "application/json",
+      "Cache-Control": "no-cache",
+      "Connection": "keep-alive"
+  };
 
-    const headers = {
-        ...corsHeaders,
-        "Content-Type": "application/json",
-        "Cache-Control": "no-cache",
-        "Connection": "keep-alive"
-    };
+  if (req.method === "OPTIONS"){
+    for (const key of corsHeaders){
+      res.setHeader(key, corsHeaders[key]);
+    }
+    res.status(200).json({ error: "ok" });
+  } //CORS preflight 요청 처리
 
-    if (req.method === "OPTIONS"){
-        return new Response("ok",{
-            status: 200,
-            headers: corsHeaders
-        });
-    } //CORS preflight 요청 처리
+  if (req.method !== "POST") {
+    res.setHeader(corsHeaders);
+    res.status(405).json({ error: "Method Not Allowed" });
+  } //주소로 바로 접근하는 경우 차단
 
-    if (req.method !== "POST") {
-        return new Response("Method Not Allowed", {
-          status: 405,
-          headers: corsHeaders
-        });
-    } //주소로 바로 접근하는 경우 차단
+  let body = "";
+  for await (const chunk of req) {
+    body += dec.decode(chunk, { stream: true });
+  }
+  const { prompt, history } = JSON.parse(body);
+  const chat = initAI(history, false);
+  //전달받은 이진 데이터를 json으로 변환
+  //전달받은 history로 ai 생성(이전 대화 기억)
 
-    const { prompt, history } = await req.json();
-    const chat = initAI(history, false);
+  const stream = new Readable({
+    read() {
+      (async () => {
+        const output_stream = createOutput(chat, prompt);
+        for await (const chunk of output_stream){ 
+          this.push(enc.encode(JSON.stringify(chunk)));
+        }
+        this.push(null);
+      })();
+    }
+  });
 
-    const stream = new ReadableStream({
-      async start(controller) {
-        (async () => {
-          try{
-            const aiStream = await createOutput(chat, prompt);
-            for await (const chunk of aiStream) {
-              controller.enqueue(enc.encode(JSON.stringify(chunk)));
-            } 
-          } catch(e){
-            console.log(e);
-            controller.enqueue(enc.encode(JSON.stringify(e)));
-          } finally{
-            controller.close();
-          }
-        })();
-      },
-    });
-
-    return new Response(stream, { headers: headers });
+  stream.pipe(res);
 }
