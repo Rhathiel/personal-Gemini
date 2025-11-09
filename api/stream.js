@@ -63,6 +63,7 @@ export default async function handler(req, res) { //fetch 이후 동작
       res.setHeader(key, corsHeaders[key]);
     }
     res.status(200).json({ error: "ok" });
+    return;
   } //CORS preflight 요청 처리
 
   if (req.method !== "POST") {
@@ -70,6 +71,7 @@ export default async function handler(req, res) { //fetch 이후 동작
       res.setHeader(key, corsHeaders[key]);
     }
     res.status(405).json({ error: "Method Not Allowed" });
+    return;
   } //주소로 바로 접근하는 경우 차단
 
   let body = "";
