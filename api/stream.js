@@ -86,7 +86,7 @@ export default async function handler(req, res) { //fetch 이후 동작
   const stream = new Readable({
     read() {
       (async () => {
-        const output_stream = createOutput(chat, prompt);
+        const output_stream = await reateOutput(chat, prompt);
         for await (const chunk of output_stream){ 
           this.push(enc.encode(JSON.stringify(chunk)));
         }
