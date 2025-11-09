@@ -15,25 +15,37 @@ function App() {
   async function sendPrompt() {
 
     if (!done) return;
+    //응답이 끝나지 않았으면 종료
 
     const prompt = input;
     if (!prompt) return;
+    //state 객체 input 값을 prompt에 저장
+    //input 값이 존재하지 않을 경우 종료
 
     const userMsg = {role: "user", parts: [{ text: prompt}]};
+    //받은 input과 role을 userMsg 객체에 저장
     setMessages(prev => [...prev, userMsg]);
+    //받은 객체를 setMessages배열에 이어붙임 (user의 메시지를 로그에 표기하기 위한 기능)
     const newHistory = [...history, userMsg];
+    //stream.js에 보낼때 필요한 history 객체도 새로 생성함 (실제로 응답을 주는 대상은 history객체)
     setHistory(newHistory);
+    //hitory 갱신
+
+    //중요 point : 객체 전체를 교체하는 이유 -> 리렌더링 강제
 
     setDone(false);
     setInput("");
+    //상태 초기화, input은 비워놓음(전달되었으므로)
 
-    const response = await fetch("https://personal-gemini.vercel.app/api/stream", {
-      method: "POST",
+    const response = await fetch("https://personal-gemini.vercel.app/api/stream", { //fetch메소드로 prompt 전달
+      method: "POST", //post방식(장점: )
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ prompt: prompt, history: newHistory })
     });
+
+    //response객체 생성(정보를 받는 객체), fetch로 목표 지정
 
     try {
       await streaming(response); //stream 호츨 done 받을 때 까지 대기
