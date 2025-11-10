@@ -38,14 +38,15 @@ function App() {
     //상태 초기화, input은 비워놓음(전달되었으므로)
 
     const response = await fetch("https://personal-gemini.vercel.app/api/stream", { //fetch메소드로 prompt 전달
-      method: "POST", //post방식(장점: )
+      method: "POST", //post방식(장점: 길다. 주소창에 표시 안되서 보안 장점)
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json" //전달 타입이 객체임을 명시.
       },
-      body: JSON.stringify({ prompt: prompt, history: newHistory })
+      body: JSON.stringify({ prompt: prompt, history: newHistory }) //history를 전달함. database 구성 후에는 필요없는 동작.
     });
 
     //response객체 생성(정보를 받는 객체), fetch로 목표 지정
+    //일종의 수레처럼 동작함.
 
     try {
       await streaming(response); //stream 호츨 done 받을 때 까지 대기
