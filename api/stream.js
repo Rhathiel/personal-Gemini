@@ -1,8 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { Readable } from 'stream';
 
-console.log("version: 1.0.6");
-
 // Gemini AI 초기화 함수
 function initAI(history, showThoughts) {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
