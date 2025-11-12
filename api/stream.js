@@ -86,6 +86,7 @@ export default async function handler(req, res) { //fetch 이후 동작
   //전달받은 history로 ai 생성(이전 대화 기억)
 
   console.log("Received request");
+  console.log("Prompt:", prompt);
 
   const stream = new Readable({
     read() {
