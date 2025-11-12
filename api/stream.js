@@ -89,6 +89,11 @@ export default async function handler(req, res) { //fetch 이후 동작
   console.log("Received request");
   console.log("Prompt:", prompt);
 
+  for (const key in headers){
+    res.setHeader(key, headers[key]);
+    console.log("key, headers[key]: ", key, headers[key]);
+  }
+
   const stream = new Readable({
     read() {
       (async () => {
