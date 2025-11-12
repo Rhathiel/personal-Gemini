@@ -11,6 +11,7 @@ function App() {
   const [done, setDone] = useState(true);
   const [messages, setMessages] = useState([]);
   const [history, setHistory] = useState([]);
+  //내부값이더라도 초기화 되는걸 막기 위해 useState로 선언함.
 
   async function sendPrompt() {
 
@@ -48,23 +49,25 @@ function App() {
     //response객체 생성(정보를 받는 객체), fetch로 목표 지정
     //일종의 수레처럼 동작함.
 
+
+    //try-catch로 에러 컨트롤
     try {
-      await streaming(response); //stream 호츨 done 받을 때 까지 대기
+      await streaming(response); //stream 호츨 done 받을 때 까지 대기, streaming함수가 async이기 때문에 await으로 호출.
     } catch(e){
       console.error(e);
     }
     finally { 
-      setDone(true); 
+      setDone(true); //문제 없으면 끝났음을 알림
     }
   }
 
   async function streaming(response){
-    const dec = new TextDecoder("utf-8");
+    const dec = new TextDecoder("utf-8"); //받은 객체를 복호화함
     
     let buffer = "";
-    let empty = { role: "model", parts: [{text: ""}]};
+    let empty = { role: "model", parts: [{text: ""}]}; //대화 말풍선 양식
     let queue = "";
-    let decoded = {};
+    let decoded = {}; 
     setMessages(prev => [...prev, empty]);
     for await (const chunk of response.body){
       try{
