@@ -86,8 +86,8 @@ function App() {
       //현재 확인된 바로는 청크가 완전하지 않는 경우는 거의 발생하지 않음.
       }
       //청크가 완전하지만 error인 경우를 컨트롤함. 이 경우 이전 대화를 모두 날리고 대화를 종료.
-      if(decoded.error){
-        buffer = buffer + "응답이 너무 많습니다! 다시 시도해주세요." 
+      if(decoded?.error){
+        buffer = buffer + decoded.error.message; 
         setMessages(prev => {
           let newMessages = [...prev];
           newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: buffer }]};
