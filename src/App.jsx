@@ -4,7 +4,7 @@ import './App.css'
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.0.94");
+    console.log("version: 1.0.95");
   }, []);
 
   const [input, setInput] = useState("");
@@ -74,6 +74,7 @@ function App() {
       try{
         queue += dec.decode(chunk, { stream: true }); //TextDecoder는 stream true일 경우 잘려진 2진 비트를 기억하기 때문에 관리 필요 X 
         decoded = JSON.parse(queue); //해당 queue를 JSON 객체로 파싱 후 decoded에 대입
+        console.log("decoded");
         queue = "";
       } catch {
         continue; 
@@ -82,6 +83,7 @@ function App() {
       }
       //청크가 완전하지만 error인 경우를 컨트롤함. 이 경우 이전 대화를 모두 날리고 대화를 종료.
       if(decoded?.error){
+        console.log("API Error");
         buffer = buffer + "\n" + "Status: " + decoded.error.status + "\n" + "Code: " + decoded.error.code; 
         setMessages(prev => {
           let newMessages = [...prev];
