@@ -44,7 +44,7 @@ async function createOutput(chat, prompt) {
   } catch(e){
     console.error(e);
 
-    return JSON.parse(JSON.stringify(e, ["error"]));
+    return JSON.parse(JSON.stringify(e, ["error", "message", "status", "code"]));
   }
 }
 
