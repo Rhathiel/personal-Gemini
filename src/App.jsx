@@ -74,6 +74,7 @@ function App() {
       try{
         queue += dec.decode(chunk, { stream: true }); //TextDecoder는 stream true일 경우 잘려진 2진 비트를 기억하기 때문에 관리 필요 X 
         decoded = JSON.parse(queue); //해당 queue를 JSON 객체로 파싱 후 decoded에 대입
+        queue = "";
       } catch {
         continue; 
       //파싱 실패시, 즉 decode 내부 버퍼에는 잘려진 청크 ~10이 남고, parse는 실패, chunk는 채워져 있는 경우 그냥 다음으로 넘어감
@@ -86,18 +87,19 @@ function App() {
           newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: buffer }]};
           return newMessages;
         });
+        break;
       }
       if(decoded){
         const { role, parts } = decoded.candidates[0].content; //해석한 객체에서 역할과 텍스트를 뽑아옴
         buffer = buffer + parts[0].text;
         setMessages(prev => {
           let newMessages = [...prev];
-          newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer + parts[0].text }]};
+          newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer }]};
           return newMessages;
         });
       }
     }
-    setHistory(prev => {[...prev, {role, parts: [{ text: buffer }]}]});
+    setHistory(prev => [...prev, {role: "model", parts: [{ text: buffer }]}] );
 
     console.log("status", response.status);
     console.log("ok?", response.ok);
