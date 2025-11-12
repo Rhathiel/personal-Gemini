@@ -59,7 +59,7 @@ export default async function handler(req, res) { //fetch 이후 동작
   };  
 
   if (req.method === "OPTIONS"){
-    for (const key of corsHeaders){
+    for (const key in corsHeaders){
       res.setHeader(key, corsHeaders[key]);
     }
     res.status(200).json({ error: "ok" });
@@ -67,7 +67,7 @@ export default async function handler(req, res) { //fetch 이후 동작
   } //CORS preflight 요청 처리
 
   if (req.method !== "POST") {
-    for (const key of corsHeaders){
+    for (const key in corsHeaders){
       res.setHeader(key, corsHeaders[key]);
     }
     res.status(405).json({ error: "Method Not Allowed" });
