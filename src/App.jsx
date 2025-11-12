@@ -87,6 +87,7 @@ function App() {
       }
       //청크가 완전하지만 error인 경우를 컨트롤함. 이 경우 이전 대화를 모두 날리고 대화를 종료.
       if(decoded?.error){
+        console.log("에!!!!!!러!!!!!!!!발!!!!!!!!생!!!!!!!!!");
         buffer = buffer + decoded.error.message; 
         setMessages(prev => {
           let newMessages = [...prev];
