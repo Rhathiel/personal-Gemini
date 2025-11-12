@@ -74,6 +74,8 @@ export default async function handler(req, res) { //fetch 이후 동작
     return;
   } //주소로 바로 접근하는 경우 차단
 
+  console.log("Processing POST request");
+
   let body = "";
   for await (const chunk of req) {
     body += dec.decode(chunk, { stream: true });
@@ -82,6 +84,8 @@ export default async function handler(req, res) { //fetch 이후 동작
   const chat = initAI(history, false);
   //전달받은 이진 데이터를 json으로 변환
   //전달받은 history로 ai 생성(이전 대화 기억)
+
+  console.log("Received request");
 
   const stream = new Readable({
     read() {
