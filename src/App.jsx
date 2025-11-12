@@ -54,7 +54,6 @@ function App() {
     try {
       await streaming(response); //stream 호츨 done 받을 때 까지 대기, streaming함수가 async이기 때문에 await으로 호출.
     } catch(e){
-      console.log("에!!!!!!!!!!!러!!!!!!!!!!!발!!!!!!!!!!!!!!생!!!!!!!!!!!!!!");
       console.error(e);
     }
     finally { 
@@ -77,6 +76,11 @@ function App() {
         decoded = JSON.parse(queue); //해당 queue를 JSON 객체로 파싱 후 decoded에 대입
         queue = "";
       } catch {
+        setMessages(prev => {
+          let newMessages = [...prev];
+          newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: "..." }]};
+          return newMessages;
+        });
         continue; 
       //파싱 실패시, 즉 decode 내부 버퍼에는 잘려진 청크 ~10이 남고, parse는 실패, chunk는 채워져 있는 경우 그냥 다음으로 넘어감
       }
@@ -90,7 +94,7 @@ function App() {
         });
         break;
       }
-      if(decoded){
+      if(decoded?.candidates?.[0]?.content?.parts?.[0]?.text){
         const { role, parts } = decoded.candidates[0].content; //해석한 객체에서 역할과 텍스트를 뽑아옴
         buffer = buffer + parts[0].text;
         setMessages(prev => {
