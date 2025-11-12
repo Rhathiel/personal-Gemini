@@ -63,6 +63,7 @@ export default async function handler(req, res) { //fetch 이후 동작
       res.setHeader(key, corsHeaders[key]);
     }
     res.status(200).end();
+    return;
   } //CORS preflight 요청 처리
 
   if (req.method !== "POST") {
