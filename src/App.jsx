@@ -4,7 +4,7 @@ import './App.css'
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.0.91");
+    console.log("version: 1.0.93");
   }, []);
 
   const [input, setInput] = useState("");
@@ -81,8 +81,8 @@ function App() {
       //현재 확인된 바로는 청크가 완전하지 않는 경우는 거의 발생하지 않음.
       }
       //청크가 완전하지만 error인 경우를 컨트롤함. 이 경우 이전 대화를 모두 날리고 대화를 종료.
-      if(decoded?.ApiError){
-        buffer = buffer + decoded.ApiError.error.message; 
+      if(decoded?.error){
+        buffer = buffer + "\n" + "Status: " + decoded.error.status + "\n" + "Code: " + decoded.error.code; 
         setMessages(prev => {
           let newMessages = [...prev];
           newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: buffer }]};

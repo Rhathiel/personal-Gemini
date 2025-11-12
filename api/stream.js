@@ -42,9 +42,9 @@ async function createOutput(chat, prompt) {
     return stream;
 
   } catch(e){
-
     console.error(e);
-    return JSON.stringify(e);
+
+    return JSON.parse(JSON.stringify(e, ["error"]));
   }
 }
 
@@ -106,7 +106,7 @@ export default async function handler(req, res) { //fetch 이후 동작
       (async () => {
         const output_stream = await createOutput(chat, prompt);
         for await (const chunk of output_stream){ 
-          this.push(enc.encode(chunk));
+          this.push(enc.encode(JSON.stringify(chunk)));
         }
         this.push(null);
       })();
