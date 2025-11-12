@@ -4,7 +4,7 @@ import './App.css'
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.0.5");
+    console.log("version: 1.0.6");
   }, []);
 
   const [input, setInput] = useState("");
@@ -54,6 +54,7 @@ function App() {
     try {
       await streaming(response); //stream 호츨 done 받을 때 까지 대기, streaming함수가 async이기 때문에 await으로 호출.
     } catch(e){
+      console.log("에!!!!!!!!!!!러!!!!!!!!!!!발!!!!!!!!!!!!!!생!!!!!!!!!!!!!!");
       console.error(e);
     }
     finally { 
