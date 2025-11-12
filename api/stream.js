@@ -34,11 +34,17 @@ function initAI(history, showThoughts) {
 
 async function createOutput(chat, prompt) {
 
-  const stream = await chat.sendMessageStream({
-      message: prompt, 
-  });
+  try{
+    const stream = await chat.sendMessageStream({
+        message: prompt, 
+    });
 
-  return stream;
+    return stream;
+
+  } catch(e){
+    console.error(e);
+    return e;
+  }
 }
 
 export default async function handler(req, res) { //fetch 이후 동작

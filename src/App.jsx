@@ -4,7 +4,7 @@ import './App.css'
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.0.8");
+    console.log("version: 1.0.9");
   }, []);
 
   const [input, setInput] = useState("");
@@ -65,18 +65,12 @@ function App() {
     const dec = new TextDecoder("utf-8"); //받은 객체를 복호화함
     
     let buffer = "";
-    let empty = { role: "model", parts: [{text: ""}]}; //대화 말풍선 양식
+    let empty = { role: "model", parts: [{text: "..."}]}; //대화 말풍선 양식
     let queue = "";
     let decoded = {}; 
     setMessages(prev => [...prev, empty]);
     //setMessages에 빈 청크 삽입
     for await (const chunk of response.body){
-      setMessages(prev => {
-        buffer = buffer + "...";
-        let newMessages = [...prev];
-        newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: buffer }]};
-        return newMessages;
-      });
       try{
         queue += dec.decode(chunk, { stream: true }); //TextDecoder는 stream true일 경우 잘려진 2진 비트를 기억하기 때문에 관리 필요 X 
         decoded = JSON.parse(queue); //해당 queue를 JSON 객체로 파싱 후 decoded에 대입
