@@ -56,7 +56,7 @@ export default async function handler(req, res) { //fetch 이후 동작
       "Content-Type": "application/json",
       "Cache-Control": "no-cache",
       "Connection": "keep-alive"
-  };
+  };  
 
   if (req.method === "OPTIONS"){
     for (const key of corsHeaders){
