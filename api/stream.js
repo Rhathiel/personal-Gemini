@@ -62,15 +62,14 @@ export default async function handler(req, res) { //fetch 이후 동작
     for (const key in corsHeaders){
       res.setHeader(key, corsHeaders[key]);
     }
-    res.status(200).json({ error: "ok" });
-    return;
+    res.status(200).end();
   } //CORS preflight 요청 처리
 
   if (req.method !== "POST") {
     for (const key in corsHeaders){
       res.setHeader(key, corsHeaders[key]);
     }
-    res.status(405).json({ error: "Method Not Allowed" });
+    res.status(405).end( "Method Not Allowed" );
     return;
   } //주소로 바로 접근하는 경우 차단
 
