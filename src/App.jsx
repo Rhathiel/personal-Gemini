@@ -72,8 +72,9 @@ function App() {
     //setMessages에 빈 청크 삽입
     for await (const chunk of response.body){
       setMessages(prev => {
+        buffer = buffer + "...";
         let newMessages = [...prev];
-        newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: "..." }]};
+        newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: buffer }]};
         return newMessages;
       });
       try{
