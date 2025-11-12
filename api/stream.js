@@ -61,6 +61,7 @@ export default async function handler(req, res) { //fetch 이후 동작
   if (req.method === "OPTIONS"){
     for (const key in corsHeaders){
       res.setHeader(key, corsHeaders[key]);
+      console.log("key, corseHeaders[key]: ", key, corsHeaders[key]);
     }
     res.status(200).end();
     return;

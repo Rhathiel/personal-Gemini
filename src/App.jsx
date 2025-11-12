@@ -3,6 +3,9 @@ import ReactMarkdown from "react-markdown";
 import './App.css'
 
 function App() {
+  useEffect(() => {
+    console.log("version: 1.0.5");
+  }, []);
 
   const [input, setInput] = useState("");
   const [done, setDone] = useState(true);
