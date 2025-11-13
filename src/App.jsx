@@ -97,13 +97,12 @@ function App() {
       if(decoded?.candidates?.[0]?.content?.parts?.[0]?.text){
         const { role, parts } = decoded.candidates[0].content; //해석한 객체에서 역할과 텍스트를 뽑아옴
         buffer = buffer + parts[0].text;
-        if(decoded?.candidates?.[0]?.finish_reason === 1){
-          setMessages(prev => {
-            let newMessages = [...prev];
-            newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer }]};
-            return newMessages;
-          }); 
-        } else if (decoded?.candidates?.[0]?.finish_reason === 2){
+        setMessages(prev => {
+          let newMessages = [...prev];
+          newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer }]};
+          return newMessages;
+        }); 
+        if (decoded?.candidates?.[0]?.finishReason === "MAX_TOKENS"){
           setMessages(prev => {
             let newMessages = [...prev];
             newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer + "토큰이 최대에 도달했습니다. 다시 시도해주세요." }]};
@@ -113,19 +112,6 @@ function App() {
       }
     }
     setHistory(prev => [...prev, {role: "model", parts: [{ text: buffer }]}] );
-    if(flag === 0){
-      setMessages(prev => {
-        let newMessages = [...prev];
-        newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: "응답이 없습니다. 나중에 다시 시도해주세요." }]};
-        return newMessages; 
-      });
-
-      throw new Error("No data received from the API.");
-    }
-
-    console.log("status", response.status);
-    console.log("ok?", response.ok);
-    console.log("headers", [...response.headers]);
   }
 
   return (
