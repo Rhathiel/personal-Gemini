@@ -43,7 +43,6 @@ async function createOutput(chat, prompt) {
 
   } catch(e){
     console.error(e);
-
     return e;
   }
 }
@@ -105,11 +104,6 @@ export default async function handler(req, res) { //fetch 이후 동작
     read() {
       (async () => {
         const output_stream = await createOutput(chat, prompt);
-        if(output_stream instanceof Error){
-          this.push(enc.encode(JSON.stringify(output_stream, ["error", "status", "code"])));
-          this.push(null);
-          return;
-        };
         for await (const chunk of output_stream){ 
           this.push(enc.encode(JSON.stringify(chunk)));
         }
