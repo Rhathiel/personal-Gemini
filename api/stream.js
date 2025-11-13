@@ -105,9 +105,13 @@ export default async function handler(req, res) { //fetch 이후 동작
         console.log(output);
         //e가 시발 어떻게 오는걸까. 
         //가정 1) e는 단순 JSON이다.
-        if(output?.error){
-          const error = JSON.stringfy(output,["error", "status", "code", "message"]);
-          this.push(enc.encode(error));
+        //문제 1) output 을 console.log는 성공
+        //asynciterable에서 실패함
+        //output?.error에서 캐치 실패
+        if(output?.ApiError){
+          console.log("에러 캐치 시작!");
+          const e = JSON.stringfy(output,["error", "status", "code", "message"]);
+          this.push(enc.encode(e));
           this.push(null);
           console.log("에러 캐치 성공!");
           return;
