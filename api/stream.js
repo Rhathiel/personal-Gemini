@@ -33,10 +33,15 @@ function initAI(history, showThoughts) {
 }
 
 async function createOutput(chat, prompt) {
-  const stream = await chat.sendMessageStream({
+  try {
+    const stream = await chat.sendMessageStream({
       message: prompt, 
-  });
+    });
 
+  } catch(e){
+    return e;
+  }
+  
   return stream;
 }
 
