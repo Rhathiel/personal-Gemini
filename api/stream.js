@@ -108,7 +108,7 @@ export default async function handler(req, res) { //fetch 이후 동작
         //문제 1) output 을 console.log는 성공
         //asynciterable에서 실패함
         //output?.error에서 캐치 실패
-        if(output instanceof ApiError || output?.error){
+        if(output?.error){
           console.log("에러 캐치 시작!");
           const e = JSON.stringfy(output,["error", "status", "code", "message"]);
           this.push(enc.encode(e));

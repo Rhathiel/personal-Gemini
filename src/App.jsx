@@ -68,9 +68,11 @@ function App() {
     let empty = { role: "model", parts: [{text: "..."}]}; //대화 말풍선 양식
     let queue = "";
     let decoded = {}; 
+    let flag = 0; //청크가 아예 오지 않은 경우
     setMessages(prev => [...prev, empty]);
     //setMessages에 빈 청크 삽입
     for await (const chunk of response.body){
+      flag = 1;
       try{
         queue += dec.decode(chunk, { stream: true }); //TextDecoder는 stream true일 경우 잘려진 2진 비트를 기억하기 때문에 관리 필요 X 
         decoded = JSON.parse(queue); //해당 queue를 JSON 객체로 파싱 후 decoded에 대입
@@ -95,14 +97,31 @@ function App() {
       if(decoded?.candidates?.[0]?.content?.parts?.[0]?.text){
         const { role, parts } = decoded.candidates[0].content; //해석한 객체에서 역할과 텍스트를 뽑아옴
         buffer = buffer + parts[0].text;
-        setMessages(prev => {
-          let newMessages = [...prev];
-          newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer }]};
-          return newMessages;
-        });
+        if(decoded?.candidates?.[0]?.finish_reason === 1){
+          setMessages(prev => {
+            let newMessages = [...prev];
+            newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer }]};
+            return newMessages;
+          }); 
+        } else if (decoded?.candidates?.[0]?.finish_reason === 2){
+          setMessages(prev => {
+            let newMessages = [...prev];
+            newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer + "토큰이 최대에 도달했습니다. 다시 시도해주세요." }]};
+            return newMessages;
+          }); 
+        }
       }
     }
     setHistory(prev => [...prev, {role: "model", parts: [{ text: buffer }]}] );
+    if(flag === 0){
+      setMessages(prev => {
+        let newMessages = [...prev];
+        newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: "응답이 없습니다. 나중에 다시 시도해주세요." }]};
+        return newMessages; 
+      });
+
+      throw new Error("No data received from the API.");
+    }
 
     console.log("status", response.status);
     console.log("ok?", response.ok);
