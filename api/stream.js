@@ -33,7 +33,6 @@ function initAI(history, showThoughts) {
 }
 
 async function createOutput(chat, prompt) {
-
   try{
     const stream = await chat.sendMessageStream({
         message: prompt, 
@@ -42,9 +41,8 @@ async function createOutput(chat, prompt) {
     return stream;
 
   } catch(e){
-    console.error(e);
-    console.log("createOutput error");
-    return e;
+    const error = JSON.parse(JSON.stringify(e,["message", "code", "status"]));
+    return error;
   }
 }
 
