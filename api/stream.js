@@ -43,6 +43,7 @@ async function createOutput(chat, prompt) {
 
   } catch(e){
     console.error(e);
+    console.log("createOutput error");
     return e;
   }
 }
