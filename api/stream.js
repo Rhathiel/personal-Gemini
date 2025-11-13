@@ -98,17 +98,21 @@ export default async function handler(req, res) { //fetch 이후 동작
         const output = await createOutput(chat, prompt);
         console.log("Output has been created\n");
         console.log(output);
-        if(!output[Symbol.asyncIterator]){
-          const error = JSON.stringify(output, ["error", "status", "code"]);
-          this.push(enc.encode(error));
-          this.push(null);
-          return;
-        }
         for await (const chunk of output){ 
-          if(!chunk){
-            continue;
+          try {
+            if(!chunk){
+              continue;
+            }
+            this.push(enc.encode(JSON.stringify(chunk)));
           }
-          this.push(enc.encode(JSON.stringify(chunk)));
+          catch(e){
+            console.log("에러 발생: \n");
+            console.error("e");
+            const error = JSON.stringify(e, ["error", "status", "code"]);
+            this.push(enc.encode(error));
+            this.push(null);
+            return;
+          }
         }
         this.push(null);
       })();

@@ -4,7 +4,7 @@ import './App.css'
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.0.9592");
+    console.log("version: 1.0.9593");
   }, []);
 
   const [input, setInput] = useState("");
