@@ -37,12 +37,10 @@ async function createOutput(chat, prompt) {
     const stream = await chat.sendMessageStream({
       message: prompt, 
     });
-
+    return stream;
   } catch(e){
     return e;
   }
-  
-  return stream;
 }
 
 export default async function handler(req, res) { //fetch 이후 동작
