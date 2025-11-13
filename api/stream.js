@@ -33,10 +33,15 @@ function initAI(history, showThoughts) {
 }
 
 async function createOutput(chat, prompt) {
-  const stream = await chat.sendMessageStream({
-    message: prompt, 
-  });
-  return stream;
+  try{  
+    const stream = await chat.sendMessageStream({
+      message: prompt, 
+    });
+    return stream;}
+  catch (e){
+    console.error(e);
+    return e;
+  }
 }
 
 export default async function handler(req, res) { //fetch 이후 동작
@@ -98,21 +103,20 @@ export default async function handler(req, res) { //fetch 이후 동작
         const output = await createOutput(chat, prompt);
         console.log("Output has been created\n");
         console.log(output);
+        //e가 시발 어떻게 오는걸까. 
+        //가정 1) e는 단순 JSON이다.
+        if(output?.error){
+          const error = JSON.stringfy(output,["error", "status", "code", "message"]);
+          this.push(enc.encode(error));
+          this.push(null);
+          console.log("에러 캐치 성공!");
+          return;
+        }
         for await (const chunk of output){ 
-          try {
-            if(!chunk){
-              continue;
-            }
-            this.push(enc.encode(JSON.stringify(chunk)));
+          if(!chunk){
+            continue;
           }
-          catch(e){
-            console.log("에러 발생: \n");
-            console.error("e");
-            const error = JSON.stringify(e, ["error", "status", "code"]);
-            this.push(enc.encode(error));
-            this.push(null);
-            return;
-          }
+          this.push(enc.encode(JSON.stringify(chunk)));
         }
         this.push(null);
       })();
