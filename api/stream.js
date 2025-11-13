@@ -33,14 +33,10 @@ function initAI(history, showThoughts) {
 }
 
 async function createOutput(chat, prompt) {
-  try {
-    const stream = await chat.sendMessageStream({
-      message: prompt, 
-    });
-    return stream;
-  } catch(e){
-    return e;
-  }
+  const stream = await chat.sendMessageStream({
+    message: prompt, 
+  });
+  return stream;
 }
 
 export default async function handler(req, res) { //fetch 이후 동작
@@ -99,14 +95,16 @@ export default async function handler(req, res) { //fetch 이후 동작
   const stream = new Readable({
     read() {
       (async () => {
-        const output_stream = await createOutput(chat, prompt);
-        if(!output_stream[Symbol.asyncIterator]){
-          const error = JSON.stringify(output_stream, ["error", "status", "code"]);
+        const output = await createOutput(chat, prompt);
+        console.log("Output has been created\n");
+        console.log(output);
+        if(!output[Symbol.asyncIterator]){
+          const error = JSON.stringify(output, ["error", "status", "code"]);
           this.push(enc.encode(error));
           this.push(null);
           return;
         }
-        for await (const chunk of output_stream){ 
+        for await (const chunk of output){ 
           if(!chunk){
             continue;
           }
