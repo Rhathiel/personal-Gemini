@@ -68,11 +68,9 @@ function App() {
     let empty = { role: "model", parts: [{text: "..."}]}; //대화 말풍선 양식
     let queue = "";
     let decoded = {}; 
-    let flag = 0; //청크가 아예 오지 않은 경우
     setMessages(prev => [...prev, empty]);
     //setMessages에 빈 청크 삽입
     for await (const chunk of response.body){
-      flag = 1;
       try{
         queue += dec.decode(chunk, { stream: true }); //TextDecoder는 stream true일 경우 잘려진 2진 비트를 기억하기 때문에 관리 필요 X 
         decoded = JSON.parse(queue); //해당 queue를 JSON 객체로 파싱 후 decoded에 대입
