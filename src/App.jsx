@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from "react-dom";
-import { ReactMarkdown } from "react-markdown";
+import ReactMarkdown from "react-markdown";
 import './App.css';
 
 function renderPlaceHolder() {
@@ -16,7 +16,7 @@ function closePlaceHolder(){
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.1.06");
+    console.log("version: 1.1.07");
   }, []);
 
   const activeEnter = (e) => {
