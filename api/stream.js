@@ -97,31 +97,26 @@ export default async function handler(req, res) { //fetch 이후 동작
     console.log("key, headers[key]: ", key, headers[key]);
   }
 
+  const output = await createOutput(chat, prompt);
+  console.log("Output has been created\n");
+  if(typeof output?.[Symbol.asyncIterator] !== "function"){
+  //output이 asyncIterator가 아닌 경우
+      if(output?.error){
+      //output이 error 객체를 포함하고 있으면
+      console.log("에러 캐치 시작!");
+      const e = JSON.stringfy(output,["error", "status", "code", "message"]);
+      this.push(enc.encode(e));
+      this.push(null);
+      console.log("에러 캐치 성공!");
+      return;
+    }
+  }
+
   const stream = new Readable({
     read() {
       (async () => {
-        const output = await createOutput(chat, prompt);
-        console.log("Output has been created\n");
-        console.log(output);
-        //e가 시발 어떻게 오는걸까. 
-        //가정 1) e는 단순 JSON이다.
-        //문제 1) output 을 console.log는 성공
-        //asynciterable에서 실패함
-        //output?.error에서 캐치 실패
-        if(typeof output?.[Symbol.asyncIterator] !== "function"){
-          //output이 asyncIterator가 아닌 경우
-          if(output?.error){
-            //output이 error 객체를 포함하고 있으면
-            console.log("에러 캐치 시작!");
-            const e = JSON.stringfy(output,["error", "status", "code", "message"]);
-            this.push(enc.encode(e));
-            this.push(null);
-            console.log("에러 캐치 성공!");
-            return;
-          }
-        }
         for await (const chunk of output){ 
-          if(!chunk){
+          if(!chunk){ 
             continue;
           }
           this.push(enc.encode(JSON.stringify(chunk)));
