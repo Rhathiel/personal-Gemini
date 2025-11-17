@@ -5,12 +5,12 @@ import './App.css';
 
 function renderPlaceHolder() {
   window.placeHolderRoot.render(createPortal(
-    <div>...</div>,
-    document.getElementById("placeHolder-ui")
+    <li>...</li>,
+    document.getElementById("messages")
   )); 
 }
 
-function closePlaceHolder(){
+function clearPlaceHolder(){
   window.placeHolderRoot.render(null);
 }
 
@@ -136,7 +136,6 @@ function App() {
         <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
         <button id="sendBtn" type="button" onClick={sendPrompt}>전송</button>
           <ul id="messages">
-            <li id="placeHolder-ui"></li>
             {messages.map((msg, i) => (
               <li key={i}>
                 <ReactMarkdown>
