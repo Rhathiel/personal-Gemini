@@ -1,7 +1,18 @@
 import { useState, useEffect } from 'react';
-import ReactMarkdown from "react-markdown";
+import { createPortal } from "react-dom";
+import { ReactMarkdown } from "react-markdown";
 import './App.css';
-import {renderPlaceHolder, clearPlaceHolder} from './placeHolderRender.jsx';
+
+function renderPlaceHolder() {
+  window.placeHolderRoot.render(createPortal(
+    <div>...</div>,
+    document.getElementById("placeHolder-ui")
+  )); 
+}
+
+function closePlaceHolder(){
+  window.placeHolderRoot.render(null);
+}
 
 function App() {
   useEffect(() => {
@@ -125,9 +136,7 @@ function App() {
         <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
         <button id="sendBtn" type="button" onClick={sendPrompt}>전송</button>
           <ul id="messages">
-            <li id="placeHolder">
-               ... 
-            </li>
+            <li id="placeHolder-ui"></li>
             {messages.map((msg, i) => (
               <li key={i}>
                 <ReactMarkdown>
