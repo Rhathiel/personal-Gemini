@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import ReactMarkdown from "react-markdown";
 import './App.css'
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.1.03");
+    console.log("version: 1.1.04");
   }, []);
 
   const activeEnter = (e) => {
@@ -74,8 +75,9 @@ function App() {
     let empty = { role: "model", parts: [{text: "..."}]}; //대화 말풍선 양식
     let queue = "";
     let decoded = {}; 
-    setMessages(prev => [...prev, empty]);
-    await Promise.resolve();
+    flushSync(() => {
+      setMessages(prev => [...prev, empty]);
+    }); 
     for await (const chunk of response.body){
       try{
         queue += dec.decode(chunk, { stream: true }); //TextDecoder는 stream true일 경우 잘려진 2진 비트를 기억하기 때문에 관리 필요 X 
