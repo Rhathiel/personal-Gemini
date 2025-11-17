@@ -9,4 +9,4 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 
-window.placeHolderRoot = createRoot(document.getElementById('placeHolder ui'))
+window.placeHolderRoot = createRoot(document.getElementById('placeHolder-ui'))
