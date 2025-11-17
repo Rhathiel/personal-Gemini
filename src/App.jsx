@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { flushSync } from 'react-dom';
 import ReactMarkdown from "react-markdown";
-import './App.css'
+import './App.css';
+import {renderPlaceHolder, clearPlaceHolder} from './placeHolderRender.jsx';
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.1.05");
+    console.log("version: 1.1.06");
   }, []);
 
   const activeEnter = (e) => {
@@ -59,8 +59,6 @@ function App() {
 
     //try-catch로 에러 컨트롤
     try {
-      let empty = { role: "model", parts: [{text: "..."}]};
-      setMessages(prev => [...prev, empty]);
       await streaming(response); //stream 호츨 done 받을 때 까지 대기, streaming함수가 async이기 때문에 await으로 호출.
     } catch(e){
       console.error(e);
@@ -71,10 +69,13 @@ function App() {
   }
 
   const streaming = async(response) => {
+    renderPlaceHolder("placeHolder");
     const dec = new TextDecoder("utf-8"); //받은 객체를 복호화함
     let buffer = "";
     let queue = "";
     let decoded = {}; 
+    let empty = { role: "model", parts: [{text: ""}]};
+    setMessages(prev => [...prev, empty]);
     for await (const chunk of response.body){
       try{
         queue += dec.decode(chunk, { stream: true }); //TextDecoder는 stream true일 경우 잘려진 2진 비트를 기억하기 때문에 관리 필요 X 
@@ -98,6 +99,7 @@ function App() {
         break;
       }
       if(decoded?.candidates?.[0]?.content?.parts?.[0]?.text){
+        clearPlaceHolder();
         const { role, parts } = decoded.candidates[0].content; //해석한 객체에서 역할과 텍스트를 뽑아옴
         buffer = buffer + parts[0].text;
         setMessages(prev => {
@@ -118,29 +120,14 @@ function App() {
   }
 
   return (
-    <>
-      <div className="layout">
-        <aside id="sidebar">
-            <header>
-                <h1>LOGO</h1>
-                <button id="toggle-btn">☰</button>
-            </header>
-            <nav>
-                <button>새 채팅</button>
-                <button>채팅 검색</button>
-                <ul> 
-                    <li>주제A</li>
-                    <li>주제B</li>
-                    <li>주제C</li>
-                </ul>
-            </nav>
-        </aside>
-      </div>
-
-      <main>
+    <body>
+      <div id = "root">
         <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
         <button id="sendBtn" type="button" onClick={sendPrompt}>전송</button>
           <ul id="messages">
+            <li id="placeHolder">
+               ... 
+            </li>
             {messages.map((msg, i) => (
               <li key={i}>
                 <ReactMarkdown>
@@ -149,8 +136,8 @@ function App() {
               </li>
             ))}
           </ul>
-      </main>
-    </>
+      </div>
+    </body>
   )
 }
 
