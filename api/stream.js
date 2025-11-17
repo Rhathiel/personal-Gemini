@@ -114,8 +114,10 @@ export default async function handler(req, res) { //fetch 이후 동작
       (async () => {
         for await (const chunk of output){ 
           if(!chunk){ 
+            console.log("빈 청크입니다:" + chunk);
             continue;
           }
+          console.log(chunk); 
           this.push(enc.encode(JSON.stringify(chunk)));
         }
         this.push(null);
