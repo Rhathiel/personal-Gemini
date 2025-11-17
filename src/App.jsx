@@ -4,7 +4,7 @@ import './App.css'
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.1.02");
+    console.log("version: 1.1.03");
   }, []);
 
   const activeEnter = (e) => {
@@ -75,7 +75,7 @@ function App() {
     let queue = "";
     let decoded = {}; 
     setMessages(prev => [...prev, empty]);
-    //setMessages에 빈 청크 삽입
+    await Promise.resolve();
     for await (const chunk of response.body){
       try{
         queue += dec.decode(chunk, { stream: true }); //TextDecoder는 stream true일 경우 잘려진 2진 비트를 기억하기 때문에 관리 필요 X 
