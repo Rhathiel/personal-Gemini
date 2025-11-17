@@ -4,6 +4,7 @@ import ReactMarkdown from "react-markdown";
 import './App.css';
 
 function renderPlaceHolder() {
+  console.log("render성공.");
   window.placeHolderRoot.render(createPortal(
     <li>...</li>,
     document.getElementById("messages")
@@ -16,7 +17,7 @@ function clearPlaceHolder(){
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.1.09");
+    console.log("version: 1.1.1");
   }, []);
 
   const activeEnter = (e) => {
