@@ -4,7 +4,7 @@ import './App.css'
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.1.01");
+    console.log("version: 1.1.02");
   }, []);
 
   const activeEnter = (e) => {
