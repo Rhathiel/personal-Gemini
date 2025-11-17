@@ -5,7 +5,7 @@ import './App.css'
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.1.04");
+    console.log("version: 1.1.05");
   }, []);
 
   const activeEnter = (e) => {
@@ -59,6 +59,8 @@ function App() {
 
     //try-catch로 에러 컨트롤
     try {
+      let empty = { role: "model", parts: [{text: "..."}]};
+      setMessages(prev => [...prev, empty]);
       await streaming(response); //stream 호츨 done 받을 때 까지 대기, streaming함수가 async이기 때문에 await으로 호출.
     } catch(e){
       console.error(e);
@@ -70,14 +72,9 @@ function App() {
 
   const streaming = async(response) => {
     const dec = new TextDecoder("utf-8"); //받은 객체를 복호화함
-    
     let buffer = "";
-    let empty = { role: "model", parts: [{text: "..."}]}; //대화 말풍선 양식
     let queue = "";
     let decoded = {}; 
-    flushSync(() => {
-      setMessages(prev => [...prev, empty]);
-    }); 
     for await (const chunk of response.body){
       try{
         queue += dec.decode(chunk, { stream: true }); //TextDecoder는 stream true일 경우 잘려진 2진 비트를 기억하기 때문에 관리 필요 X 
