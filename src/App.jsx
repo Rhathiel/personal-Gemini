@@ -4,8 +4,14 @@ import './App.css'
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.1.00");
+    console.log("version: 1.1.01");
   }, []);
+
+  const activeEnter = (e) => {
+    if(e.key === "Enter"){
+      sendPrompt();
+    }
+  }
 
   const [input, setInput] = useState("");
   const [done, setDone] = useState(true);
@@ -13,7 +19,7 @@ function App() {
   const [history, setHistory] = useState([]);
   //내부값이더라도 초기화 되는걸 막기 위해 useState로 선언함.
 
-  async function sendPrompt() {
+  const sendPrompt = async () => {
 
     if (!done) return;
     //응답이 끝나지 않았으면 종료
@@ -61,7 +67,7 @@ function App() {
     }
   }
 
-  async function streaming(response){
+  const streaming = async(response) => {
     const dec = new TextDecoder("utf-8"); //받은 객체를 복호화함
     
     let buffer = "";
@@ -133,7 +139,7 @@ function App() {
       </div>
 
       <main>
-        <input type="text" value={input} onChange={(e) => setInput(e.target.value)}/>
+        <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
         <button id="sendBtn" type="button" onClick={sendPrompt}>전송</button>
           <ul id="messages">
             {messages.map((msg, i) => (
