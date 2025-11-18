@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import ChatInputBox from './ChatInputBox.jsx';
 import ChatMessages from './ChatMessages.jsx';
-import './Chat.css';
 
 function Chat() {
 
@@ -99,8 +98,8 @@ function Chat() {
 
   return (
     <div>
-      <ChatInputBox sendPrompt={sendPrompt}/>
       <ChatMessages messages={messages} done={done}/>
+      <ChatInputBox sendPrompt={sendPrompt}/>
     </div>
   )
 }

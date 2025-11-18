@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import Chat from './components/chat/chat.jsx';
 
 function App() {
   useEffect(() => {

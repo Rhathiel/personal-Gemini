@@ -1,4 +1,9 @@
 import { useState } from "react";
+import styled from 'styled-components'
+
+let StyledInput = styled.input`
+     font-size: 40px;
+`;
 
 function ChatInputBox({sendPrompt}) {
     const [input, setInput] = useState("");
@@ -17,7 +22,7 @@ function ChatInputBox({sendPrompt}) {
     
     return (
         <div>
-            <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
+            <StyledInput type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
             <button id="sendBtn" type="button" onClick={activeClick}>전송</button>
         </div>
     );
