@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { error } from "console";
 import { Readable } from 'stream';
 
 // Gemini AI 초기화 함수
@@ -107,20 +108,22 @@ export default async function handler(req, res) { //fetch 이후 동작
   }
 
   const output = await createOutput(chat, prompt);
+  let isApiError = false;
+  
   console.log(output);
   if(typeof output?.[Symbol.asyncIterator] !== "function"){
   //output이 asyncIterator가 아닌 경우(ApiError인 경우)
-    console.log("에러 캐치 시작!");
-    const e = JSON.stringify(output,["error", "status", "code", "message"]);
-    this.push(enc.encode(e));
-    this.push(null);
-    console.log("에러 캐치 성공!");
-    return;
+    isApiError = true;
   }
 
   const stream = new Readable({
     read() {
       (async () => {
+        if (isApiError === true) {
+          let error = JSON.stringify(output,["error", "status", "code", "message"]);
+          this.push(enc.encode(error));
+          this.push(null);
+        }
         for await (const chunk of output){ 
           if(  !chunk || //undefined,null
               (typeof chunk === "string" && chunk.trim() === "") ||  //empty string
@@ -128,9 +131,8 @@ export default async function handler(req, res) { //fetch 이후 동작
               (chunk instanceof Uint8Array && chunk.length === 0) || //empty unit8array
               (Buffer.isBuffer(chunk) && chunk.length === 0) //empty buffer
             ){ 
-            const error = {error: {code: "100", status: "INVALID_CHUNK", message: "완전하지 않은 청크."}};
+            let error = {error: {code: "100", status: "INVALID_CHUNK", message: "완전하지 않은 청크."}};
             this.push(enc.encode(JSON.stringify(error)));
-            this.push(null);
           }
           console.log(chunk);
           console.log({
