@@ -6,7 +6,6 @@ function Chat() {
 
   const [done, setDone] = useState(true);
   const [messages, setMessages] = useState([]);
-  const [history, setHistory] = useState([]);
 
   const printMessage = (decoded, buffer) => {
     if(decoded?.error){
@@ -42,8 +41,6 @@ function Chat() {
 
     const userMsg = {role: "user", parts: [{ text: prompt}]};
     setMessages(prev => [...prev, userMsg]);
-    const newHistory = [...history, userMsg];
-    setHistory(newHistory);
 
     setDone(false);
 
@@ -52,9 +49,8 @@ function Chat() {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ prompt: prompt, history: newHistory })
+      body: JSON.stringify({ prompt: prompt,  isNewSession: true })
     });
-
 
     try {
       await streaming(response);
@@ -93,7 +89,6 @@ function Chat() {
         printMessage(decoded, buffer);
       }
     }
-    setHistory(prev => [...prev, {role: "model", parts: [{ text: buffer.sumText }]}] );
   }
 
   return (

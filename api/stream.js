@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { Redis } from '@upstash/redis';
 import { Readable } from 'stream';
 
 function initAI(history, showThoughts) {
@@ -153,7 +154,17 @@ export default async function handler(req, res) { //fetch 이후 동작
   for await (const chunk of req) {
     body += dec.decode(chunk, { stream: true });
   }
-  const { prompt, history } = JSON.parse(body);
+  const { prompt, isNewSession } = JSON.parse(body);
+
+  let history = [];
+  let sessionId = "";
+  if(isNewSession){
+    history = [{role, parts: [{ text: prompt }]}];
+    sessionId = crypto.randomUUID();
+    await Redis.set(`session:${sessionId}`, JSON.stringify(history));
+  } else {
+    
+  }
 
   const chat = initAI(history, false);
 
@@ -176,6 +187,9 @@ export default async function handler(req, res) { //fetch 이후 동작
   const stream = new Readable({
     read() {
       (async () => {
+        if(isNewSession){
+          this.push(enc.encode(JSON.stringify({ sessionId: sessionId })));
+        }
         if (isApiError === true) {
           console.log(output);
           let error = JSON.stringify(output,["error", "status", "code"]);
