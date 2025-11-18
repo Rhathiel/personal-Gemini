@@ -4,7 +4,7 @@ import './App.css';
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.1.8");
+    console.log("version: 1.1.9");
   }, []);
 
   const activeEnter = (e) => {
@@ -59,8 +59,7 @@ function App() {
     let buffer = "";
     let queue = "";
     let decoded = {}; 
-    let empty = { role: "model", parts: [{text: ""}]};
-    setMessages(prev => [...prev, empty]);
+    setMessages(prev => [...prev, {}]);
     for await (const chunk of response.body){
       try{
         queue += dec.decode(chunk, { stream: true }); 
@@ -80,7 +79,7 @@ function App() {
         });
         break;
       }
-      if(decoded?.candidates?.[0]?.content?.parts?.[0]?.text){
+      if(decoded?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() !== 0){
         const { role, parts } = decoded.candidates[0].content; 
         buffer = buffer + parts[0].text;
         setMessages(prev => {
@@ -105,7 +104,7 @@ function App() {
       <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
       <button id="sendBtn" type="button" onClick={sendPrompt}>전송</button>
         <ul id="messages">
-          {messages.map((msg, i) => (
+          {messages.map((msg, i) => ((Object.keys(msg).length === 0) &&
             <li key={i}>
               <ReactMarkdown>
                 {(msg.role === "user" ? "**나:**" : "**AI:**") + " " + (msg.parts?.[0]?.text)}
