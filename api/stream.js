@@ -182,6 +182,7 @@ export default async function handler(req, res) { //fetch 이후 동작
     read() {
       (async () => {
         if (isApiError === true) {
+          console.log(output);
           let error = JSON.stringify(output,["error", "status", "code"]);
           this.push(enc.encode(error));
           this.push(null);
