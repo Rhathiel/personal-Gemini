@@ -113,12 +113,16 @@ export default async function handler(req, res) { //fetch 이후 동작
     read() {
       (async () => {
         for await (const chunk of output){ 
-          if(!chunk){ 
-            console.log("빈 청크입니다:" + chunk);
+          if(  !chunk || //undefined,null
+              (typeof chunk === "string" && chunk.trim() === "") || 
+              (Object.getPrototypeOf(chunk) === Object.prototype && Object.keys(chunk).length === 0) ||
+              (chunk instanceof Uint8Array && chunk.length === 0) ||
+              (Buffer.isBuffer(chunk) && chunk.length === 0)
+            ){ 
+            console.log("빈 청크입니다");
             continue;
           }
           console.log(chunk);
-          console.log("텍스트: " + chunk.candidates?.[0]?.content?.parts?.[0]?.text); 
           this.push(enc.encode(JSON.stringify(chunk)));
         }
         this.push(null);
