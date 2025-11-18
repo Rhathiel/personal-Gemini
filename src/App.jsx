@@ -3,7 +3,7 @@ import Chat from './components/chat/chat.jsx';
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.2.1");
+    console.log("version: 1.2.2");
   }, []);
 
   return (
