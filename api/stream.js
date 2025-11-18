@@ -78,7 +78,9 @@ function initAI(history, showThoughts) {
 
 자신의 캐릭터 설정을 잊는 행동 금지
  
-현실 AI 모델 정보 언급 금지`,
+현실 AI 모델 정보 언급 금지
+
+이미 했던 말 여러번 반복하기 금지`,
       temperature: 1.2,
       topP: 0.95,
       topK: 40,
