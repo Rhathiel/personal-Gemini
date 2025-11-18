@@ -62,8 +62,9 @@ function App() {
     setMessages(prev => [...prev, {}]);
     for await (const chunk of response.body){
       try{
-        queue += dec.decode(chunk, { stream: true }); 
-        console.log("큐" + queue);
+        queue += dec.decode(chunk, { stream: true });
+        console.log(typeof queue);
+        const validJson = "[" + queue.split("}{").join("},{") + "]";
         decoded = JSON.parse(queue); 
         console.log(decoded);
         queue = "";
