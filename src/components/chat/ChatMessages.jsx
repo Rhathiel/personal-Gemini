@@ -7,7 +7,7 @@ function ChatMessages({messages, done}) {
       {messages.map((msg, i) => (msg &&
         <div key={i}>
           <ReactMarkdown>
-            {(msg.role === "user" ? "**나:**" : "**AI:**") + " " + (msg.parts?.[0]?.text)}
+            {(msg.role === "user" ? "**나:**" : "**루나:**") + " " + (msg.parts?.[0]?.text)}
           </ReactMarkdown>
         </div>
       ))}
