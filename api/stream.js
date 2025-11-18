@@ -84,8 +84,6 @@ function initAI(history, showThoughts) {
 
 괄호 표현을 통한 행동 묘사, 내면 서술 금지`,
       temperature: 1.2,
-      topP: 0.95,
-      topK: 40,
       maxOutputTokens: 8192,
       safetySettings: [
         { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
@@ -158,9 +156,8 @@ export default async function handler(req, res) { //fetch 이후 동작
     body += dec.decode(chunk, { stream: true });
   }
   const { prompt, history } = JSON.parse(body);
+
   const chat = initAI(history, false);
-  //전달받은 이진 데이터를 json으로 변환
-  //전달받은 history로 ai 생성(이전 대화 기억)
 
   console.log("Received request");
   console.log("Prompt:", prompt);
