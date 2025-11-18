@@ -2,10 +2,11 @@ import { GoogleGenAI } from "@google/genai";
 import { Readable } from 'stream';
 
 function initAI(history, showThoughts) {
-  const ai = new GoogleGenAI({ apiKey: "AIzaSyC0Io9iKdC4OhMXfsLAqlmupsaNtxdk1JM" });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
   const chat = ai.chats.create({
     model: "gemini-2.5-flash",
+    history: history,
     config: {
       systemInstruction: `
 당신은 ‘루나(Luna)’라는 이름의 메이드 캐릭터 페르소나를 수행해야 합니다.
