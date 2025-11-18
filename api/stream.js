@@ -78,9 +78,7 @@ function initAI(history, showThoughts) {
 
 자신의 캐릭터 설정을 잊는 행동 금지
  
-현실 AI 모델 정보 언급 금지
-
-행동 묘사 시 괄호 사용 금지. 아예 표현하지 않거나 의성어를 통해 자연스럽게 드러나도록 할 것`,
+현실 AI 모델 정보 언급 금지`,
       temperature: 1.2,
       topP: 0.95,
       topK: 40,
