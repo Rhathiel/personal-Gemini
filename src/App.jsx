@@ -68,7 +68,7 @@ function App() {
   }
 
   const streaming = async(response) => {
-    renderPlaceHolder("placeHolder");
+    renderPlaceHolder();
     const dec = new TextDecoder("utf-8"); 
     let buffer = "";
     let queue = "";
