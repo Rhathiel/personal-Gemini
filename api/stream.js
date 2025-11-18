@@ -171,7 +171,6 @@ export default async function handler(req, res) { //fetch 이후 동작
   const output = await createOutput(chat, prompt);
   let isApiError = false;
   
-  console.log(output);
   if(typeof output?.[Symbol.asyncIterator] !== "function"){
   //output이 asyncIterator가 아닌 경우(ApiError인 경우)
     isApiError = true;
@@ -181,9 +180,10 @@ export default async function handler(req, res) { //fetch 이후 동작
     read() {
       (async () => {
         if (isApiError === true) {
-          let error = JSON.stringify(output,["error", "status", "code", "message"]);
+          let error = JSON.stringify(output,["error", "status", "code"]);
           this.push(enc.encode(error));
           this.push(null);
+          return;
         }
         for await (const chunk of output){ 
           if(  !chunk || //undefined,null
@@ -194,16 +194,12 @@ export default async function handler(req, res) { //fetch 이후 동작
             ){ 
             let error = {error: {code: "100", status: "INVALID_CHUNK", message: "완전하지 않은 청크."}};
             this.push(enc.encode(JSON.stringify(error)));
+          } else{
+            this.push(enc.encode(JSON.stringify(chunk)));
           }
-          console.log(chunk);
-          console.log({
-            text: chunk?.candidates?.[0]?.content?.parts?.[0]?.text,
-            finish: chunk?.candidates?.[0]?.finishReason,
-            index: chunk?.candidates?.[0]?.index
-          });
-          this.push(enc.encode(JSON.stringify(chunk)));
         }
         this.push(null);
+        return;
       })();
     }
   });
