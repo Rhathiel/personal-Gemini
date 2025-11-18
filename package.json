@@ -12,6 +12,7 @@
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
     "@upstash/redis": "^1.35.3",
+    "@vercel/edge-config": "^1.4.3",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-markdown": "^10.1.0",
