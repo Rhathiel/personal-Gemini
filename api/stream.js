@@ -7,7 +7,7 @@ function initAI(history, showThoughts) {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
   const chat = ai.chats.create({
-    model: "gemini-2.5-flash-lite",
+    model: "gemini-2.5-pro",
     history: history,
     config: {
       systemInstruction: `
