@@ -17,7 +17,7 @@ function clearPlaceHolder(){
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.1.1");
+    console.log("version: 1.1.2");
   }, []);
 
   const activeEnter = (e) => {
