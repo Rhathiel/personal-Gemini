@@ -114,15 +114,20 @@ export default async function handler(req, res) { //fetch 이후 동작
       (async () => {
         for await (const chunk of output){ 
           if(  !chunk || //undefined,null
-              (typeof chunk === "string" && chunk.trim() === "") || 
-              (Object.getPrototypeOf(chunk) === Object.prototype && Object.keys(chunk).length === 0) ||
-              (chunk instanceof Uint8Array && chunk.length === 0) ||
-              (Buffer.isBuffer(chunk) && chunk.length === 0)
+              (typeof chunk === "string" && chunk.trim() === "") ||  //empty string
+              (Object.getPrototypeOf(chunk) === Object.prototype && Object.keys(chunk).length === 0) || //empty json
+              (chunk instanceof Uint8Array && chunk.length === 0) || //empty unit8array
+              (Buffer.isBuffer(chunk) && chunk.length === 0) //empty buffer
             ){ 
             console.log("빈 청크입니다");
             continue;
           }
           console.log(chunk);
+          console.log({
+            text: chunk?.candidates?.[0]?.content?.parts?.[0]?.text,
+            finish: chunk?.candidates?.[0]?.finishReason,
+            index: chunk?.candidates?.[0]?.index
+          });
           this.push(enc.encode(JSON.stringify(chunk)));
         }
         this.push(null);
