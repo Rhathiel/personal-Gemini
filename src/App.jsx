@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import Chat from './components/chat/chat.jsx';
+import Chat from './components/chat/Chat.jsx';
 
 function App() {
   useEffect(() => {
