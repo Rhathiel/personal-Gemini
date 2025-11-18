@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import { Readable } from 'stream';
 
 function initAI(history, showThoughts) {
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const ai = new GoogleGenAI({ apiKey: AIzaSyDyI3v_Aw0HY3QvFaDBE10goPYvpmQCcTY });
 
   const chat = ai.chats.create({
     model: "gemini-2.5-pro",
