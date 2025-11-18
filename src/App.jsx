@@ -1,9 +1,8 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Chat from './components/chat/Chat.jsx';
 import SideBar from './components/sidebar/SideBar.jsx';
 import Monitor from './components/monitor/Monitor.jsx';
 import styled from 'styled-components';
-
 
 const Div = styled.div`
   display: flex;
@@ -16,10 +15,12 @@ function App() {
     console.log("version: 1.2.2");
   }, []);
 
+  const [isNewChat, setNewChat] = useState(false);
+  
   return (
     <Div>
-      <SideBar />
-      <Chat />
+      <SideBar setNewChat={setNewChat} />
+      <Chat isNewChat={isNewChat}/>
       <Monitor />
     </Div>
   )

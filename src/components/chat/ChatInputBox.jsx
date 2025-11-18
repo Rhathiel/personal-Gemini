@@ -23,7 +23,7 @@ function ChatInputBox({sendPrompt}) {
     return (
         <div>
             <StyledInput type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
-            <button id="sendBtn" type="button" onClick={activeClick}>전송</button>
+            <button type="button" onClick={activeClick}>전송</button>
         </div>
     );
 }   

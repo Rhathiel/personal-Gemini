@@ -27,18 +27,23 @@ let StyledNewChatButton1 = styled.button`
     background: #151515ff;  
 
     &:hover {
-        background: #3535353f;   
-        color: white;      
+        background: #6c6c6c3f;    
+    }
+
+    &:active {
+        background: #3636363f;
     }
 `;
 
-function SideBar() {
+function SideBar({setNewChat}) {
 
-
+  const activeClick = () => {
+    setNewChat(true);
+  }
 
   return (
     <StyledSideBar>
-      <StyledNewChatButton1>새 채팅</StyledNewChatButton1>
+      <StyledNewChatButton1 type="button" onClick={activeClick}>새 채팅</StyledNewChatButton1>
     </StyledSideBar>
   );
 }

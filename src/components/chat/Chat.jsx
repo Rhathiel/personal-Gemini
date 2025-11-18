@@ -2,7 +2,7 @@ import { useState } from 'react';
 import ChatInputBox from './ChatInputBox.jsx';
 import ChatMessages from './ChatMessages.jsx';
 
-function Chat() {
+function Chat({isNewChat}) {
 
   const [done, setDone] = useState(true);
   const [messages, setMessages] = useState([]);
