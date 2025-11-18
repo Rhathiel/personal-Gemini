@@ -4,7 +4,7 @@ import './App.css';
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.2.0");
+    console.log("version: 1.2.1");
   }, []);
 
   const activeEnter = (e) => {
@@ -17,6 +17,33 @@ function App() {
   const [done, setDone] = useState(true);
   const [messages, setMessages] = useState([]);
   const [history, setHistory] = useState([]);
+
+  const printMessage = (decoded, buffer) => {
+    if(decoded?.error){
+      console.log("API Error");
+      buffer.sumText = buffer.sumText + "\n" + "Status: " + decoded.error.status + "\n" + "Code: " + decoded.error.code; 
+      setMessages(prev => {
+        let newMessages = [...prev];
+        newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: buffer.sumText }]};
+        return newMessages; 
+      });
+    } else if(decoded?.candidates?.[0]?.content?.parts?.[0]?.text?.trim()){
+      const { role, parts } = decoded.candidates[0].content; 
+      buffer.sumText = buffer.sumText + parts[0].text;
+      setMessages(prev => {
+        let newMessages = [...prev];
+        newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer.sumText }]};
+        return newMessages;
+      }); 
+      if (decoded?.candidates?.[0]?.finishReason === "MAX_TOKENS"){
+        setMessages(prev => {
+          let newMessages = [...prev];
+          newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer.sumText + "토큰이 최대에 도달했습니다. 다시 시도해주세요." }]};
+          return newMessages;
+        }); 
+      }
+    }
+  }
 
   const sendPrompt = async () => {
 
@@ -56,15 +83,16 @@ function App() {
 
   const streaming = async(response) => {
     const dec = new TextDecoder("utf-8"); 
-    let buffer = "";
+    let buffer = {sumText: ""};
     let queue = "";
     let decoded = {}; 
     setMessages(prev => [...prev, {}]);
     for await (const chunk of response.body){
       try{
         queue += dec.decode(chunk, { stream: true });
-        console.log(typeof queue);
-        const validJson = "[" + queue.split("}{").join("},{") + "]";
+        if(queue.includes("}{")){
+          queue = "[" + queue.split("}{").join("},{") + "]";
+        }
         decoded = JSON.parse(queue); 
         console.log(decoded);
         queue = "";
@@ -72,34 +100,15 @@ function App() {
         console.error(e);
         continue; 
       }
-      if(decoded?.error){
-        console.log("API Error");
-        buffer = buffer + "\n" + "Status: " + decoded.error.status + "\n" + "Code: " + decoded.error.code; 
-        setMessages(prev => {
-          let newMessages = [...prev];
-          newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: buffer }]};
-          return newMessages; 
-        });
-        break;
-      }
-      if(decoded?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() !== 0){
-        const { role, parts } = decoded.candidates[0].content; 
-        buffer = buffer + parts[0].text;
-        setMessages(prev => {
-          let newMessages = [...prev];
-          newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer }]};
-          return newMessages;
-        }); 
-        if (decoded?.candidates?.[0]?.finishReason === "MAX_TOKENS"){
-          setMessages(prev => {
-            let newMessages = [...prev];
-            newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer + "토큰이 최대에 도달했습니다. 다시 시도해주세요." }]};
-            return newMessages;
-          }); 
+      if(Array.isArray(decoded) === true){
+        for(let e of decoded){
+          printMessage(e, buffer);
         }
+      } else {
+        printMessage(decoded, buffer);
       }
     }
-    setHistory(prev => [...prev, {role: "model", parts: [{ text: buffer }]}] );
+    setHistory(prev => [...prev, {role: "model", parts: [{ text: buffer.sumText }]}] );
   }
 
   return (

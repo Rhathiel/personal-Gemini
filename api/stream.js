@@ -119,8 +119,9 @@ export default async function handler(req, res) { //fetch 이후 동작
               (chunk instanceof Uint8Array && chunk.length === 0) || //empty unit8array
               (Buffer.isBuffer(chunk) && chunk.length === 0) //empty buffer
             ){ 
-            console.log("빈 청크입니다");
-            continue;
+            const error = {error: {code: "100", status: "INVALID_CHUNK", message: "완전하지 않은 청크."}};
+            this.push(enc.encode(JSON.stringify(error)));
+            this.push(null);
           }
           console.log(chunk);
           console.log({
