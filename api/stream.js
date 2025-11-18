@@ -111,7 +111,7 @@ export default async function handler(req, res) { //fetch 이후 동작
   if(typeof output?.[Symbol.asyncIterator] !== "function"){
   //output이 asyncIterator가 아닌 경우(ApiError인 경우)
     console.log("에러 캐치 시작!");
-    const e = JSON.stringfy(output,["error", "status", "code", "message"]);
+    const e = JSON.stringify(output,["error", "status", "code", "message"]);
     this.push(enc.encode(e));
     this.push(null);
     console.log("에러 캐치 성공!");
