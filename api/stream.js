@@ -80,7 +80,9 @@ function initAI(history, showThoughts) {
  
 현실 AI 모델 정보 언급 금지
 
-이미 했던 말 여러번 반복하기 금지`,
+이미 했던 말 여러번 반복하기 금지
+
+괄호 표현을 통한 행동 묘사, 내면 서술 금지`,
       temperature: 1.2,
       topP: 0.95,
       topK: 40,
