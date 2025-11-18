@@ -1,19 +1,6 @@
-import { useState, useEffect } from 'react';
-import { createPortal } from "react-dom";
+import { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from "react-markdown";
 import './App.css';
-
-function renderPlaceHolder() {
-  window.placeHolderRoot.render(createPortal(
-    <li>...</li>,
-    document.getElementById("messages")
-  )); 
-  console.log("render성공.");
-}
-
-function clearPlaceHolder(){
-  window.placeHolderRoot.render(null);
-}
 
 function App() {
   useEffect(() => {
@@ -68,7 +55,6 @@ function App() {
   }
 
   const streaming = async(response) => {
-    renderPlaceHolder();
     const dec = new TextDecoder("utf-8"); 
     let buffer = "";
     let queue = "";
@@ -95,7 +81,6 @@ function App() {
         break;
       }
       if(decoded?.candidates?.[0]?.content?.parts?.[0]?.text){
-        clearPlaceHolder();
         const { role, parts } = decoded.candidates[0].content; 
         buffer = buffer + parts[0].text;
         setMessages(prev => {
@@ -116,21 +101,20 @@ function App() {
   }
 
   return (
-    <body>
-      <div id = "root">
-        <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
-        <button id="sendBtn" type="button" onClick={sendPrompt}>전송</button>
-          <ul id="messages">
-            {messages.map((msg, i) => (
-              <li key={i}>
-                <ReactMarkdown>
-                  {(msg.role === "user" ? "**나:**" : "**AI:**") + " " + (msg.parts?.[0]?.text)}
-                </ReactMarkdown>
-              </li>
-            ))}
-          </ul>
-      </div>
-    </body>
+    <div id = "root">
+      <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
+      <button id="sendBtn" type="button" onClick={sendPrompt}>전송</button>
+        <ul id="messages">
+          {(done) ? null : <li>...</li>}
+          {messages.map((msg, i) => (
+            <li key={i}>
+              <ReactMarkdown>
+                {(msg.role === "user" ? "**나:**" : "**AI:**") + " " + (msg.parts?.[0]?.text)}
+              </ReactMarkdown>
+            </li>
+          ))}
+        </ul>
+    </div>
   )
 }
 
