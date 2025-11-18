@@ -8,5 +8,3 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode>,
 )
-
-window.placeHolderRoot = createRoot(document.getElementById('placeHolderRoot'));
