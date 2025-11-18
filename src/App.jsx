@@ -63,6 +63,7 @@ function App() {
     for await (const chunk of response.body){
       try{
         queue += dec.decode(chunk, { stream: true }); 
+        console.log("큐" + queue);
         decoded = JSON.parse(queue); 
         console.log(decoded);
         queue = "";
