@@ -4,7 +4,7 @@ import './App.css';
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.1.4");
+    console.log("version: 1.1.5");
   }, []);
 
   const activeEnter = (e) => {
@@ -105,7 +105,6 @@ function App() {
       <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
       <button id="sendBtn" type="button" onClick={sendPrompt}>전송</button>
         <ul id="messages">
-          {(done) ? null : <li>...</li>}
           {messages.map((msg, i) => (
             <li key={i}>
               <ReactMarkdown>
@@ -113,6 +112,7 @@ function App() {
               </ReactMarkdown>
             </li>
           ))}
+          {(done) ? null : <li>...</li>}
         </ul>
     </div>
   )
