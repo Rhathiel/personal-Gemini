@@ -4,7 +4,7 @@ import './App.css';
 
 function App() {
   useEffect(() => {
-    console.log("version: 1.1.9");
+    console.log("version: 1.2.0");
   }, []);
 
   const activeEnter = (e) => {
@@ -66,7 +66,8 @@ function App() {
         decoded = JSON.parse(queue); 
         console.log(decoded);
         queue = "";
-      } catch {
+      } catch(e) {
+        console.error(e);
         continue; 
       }
       if(decoded?.error){
