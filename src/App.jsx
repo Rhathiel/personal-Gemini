@@ -104,7 +104,7 @@ function App() {
       <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
       <button id="sendBtn" type="button" onClick={sendPrompt}>전송</button>
         <ul id="messages">
-          {messages.map((msg, i) => ((Object.keys(msg).length === 0) &&
+          {messages.map((msg, i) => ((Object.keys(msg).length !== 0) &&
             <li key={i}>
               <ReactMarkdown>
                 {(msg.role === "user" ? "**나:**" : "**AI:**") + " " + (msg.parts?.[0]?.text)}
