@@ -2,10 +2,9 @@ import { useState } from 'react';
 import styled from 'styled-components'
 
 let StyledSideBar = styled.div`
-    top: 0;
     left: 0;
-    transform: translateX(-200px);
-    width: 300px;
+    transform: translateX(-150px);
+    width: 200px;
     height: 100%;
     background: #151515ff;
     position: fixed;
@@ -20,9 +19,9 @@ let StyledSideBar = styled.div`
 let StyledNewChatButton1 = styled.button`
     display: block;
     height: 50px;
-    width: 240px;
-    margin: 100px auto 0px auto;
-    border-radius: 16px;
+    width: 90%;
+    margin: 100px auto 100px auto;
+    border-radius: 50px;
     border: 0px;
     background: #151515ff;  
 

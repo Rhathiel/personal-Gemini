@@ -1,6 +1,17 @@
 import { useState } from 'react';
 import ChatInputBox from './ChatInputBox.jsx';
 import ChatMessages from './ChatMessages.jsx';
+import styled from 'styled-components';
+
+const Div = styled.div`
+  position: fixed;
+  top: 5%;
+  bottom: 5%;
+  left: 90px;  
+  right: 470px;    
+  background: #705454ff;
+  z-index: 10;
+`;
 
 function Chat({isNewChat}) {
 
@@ -92,10 +103,10 @@ function Chat({isNewChat}) {
   }
 
   return (
-    <div>
+    <Div>
       <ChatMessages messages={messages} done={done}/>
       <ChatInputBox sendPrompt={sendPrompt}/>
-    </div>
+    </Div>
   )
 }
 

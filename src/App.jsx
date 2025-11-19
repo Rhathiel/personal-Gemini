@@ -5,9 +5,6 @@ import Monitor from './components/monitor/Monitor.jsx';
 import styled from 'styled-components';
 
 const Div = styled.div`
-  display: flex;
-  flex-direction: row;
-  height: 100%;
 `;
 
 function App() {

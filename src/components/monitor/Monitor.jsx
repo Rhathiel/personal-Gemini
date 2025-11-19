@@ -6,8 +6,15 @@ import { OrbitControls } from '@react-three/drei';
 import styled from 'styled-components';
 
 const Div = styled.div`
-    height: 100%;
-    width: 1000px;
+    top: 5%;
+    right: 2.5%;
+    bottom: 5%;
+    width: 400px;
+    position: fixed;
+    border-radius: 50px;
+    
+    background: #2f2e2eff;
+    z-index: 2;
 `;
 
 function MmdModel({ url }) {

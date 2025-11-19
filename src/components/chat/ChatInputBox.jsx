@@ -2,7 +2,11 @@ import { useState } from "react";
 import styled from 'styled-components'
 
 let StyledInput = styled.input`
-     font-size: 40px;
+    position: sticky;
+    bottom: 0;
+    width: 80%;
+    margin = 10px auto 10px auto;
+    border-radius: 16px;
 `;
 
 function ChatInputBox({sendPrompt}) {
