@@ -2,9 +2,7 @@ import { useState } from "react";
 import styled from 'styled-components'
 
 let StyledInput = styled.input`
-    position: sticky;
-    bottom: 0;
-    width: 80%;
+    width: 90%;
     margin = 10px auto 10px auto;
     border-radius: 16px;
 `;
