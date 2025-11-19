@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import ChatInputBox from './ChatInputBox.jsx';
 import ChatMessages from './ChatMessages.jsx';
 import styled from 'styled-components';
@@ -13,7 +13,38 @@ const Div = styled.div`
   z-index: 10;
 `;
 
-function Chat({isNewChat}) {
+//정리:
+//세션 별로 난수 생성, 난수 생성은 프론트에서 결정
+//해당 동작은 useEffect로 처리하는게 좋아보임. 이후 렌더부터 실행되면 안됨.
+//localstorage로 채팅방 id를 관리하고, 존재하지 않을때만 난수를 생성하면 됨.
+//생성한 난수를 prompt와 함께 백엔드에 전송, 백엔드에서 해당 난수에 대응하는 key에 
+//value: history를 저장함.
+//프론트에서 생성한 난수 session id를 local storage에 넣고, 
+//해당 session id를 첫 fetch(스타트포인트)에 prompt와 함께 
+// 백엔드에 박고 응답시작마다 fetch되고, 응답마다 데이터베이스에 
+// 그대로 history가 저장되도록 함. 
+// case 1: 새로고침의경우 현재 sessionId의 value를 백엔드에 
+// fetch하여 해당하는 history를 받고 messages에 표현하면 될듯 
+// case 2: 새 채팅 생성의 경우 새로 sessionId를 만들고 이하 똑같이 진행
+
+function Chat({isNewChat, setSelectedSessionId, selectedSessionId}) {
+
+  useEffect (() => {
+
+  }, []);
+
+  useEffect (() => {
+    const raw = localStorage.getItem("sessionList");  
+    const list = raw ? JSON.parse(raw) : []; 
+    const sessionId = crypto.randomUUID();
+    const newChat = {
+      sessionId: sessionId,
+      title: "새 채팅"
+    }
+    list.push(newChat) //새 sessionList
+    localStorage.setItem("sessionList", list);
+    console.log("New Session Created: ", sessionId);
+  }, [isNewChat]);
 
   const [done, setDone] = useState(true);
   const [messages, setMessages] = useState([]);

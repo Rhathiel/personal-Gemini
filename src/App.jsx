@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Chat from './components/chat/Chat.jsx';
 import SideBar from './components/sidebar/SideBar.jsx';
 import Monitor from './components/monitor/Monitor.jsx';
@@ -12,12 +12,21 @@ function App() {
     console.log("version: 1.2.2");
   }, []);
 
-  const [isNewChat, setNewChat] = useState(false);
+  const [isNewChat, setNewChat] = useRef(false);
+
+  const [selectedSessionId, setSelectedSessionId] = useState("");
   
   return (
     <Div>
-      <SideBar setNewChat={setNewChat} />
-      <Chat isNewChat={isNewChat}/>
+      <SideBar 
+      setNewChat={setNewChat} 
+      setSelectedSessionId={setSelectedSessionId}
+      selectedSessionId={selectedSessionId}
+      />
+      <Chat isNewChat={isNewChat} 
+      setSelectedSessionId={setSelectedSessionId}
+      selectedSessionId={selectedSessionId}
+      />
       <Monitor />
     </Div>
   )
