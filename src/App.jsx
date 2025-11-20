@@ -14,8 +14,6 @@ function App() {
     console.log("version: 1.2.2");
   }, []);
 
-  const [isNewChat, setNewChat] = useState(false);
-
   const [isHome, setHome] = useState(true);
  
   const [isSelectedSession, setSelectedSession] = useState({
@@ -26,17 +24,16 @@ function App() {
   return (
     <Div>
       <SideBar 
-      isNewChat={isNewChat}
-      setNewChat={setNewChat} 
       setSelectedSession={setSelectedSession}
       isSelectedSession={isSelectedSession}
       setHome={setHome}
       />
-      {isHome === true ? <ChatHome />
-         : 
-        <Chat isNewChat={isNewChat} 
+      {isHome === true ? 
+        <ChatHome />: 
+        <Chat  
         setSelectedSession={setSelectedSession}
-        selectedSession={isSelectedSession}/>
+        selectedSession={isSelectedSession}
+        />
       }
       <Monitor />
     </Div>

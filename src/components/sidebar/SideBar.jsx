@@ -42,7 +42,7 @@ let StyledChatListItem = styled.div`
   background: ${(props) => (props.isSelected ? '#6c6c6c3f' : '#151515ff')};
 `;
 
-function SideBar({isNewChat, setNewChat, setSelectedSession, isSelectedSession, setHome}) {
+function SideBar({setSelectedSession, isSelectedSession, setHome}) {
   const [chatList, setChatList] = useState([]);
   const [input, setInput] = useState("");
   const [editing, setEditing] = useState({
@@ -60,7 +60,6 @@ function SideBar({isNewChat, setNewChat, setSelectedSession, isSelectedSession, 
   //새 채팅 생성
   const activeClick = () => {
     setHome(false);
-    setNewChat(true);
     const raw = localStorage.getItem("sessionList");  
     const list = raw ? JSON.parse(raw) : []; 
     const sessionId = crypto.randomUUID();
@@ -74,7 +73,6 @@ function SideBar({isNewChat, setNewChat, setSelectedSession, isSelectedSession, 
     const raw2 = localStorage.getItem("sessionList");
     console.log("Updated sessionList: ", raw2);
     setChatList(list);
-    setNewChat(false);
     setSelectedSession({
       sessionId: sessionId,
       isSelected: true

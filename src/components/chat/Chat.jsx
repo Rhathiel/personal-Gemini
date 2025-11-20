@@ -31,14 +31,14 @@ function Chat({isNewChat, setSelectedSession, isSelectedSession}) {
 
   //새로고침 시
   useEffect (() => {
-    const raw = localStorage.getItem("sessionList");
+    const raw = localStorage.getItem("currentChatMessages");
     const list = raw ? JSON.parse(raw) : [];
   }, []);
 
-  //새 채팅 생성 시 세션 아이디를 교체하고, 메시지 초기화
+  //setSelectedSession 변경시마다 실행됨. messages 갱신을 위해 필요함!
   useEffect (() => {
 
-  }, [isNewChat]);
+  }, []);
 
   const [done, setDone] = useState(true);
   const [messages, setMessages] = useState([]);

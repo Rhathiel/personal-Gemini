@@ -1,5 +1,4 @@
 import { GoogleGenAI } from "@google/genai";
-import { Redis } from '@upstash/redis';
 import { Readable } from 'stream';
 
 function initAI(history, showThoughts) {
