@@ -20,7 +20,7 @@ let StyledNewChatButton1 = styled.button`
     display: block;
     height: 50px;
     width: 90%;
-    margin: 100px auto 100px auto;
+    margin: 100px auto 100px auto; 
     border-radius: 50px;
     border: 0px;
     background: #151515ff;  
@@ -34,7 +34,15 @@ let StyledNewChatButton1 = styled.button`
     }
 `;
 
-function SideBar({setNewChat, setSelectedSessionId, selectedSessionId}) {
+let StyledChatList = styled.div`
+`;
+
+let StyledChatListItem = styled.div`
+  background: #151515ff;
+  background: ${(props) => (props.isSelected ? '#6c6c6c3f' : '#151515ff')};
+`;
+
+function SideBar({isNewChat, setNewChat, setSelectedSessionId, selectedSessionId}) {
   const [chatList, setChatList] = useState([]);
   const [input, setInput] = useState("");
   const [editing, setEditing] = useState({
@@ -42,12 +50,26 @@ function SideBar({setNewChat, setSelectedSessionId, selectedSessionId}) {
     isEditing: false
   });
 
+  //처음에 chatList를 불러오고
   useEffect(() => {
-    const raw = localStorage.getItem("sessionList");
-    const list = raw ? JSON.parse(raw) : [];
+    const raw = localStorage.getItem("sessionList");  
+    const list = raw ? JSON.parse(raw) : []; 
+    const sessionId = crypto.randomUUID();
+    const newChat = {
+      sessionId: sessionId,
+      title: "새 채팅"
+    }
+    list.push(newChat) //새 sessionList
+    localStorage.setItem("sessionList", list);
+    console.log("New Session Created: ", sessionId);
     setChatList(list);
-  }, []);
+    setNewChat(false);
+    setSelectedSessionId(sessionId);
+  }, [isNewChat]);
 
+  //chatjsx에서는 sessionId만을 갱신함 -> 즉, Sidebar에서 따로 동기화 필요
+  //즉, newChat이 트루가 되면 chatList effect함수를 다시 실행시키는게 좋아보임.
+  //chatList -> localStorage 동기화
   useEffect(() => {
     localStorage.setItem("sessionList", JSON.stringify(chatList));
   }, [chatList]);
@@ -81,8 +103,9 @@ function SideBar({setNewChat, setSelectedSessionId, selectedSessionId}) {
       <StyledNewChatButton1 type="button" onClick={activeClick}>
         새 채팅
       </StyledNewChatButton1>
+      <StyledChatList>
         {chatList.map((chat) => (
-          <div key={chat.sessionId}>
+          <StyledChatListItem key={chat.sessionId} $isSelected={selectedSessionId === chat.sessionId}>
             {!(editing.isEditing && editing.sessionId === chat.sessionId) && <div onClick={() => {
               setSelectedSessionId(chat.sessionId);}}>
               {chat.title}
@@ -91,13 +114,18 @@ function SideBar({setNewChat, setSelectedSessionId, selectedSessionId}) {
               <input type="text" value={input} onChange={(e) => setInput(e.target.value)} 
               onKeyDown={(e) => activeEnter(e, chat.sessionId)}/>}
             <button onClick={() => {
-              setEditing({sessionId: chat.sessionId, isEditing: true});
-              setInput(chat.title);
+              if(editing.isEditing && editing.sessionId === chat.sessionId){
+                setEditing({sessionId: null, isEditing: false});
+              }else{
+                setEditing({sessionId: chat.sessionId, isEditing: true});
+                setInput(chat.title);
+              }
             }}>
               수정
             </button>
-          </div>
+          </StyledChatListItem>
         ))}
+      </StyledChatList>
     </StyledSideBar>
   );
 }
