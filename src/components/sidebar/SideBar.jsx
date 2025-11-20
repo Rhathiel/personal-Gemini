@@ -42,7 +42,7 @@ let StyledChatListItem = styled.div`
   background: ${(props) => (props.isSelected ? '#6c6c6c3f' : '#151515ff')};
 `;
 
-function SideBar({isNewChat, setNewChat, setSelectedSessionId, selectedSessionId}) {
+function SideBar({isNewChat, setNewChat, setSelectedSession, isSelectedSession, setHome}) {
   const [chatList, setChatList] = useState([]);
   const [input, setInput] = useState("");
   const [editing, setEditing] = useState({
@@ -50,8 +50,17 @@ function SideBar({isNewChat, setNewChat, setSelectedSessionId, selectedSessionId
     isEditing: false
   });
 
-  //처음에 chatList를 불러오고
   useEffect(() => {
+    const raw = localStorage.getItem("sessionList");  
+    console.log("raw sessionList: ", raw);
+    const list = raw ? JSON.parse(raw) : []; 
+    setChatList(list);
+  }, []);
+
+  //새 채팅 생성
+  const activeClick = () => {
+    setHome(false);
+    setNewChat(true);
     const raw = localStorage.getItem("sessionList");  
     const list = raw ? JSON.parse(raw) : []; 
     const sessionId = crypto.randomUUID();
@@ -60,20 +69,19 @@ function SideBar({isNewChat, setNewChat, setSelectedSessionId, selectedSessionId
       title: "새 채팅"
     }
     list.push(newChat) //새 sessionList
-    localStorage.setItem("sessionList", list);
+    localStorage.setItem("sessionList", JSON.stringify(list));
     console.log("New Session Created: ", sessionId);
+    const raw2 = localStorage.getItem("sessionList");
+    console.log("Updated sessionList: ", raw2);
     setChatList(list);
     setNewChat(false);
-    setSelectedSessionId(sessionId);
-  }, [isNewChat]);
+    setSelectedSession({
+      sessionId: sessionId,
+      isSelected: true
+    });
+  }
 
-  //chatjsx에서는 sessionId만을 갱신함 -> 즉, Sidebar에서 따로 동기화 필요
-  //즉, newChat이 트루가 되면 chatList effect함수를 다시 실행시키는게 좋아보임.
-  //chatList -> localStorage 동기화
-  useEffect(() => {
-    localStorage.setItem("sessionList", JSON.stringify(chatList));
-  }, [chatList]);
-
+  //채팅 제목 수정
   const activeEnter = (e, sessionId) => {
     if(e.key === "Enter"){
       editTitle(input, sessionId);
@@ -94,10 +102,6 @@ function SideBar({isNewChat, setNewChat, setSelectedSessionId, selectedSessionId
     })
   }
 
-  const activeClick = () => {
-    setNewChat(true);
-  }
-
   return (
     <StyledSideBar>
       <StyledNewChatButton1 type="button" onClick={activeClick}>
@@ -105,9 +109,12 @@ function SideBar({isNewChat, setNewChat, setSelectedSessionId, selectedSessionId
       </StyledNewChatButton1>
       <StyledChatList>
         {chatList.map((chat) => (
-          <StyledChatListItem key={chat.sessionId} $isSelected={selectedSessionId === chat.sessionId}>
+          <StyledChatListItem key={chat.sessionId} $isSelected={isSelectedSession.sessionId === chat.sessionId}>
             {!(editing.isEditing && editing.sessionId === chat.sessionId) && <div onClick={() => {
-              setSelectedSessionId(chat.sessionId);}}>
+              setSelectedSession({
+                sessionId: chat.sessionId,
+                isSelected: true
+              });}}>
               {chat.title}
             </div>}
               {(editing.isEditing && editing.sessionId === chat.sessionId) && 

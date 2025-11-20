@@ -7,7 +7,7 @@ const Div = styled.div`
   position: fixed;
   top: 5%;
   bottom: 5%;
-  left: 90px;  
+  left: 240px;  
   right: 470px;    
   background: #705454ff;
   z-index: 10;
@@ -27,7 +27,7 @@ const Div = styled.div`
 // fetch하여 해당하는 history를 받고 messages에 표현하면 될듯 
 // case 2: 새 채팅 생성의 경우 새로 sessionId를 만들고 이하 똑같이 진행
 
-function Chat({isNewChat, setSelectedSessionId, selectedSessionId}) {
+function Chat({isNewChat, setSelectedSession, isSelectedSession}) {
 
   //새로고침 시
   useEffect (() => {
