@@ -62,6 +62,7 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
 
     const list = await storage.loadSessionList();
     list.push(newChat);
+    console.log(list);
     await storage.saveSessionList(list);
     setChatList(list);
 

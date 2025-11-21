@@ -45,7 +45,7 @@ export async function responseToText(response) {
   }
 }
 
-export async function responseToJson(stream) {
+export async function responseToJson(response) {
   try {
     return await response.json();
   } catch (err) {
