@@ -1,14 +1,9 @@
 import { Redis } from '@upstash/redis';
 
-//그러면 구조를 정리해서, 
-// 다른 chat들은 database에, 
-// chat 눌러서 들어가면 session을 
-// database로 쏴서 messages를 받아오고 화면 랜더링, 
-// 그리고 해당 messages는 항상 localStorage와 동기화, 
-// 만약 chat을 바꾸면 localStorage는 비우고 localStorage
-// 내부의 메시지를 fetch로 database에 전달. 
-// 그 외에 응답처리는 stream.js가 맡고, 
-// stream.js로 쏴줄 history는 localStorage 사용. ㄱㅊ?
+export const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_URL,
+});
 
 export default async function handler(req, res) {
   const enc = new TextEncoder(); 
@@ -47,9 +42,14 @@ export default async function handler(req, res) {
   for await (const chunk of req) {
     body += dec.decode(chunk, { stream: true });
   }
-  const { prompt, isNewSession } = JSON.parse(body);
+  //여기서 전달된 body는 sessionId와 history를 담는 객체라고 가정.
+  
+  const obj = JSON.parse(body);
+  const sessionId = obj.sessionId; //string
+  const history = obj.history; //array
+
+  await redis.set("sessionId", "history");
 
   
-
 
 }
