@@ -47,7 +47,7 @@ export async function responseToText(response) {
 
 export async function responseToJson(response) {
   try {
-    console.log("response:" + response);
+    console.log("response:" + stringifyJson(response));
     return await response.json();
   } catch (err) {
     console.error("[responseToJson] response.Json() failed:", err);
