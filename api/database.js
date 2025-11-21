@@ -36,6 +36,7 @@ export default async function handler(req, res) {
 
   //input 받음
   const input = await utils.streamToJson(req);
+  console.log("input: ", input);
 
   for (const key in headers){
     res.setHeader(key, headers[key]);
