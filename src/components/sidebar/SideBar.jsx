@@ -52,7 +52,7 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
     chatListSync;
   }, []);
 
-  const activeClick = () => {
+  const activeClick = async () => {
     setHome(false); 
     const sessionId = crypto.randomUUID();
     const newChat = {
@@ -60,9 +60,9 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
       title: "새 채팅"
     }
 
-    const list = storage.loadSessionList();
+    const list = await storage.loadSessionList();
     list.push(newChat);
-    storage.saveSessionList(list);
+    await storage.saveSessionList(list);
     setChatList(list);
 
     setSelectedSession({
@@ -71,8 +71,8 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
     });
   }
 
-  const chatListSync = () => {
-    const list = storage.loadSessionList();  
+  const chatListSync = async () => {
+    const list = await storage.loadSessionList();  
     console.log("sessionList: ", list);
     setChatList(list);
   }
@@ -86,14 +86,14 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
   }
 
   const editTitle = (input, sessionId) => {
-    setChatList((prev) => {
+    setChatList(async (prev) => {
       let newChatList = [...prev];
       const index = newChatList.findIndex(item => item.sessionId === sessionId);
       newChatList[index] = {
         title: input,
         sessionId: sessionId
       };
-      storage.saveSessionList(newChatList);
+      await storage.saveSessionList(newChatList);
       return newChatList; 
     })
   }

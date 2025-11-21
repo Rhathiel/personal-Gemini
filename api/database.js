@@ -23,7 +23,7 @@ export default async function handler(req, res) {
       res.setHeader(key, corsHeaders[key]);
       console.log("key, corseHeaders[key]: ", key, corsHeaders[key]);
     }
-    res.status(200).json({ ok: true })
+    res.status(204).end();
     return;
   }
   if (req.method !== "POST") {
