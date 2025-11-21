@@ -33,13 +33,7 @@ export default async function handler(req, res) {
     res.status(405).end( "Method Not Allowed" );
     return;
   } 
-
-  let body = "";
-  for await (const chunk of req){
-    body += utils.decodeText(chunk);
-  }
-  console.log(body);
-
+  
   //input 받음
   const input = await utils.streamToJson(req);
   console.log("input: ", input);
