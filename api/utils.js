@@ -39,7 +39,7 @@ export function stringifyJson(json) {
 export async function streamToText(stream) {
   try {
     let body = "";
-    for (chunk of stream){
+    for await (const chunk of stream){
       body += decodeText(chunk);
     }
     return body;
@@ -51,7 +51,7 @@ export async function streamToText(stream) {
 export async function streamToJson(stream) {
   try {
     let body = "";
-    for (chunk of stream){
+    for await (const chunk of stream){
       body += decodeText(chunk);
     }
     return await parseText(body);
