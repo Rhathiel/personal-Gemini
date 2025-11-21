@@ -1,10 +1,21 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components'
 import * as storage from '../../lib/storage.jsx'
+import PopupMenu from './PopupMenu.jsx';
+
+let Div = styled.div`
+`;
 
 let StyledSideBar = styled.div`
     left: 0;
-    transform: translateX(-150px);
+    top: 0;
+    transform: ${({$menu_visiable}) => {
+      if($menu_visiable === false){
+        return("translateX(-150px)")
+      }else{
+        return("translateX(0px)")
+      }
+    }};
     width: 200px;
     height: 100%;
     background: #151515ff;
@@ -47,8 +58,12 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
     sessionId: null,
     isEditing: false
   });
+  const [menu, setMenu] = useState({
+    x: 0, y: 0, visiable: false, sessionId: null, input: ""
+  });
 
   useEffect(() => {
+    chatListSync()
   }, []);
 
   const activeClick = async () => {
@@ -61,9 +76,8 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
 
     const list = await storage.loadSessionList();
     list.push(newChat);
-    console.log(list);
-    await storage.saveSessionList(list);
     setChatList(list);
+    await storage.saveSessionList(list);
 
     setSelectedSession({
       sessionId: sessionId,
@@ -85,55 +99,59 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
     }
   }
 
-  const editTitle = (input, sessionId) => {
-    setChatList(async (prev) => {
-      let newChatList = [...prev];
-      const index = newChatList.findIndex(item => item.sessionId === sessionId);
-      newChatList[index] = {
-        title: input,
-        sessionId: sessionId
-      };
-      await storage.saveSessionList(newChatList);
-      return newChatList; 
+  const editTitle = async (input, sessionId) => {
+    const list = await storage.loadSessionList();
+    const index = list.findIndex(item => item.sessionId === sessionId);
+    list[index] = {
+      title: input,
+      sessionId: sessionId
+    };
+    setChatList(list);
+    await storage.saveSessionList(list);
+  }
+
+  const isOpened = (e, sessionId, title) => {
+    const rect = e.target.getBoundingClientRect();
+    setMenu({
+      x: rect.left,
+      y: rect.bottom,
+      visiable: true,
+      sessionId: sessionId, 
+      input: title
     })
   }
 
   return (
-    <StyledSideBar>
-      <StyledNewChatButton1 type="button" onClick={activeClick}>
-        새 채팅
-      </StyledNewChatButton1>
-      <StyledChatList>
-        {chatList.map((chat) => (
-          <StyledChatListItem key={chat.sessionId} $isSelected={isSelectedSession.sessionId === chat.sessionId}>
-            {!(editing.isEditing && editing.sessionId === chat.sessionId) && <div onClick={() => {
-              setSelectedSession({
-                sessionId: chat.sessionId,
-                isSelected: true
-              });}}>
-              {chat.title}
-            </div>}
+    <Div>
+      <StyledSideBar $menu_visiable={menu.visiable}>
+        <StyledNewChatButton1 type="button" onClick={activeClick}>
+          새 채팅
+        </StyledNewChatButton1>
+        <StyledChatList>
+          {chatList.map((chat) => (
+            <StyledChatListItem key={chat.sessionId} $isSelected={isSelectedSession.sessionId === chat.sessionId}>
+              {!(editing.isEditing && editing.sessionId === chat.sessionId) && <div onClick={() => {
+                setSelectedSession({
+                  sessionId: chat.sessionId,
+                  isSelected: true
+                });}}>
+                {chat.title}
+              </div>}
               {(editing.isEditing && editing.sessionId === chat.sessionId) && 
-              <input type="text" value={input} onChange={(e) => setInput(e.target.value)} 
-              onKeyDown={(e) => activeEnter(e, chat.sessionId)}/>}
-            <button onClick={() => {
-              if(editing.isEditing && editing.sessionId === chat.sessionId){
-                setEditing({sessionId: null, isEditing: false});
-              }else{
-                setEditing({sessionId: chat.sessionId, isEditing: true});
-                setInput(chat.title);
+                <input type="text" value={input} onChange={(e) => setInput(e.target.value)} 
+                onKeyDown={(e) => activeEnter(e, chat.sessionId)}/>
               }
-            }}>
-              수정
-            </button>
-            <button onClick={() => {
-            }}>
-              삭제
-            </button>
-          </StyledChatListItem>
-        ))}
-      </StyledChatList>
-    </StyledSideBar>
+              <button onClick={(e) => {isOpened(e, chat.sessionId, chat.title)}}>
+                메뉴
+              </button>
+            </StyledChatListItem>
+          ))}
+        </StyledChatList>
+      </StyledSideBar>
+      {menu.visiable && (<PopupMenu 
+      isClosed={() => setMenu({ ...menu, visiable: false })}
+      setEditing={setEditing} setInput={setInput} menu={menu}/>)}
+    </Div>
   );
 }
 

@@ -10,7 +10,6 @@ const Div = styled.div`
 
 function App() {
   useEffect(() => {
-    localStorage.clear()
     console.log("version: 1.2.2");
   }, []);
 
