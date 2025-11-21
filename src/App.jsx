@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-
+import Chat from './components/chat/Chat.jsx'
 import ChatHome from './components/chat/ChatHome.jsx';
 import SideBar from './components/sidebar/SideBar.jsx';
 import Monitor from './components/monitor/Monitor.jsx';
