@@ -36,7 +36,7 @@ export default async function handler(req, res) {
 
   let body = "";
   for await (const chunk of req){
-    body += decodeText(chunk);
+    body += utils.decodeText(chunk);
   }
   console.log(body);
 
