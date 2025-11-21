@@ -16,7 +16,6 @@ let StyledSideBar = styled.div`
         transform: translateX(0px);
     }
 `;
-
 let StyledNewChatButton1 = styled.button`
     display: block;
     height: 50px;
@@ -34,10 +33,8 @@ let StyledNewChatButton1 = styled.button`
         background: #3636363f;
     }
 `;
-
 let StyledChatList = styled.div`
 `;
-
 let StyledChatListItem = styled.div`
   background: #151515ff;
   background: ${(props) => (props.isSelected ? '#6c6c6c3f' : '#151515ff')};
@@ -52,34 +49,34 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
   });
 
   useEffect(() => {
-    const list = storage.loadSessionList();  
-    console.log("sessionList: ", list);
-    setChatList(list);
+    chatListSync;
   }, []);
 
-  //새 채팅 생성
   const activeClick = () => {
-    setHome(false);
-    const raw = localStorage.getItem("sessionList");  
-    const list = raw ? JSON.parse(raw) : []; 
+    setHome(false); 
     const sessionId = crypto.randomUUID();
     const newChat = {
       sessionId: sessionId,
       title: "새 채팅"
     }
-    list.push(newChat) //새 sessionList
-    localStorage.setItem("sessionList", JSON.stringify(list));
-    console.log("New Session Created: ", sessionId);
-    const raw2 = localStorage.getItem("sessionList");
-    console.log("Updated sessionList: ", raw2);
+
+    const list = storage.loadSessionList();
+    list.push(newChat);
+    storage.saveSessionList(list);
     setChatList(list);
+
     setSelectedSession({
       sessionId: sessionId,
       isSelected: true
     });
   }
 
-  //채팅 제목 수정
+  const chatListSync = () => {
+    const list = storage.loadSessionList();  
+    console.log("sessionList: ", list);
+    setChatList(list);
+  }
+
   const activeEnter = (e, sessionId) => {
     if(e.key === "Enter"){
       editTitle(input, sessionId);
@@ -96,6 +93,7 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
         title: input,
         sessionId: sessionId
       };
+      storage.saveSessionList(newChatList);
       return newChatList; 
     })
   }
@@ -127,6 +125,10 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
               }
             }}>
               수정
+            </button>
+            <button onClick={() => {
+            }}>
+              삭제
             </button>
           </StyledChatListItem>
         ))}
