@@ -1,13 +1,12 @@
 import { Redis } from '@upstash/redis';
+import * as utils from './utils.jsx';
 
 export const redis = new Redis({
   url: process.env.KV_REST_API_URL,
-  token: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
 });
 
 export default async function handler(req, res) {
-  const enc = new TextEncoder(); 
-  const dec = new TextDecoder("utf-8");
 
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -18,38 +17,56 @@ export default async function handler(req, res) {
       ...corsHeaders,
       "Content-Type": "application/json",
       "Cache-Control": "no-cache",
-      "Connection": "keep-alive"
   };  
-
   if (req.method === "OPTIONS"){
     for (const key in corsHeaders){
       res.setHeader(key, corsHeaders[key]);
       console.log("key, corseHeaders[key]: ", key, corsHeaders[key]);
     }
-    res.status(200).end();
+    res.status(200).json({ ok: true })
     return;
-  } //CORS preflight 요청 처리
-
+  }
   if (req.method !== "POST") {
     for (const key in corsHeaders){
       res.setHeader(key, corsHeaders[key]);
     }
     res.status(405).end( "Method Not Allowed" );
     return;
-  } //주소로 바로 접근하는 경우 차단
+  } 
 
-  let body = "";
-  for await (const chunk of req) {
-    body += dec.decode(chunk, { stream: true });
+  //input 받음
+  const input = await utils.streamToJson(req);
+
+  for (const key in headers){
+    res.setHeader(key, headers[key]);
+    console.log("key, headers[key]: ", key, headers[key]);
   }
-  //여기서 전달된 body는 sessionId와 history를 담는 객체라고 가정.
-  
-  const obj = JSON.parse(body);
-  const sessionId = obj.sessionId; //string
-  const history = obj.history; //array
 
-  await redis.set("sessionId", "history");
+  //save message
+  if(input.request === 1){
+    await redis.set(input.sessionId, utils.stringifyJson(input.messages));
+    res.status(200).json({ ok: true })
+    return;
+  } 
 
-  
+  //load message
+  else if(input.request === 2){
+    const output = utils.parseText(await redis.get(input.sessionId));
+    res.status(200).json(output);
+    return;
+  }
 
+  //save sessionList
+  else if(input.request === 3){
+    await redis.set("sessionList", utils.stringifyJson(input.sessionList));
+    res.status(200).json({ ok: true })
+    return;
+  }
+
+  //load sessionList
+  else if(input.request === 4){
+    const output = utils.parseText(await redis.get("sessionList"));
+    res.status(200).json(output);
+    return;
+  }
 }

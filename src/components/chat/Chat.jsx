@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import ChatInputBox from './ChatInputBox.jsx';
 import ChatMessages from './ChatMessages.jsx';
 import styled from 'styled-components';
+import * as storage from '../../lib/storage.jsx'
 
 const Div = styled.div`
   position: fixed;

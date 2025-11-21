@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import styled from 'styled-components'
+import * as storage from '../../lib/storage.jsx'
 
 let StyledSideBar = styled.div`
     left: 0;
@@ -51,9 +52,8 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
   });
 
   useEffect(() => {
-    const raw = localStorage.getItem("sessionList");  
-    console.log("raw sessionList: ", raw);
-    const list = raw ? JSON.parse(raw) : []; 
+    const list = storage.loadSessionList();  
+    console.log("sessionList: ", list);
     setChatList(list);
   }, []);
 
