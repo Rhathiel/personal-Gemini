@@ -2,15 +2,33 @@ import { useState, useEffect } from 'react';
 import styled from 'styled-components'
 import * as storage from '../../lib/storage.jsx'
 import PopupMenu from './PopupMenu.jsx';
+import { createPortal } from "react-dom";
 
 let Div = styled.div`
+`;
+
+const Closer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9998;
+  background: rgba(0,0,0,0);
+`;
+
+const StyledInput = styled.input`
+  position: absolute;
+  z-index: 9999;
+  top: ${({ y }) => y}px;
+  left: ${({ x }) => x}px;
 `;
 
 let StyledSideBar = styled.div`
     left: 0;
     top: 0;
-    transform: ${({$menu_visiable}) => {
-      if($menu_visiable === false){
+    transform: ${({$menu_visiable, $is_editing}) => {
+      if($menu_visiable === false && $is_editing === false){
         return("translateX(-150px)")
       }else{
         return("translateX(0px)")
@@ -59,7 +77,7 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
     isEditing: false
   });
   const [menu, setMenu] = useState({
-    x: 0, y: 0, visiable: false, sessionId: null, input: ""
+    x: 0, y: 0, visiable: false, sessionId: null, title: null
   });
 
   useEffect(() => {
@@ -116,14 +134,23 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
       x: rect.left,
       y: rect.bottom,
       visiable: true,
-      sessionId: sessionId, 
-      input: title
+      sessionId: sessionId,
+      title: title
+    })
+  }
+
+  const onClose = (e) => {
+    const rect = e.target.getBoundingClientRect();
+    setMenu({
+      x: rect.left,
+      y: rect.bottom,
+      visiable: false,
     })
   }
 
   return (
     <Div>
-      <StyledSideBar $menu_visiable={menu.visiable}>
+      <StyledSideBar $menu_visiable={menu.visiable} $is_editing={editing.isEditing}>
         <StyledNewChatButton1 type="button" onClick={activeClick}>
           새 채팅
         </StyledNewChatButton1>
@@ -138,8 +165,15 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
                 {chat.title}
               </div>}
               {(editing.isEditing && editing.sessionId === chat.sessionId) && 
-                <input type="text" value={input} onChange={(e) => setInput(e.target.value)} 
-                onKeyDown={(e) => activeEnter(e, chat.sessionId)}/>
+                createPortal(                
+                  <>
+                    <StyledInput type="text" value={input} onChange={(e) => setInput(e.target.value)} 
+                    onKeyDown={(e) => activeEnter(e, chat.sessionId)}/>
+                    <Closer onClick={() => {
+                      setEditing({sessionId: null, isEditing: false});
+                    }}/>
+                  </>, document.body
+                )
               }
               <button onClick={(e) => {isOpened(e, chat.sessionId, chat.title)}}>
                 메뉴
@@ -148,8 +182,7 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
           ))}
         </StyledChatList>
       </StyledSideBar>
-      {menu.visiable && (<PopupMenu 
-      isClosed={() => setMenu({ ...menu, visiable: false })}
+      {menu.visiable && (<PopupMenu onClose={onClose}
       setEditing={setEditing} setInput={setInput} menu={menu}/>)}
     </Div>
   );

@@ -24,18 +24,16 @@ const Closer = styled.div`
   background: rgba(0,0,0,0);
 `;
 
-function PopupMenu ({isClosed, setEditing, setInput, menu}){
+function PopupMenu ({onClose, setEditing, setInput, menu}){
 
   return createPortal(
     <>
-      <Closer onClick={isClosed}/>
+      <Closer onClick={onClose}/>
       <MenuWrapper x={menu.x} y={menu.y}>
-        <button onClick={() => {
-          //부모-자식이 동시에 랜더 큐에 잡히면, 자식은 항상 우선적으로 랜더된다.
-          //즉, 동시에 큐에 진입하더라도 순서에 따라 예약 순서가 바뀌므로 자식 컴포넌츠의 상태 변경이 우선적으로 오게 한다.
-          isClosed();
-          setEditing({sessionId: menu.sessionId, isEditing: true});
+        <button onClick={(e) => {
           setInput(menu.title);
+          setEditing({sessionId: menu.sessionId, isEditing: true})
+          onClose(e)
         }}>
           수정
         </button>
