@@ -67,7 +67,10 @@ export default async function handler(req, res) {
   //load sessionList
   else if(input.request === 4){
     const output = utils.parseText(await redis.get("sessionList"));
-    console.log("알랄랄라:" + output);
+    if(!output){
+      res.status(200).json([]);
+      return;
+    }
     res.status(200).json(output);
     return;
   }

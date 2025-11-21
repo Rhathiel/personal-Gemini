@@ -63,7 +63,5 @@ export async function loadSessionList() {
   body: utils.stringifyJson(obj)
   });
 
-  console.log("real_response:" + utils.stringifyJson(response));
-
   return utils.responseToJson(response) ? utils.responseToJson(response) : [];
 }
