@@ -31,7 +31,9 @@ export async function loadMessages(sessionId) {
   body: utils.stringifyJson(obj)
   });
 
-  return utils.responseToJson(response) ? utils.responseToJson(response) : [];
+  const output = utils.responseToJson(response)
+
+  return output ? output : [];
 }
 
 export async function saveSessionList(sessionList) {
@@ -63,5 +65,7 @@ export async function loadSessionList() {
   body: utils.stringifyJson(obj)
   });
 
-  return utils.responseToJson(response) ? utils.responseToJson(response) : [];
+  const output = utils.responseToJson(response)
+
+  return output ? output : [];
 }
