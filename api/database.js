@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     res.status(405).end( "Method Not Allowed" );
     return;
   } 
-  
+
   //input 받음
   const input = await utils.streamToJson(req);
   console.log("input: ", input);
@@ -66,7 +66,8 @@ export default async function handler(req, res) {
 
   //load sessionList
   else if(input.request === 4){
-    const output = utils.parseText(await redis.get("sessionList"));
+    console.log(await redis.get("sessionList"));
+    const output = await redis.get("sessionList");
     console.log(output);
     res.status(200).json(output);
     return;
