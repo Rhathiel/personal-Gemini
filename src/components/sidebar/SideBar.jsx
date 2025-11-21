@@ -49,7 +49,6 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
   });
 
   useEffect(() => {
-    chatListSync();
   }, []);
 
   const activeClick = async () => {
