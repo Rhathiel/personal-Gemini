@@ -31,7 +31,7 @@ export async function loadMessages(sessionId) {
   body: utils.stringifyJson(obj)
   });
 
-  return utils.streamToJson(response) ? utils.streamToJson(response) : [];
+  return utils.responseToJson(response) ? utils.responseToJson(response) : [];
 }
 
 export async function saveSessionList(sessionList) {
@@ -63,5 +63,5 @@ export async function loadSessionList() {
   body: utils.stringifyJson(obj)
   });
 
-  return utils.streamToJson(response) ? utils.streamToJson(response) : [];
+  return utils.responseToJson(response) ? utils.responseToJson(response) : [];
 }

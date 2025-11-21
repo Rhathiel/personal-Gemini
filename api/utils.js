@@ -20,7 +20,7 @@ export function encodeText(text) {
 export function decodeText(buffer) {
   try {
     const dec = new TextDecoder("utf-8");
-    return dec.decode(buffer);
+    return dec.decode(buffer, { stream: true });
   } catch (err) {
     console.error("[decodeText] TextDecoder failed:", err, "Input:", buffer);
     return "";
@@ -38,18 +38,24 @@ export function stringifyJson(json) {
 
 export async function streamToText(stream) {
   try {
-    return await stream.text();
+    let body = "";
+    for (chunk of stream){
+      body += decodeText(chunk);
+    }
+    return body;
   } catch (err) {
-    console.error("[streamToText] response.text() failed:", err);
     return "" // fallback
   }
 }
 
 export async function streamToJson(stream) {
   try {
-    return await stream.json();
+    let body = "";
+    for (chunk of stream){
+      body += decodeText(chunk);
+    }
+    return await parseText(body);
   } catch (err) {
-    console.error("[streamToJson] response.text() failed:", err);
     return null // fallback
   }
 }
