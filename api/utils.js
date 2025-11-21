@@ -49,7 +49,7 @@ export async function streamToJson(stream) {
   try {
     return await stream.json();
   } catch (err) {
-    console.error("[streamToText] response.text() failed:", err);
+    console.error("[streamToJson] response.text() failed:", err);
     return null // fallback
   }
 }
