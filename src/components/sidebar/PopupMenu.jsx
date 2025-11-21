@@ -1,6 +1,4 @@
-import {useState, useEffect} from 'react';
 import styled from "styled-components";
-import { createPortal } from "react-dom";
 
 const MenuWrapper = styled.div`
   position: absolute;
@@ -14,36 +12,33 @@ const MenuWrapper = styled.div`
   z-index: 9999;
 `;
 
-const Closer = styled.div`
+const Overlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5)
   z-index: 9998;
-  background: rgba(0,0,0,0);
 `;
 
 function PopupMenu ({onClose, setEditing, setInput, menu}){
-
-  return createPortal(
-    <>
-      <Closer onClick={onClose}/>
-      <MenuWrapper x={menu.x} y={menu.y}>
-        <button onClick={(e) => {
-          setInput(menu.title);
-          setEditing({sessionId: menu.sessionId, isEditing: true})
-          onClose(e)
-        }}>
-          수정
-        </button>
-        <button onClick={() => {
-        }}>
-          삭제
-        </button> 
-      </MenuWrapper>
-    </>, document.body
-  )
+  <>
+    <Closer onClick={onClose}/>
+    <MenuWrapper x={menu.x} y={menu.y}>
+      <button onClick={(e) => {
+        setInput(menu.title);
+        setEditing({sessionId: menu.sessionId, isEditing: true})
+        onClose(e)
+      }}>
+        수정
+      </button>
+      <button onClick={() => {
+      }}>
+        삭제
+      </button> 
+    </MenuWrapper>
+  </>
 }
 
 export default PopupMenu;

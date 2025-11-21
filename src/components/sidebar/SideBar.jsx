@@ -1,27 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect} from 'react';
 import styled from 'styled-components'
 import * as storage from '../../lib/storage.jsx'
 import PopupMenu from './PopupMenu.jsx';
-import { createPortal } from "react-dom";
 
 let Div = styled.div`
 `;
 
-const Closer = styled.div`
+const Overlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5)
   z-index: 9998;
-  background: rgba(0,0,0,0);
 `;
 
 const StyledInput = styled.input`
   position: absolute;
   z-index: 9999;
-  top: ${({ y }) => y}px;
-  left: ${({ x }) => x}px;
 `;
 
 let StyledSideBar = styled.div`
@@ -164,16 +161,14 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
                 });}}>
                 {chat.title}
               </div>}
-              {(editing.isEditing && editing.sessionId === chat.sessionId) && 
-                createPortal(                
-                  <>
-                    <StyledInput type="text" value={input} onChange={(e) => setInput(e.target.value)} 
-                    onKeyDown={(e) => activeEnter(e, chat.sessionId)}/>
-                    <Closer onClick={() => {
-                      setEditing({sessionId: null, isEditing: false});
-                    }}/>
-                  </>, document.body
-                )
+              {(editing.isEditing && editing.sessionId === chat.sessionId) &&           
+                <>
+                  <StyledInput type="text" value={input} onChange={(e) => setInput(e.target.value)} 
+                  onKeyDown={(e) => activeEnter(e, chat.sessionId)}/>
+                  <Overlay onClick={() => {
+                    setEditing({sessionId: null, isEditing: false});
+                  }}/>
+                </>
               }
               <button onClick={(e) => {isOpened(e, chat.sessionId, chat.title)}}>
                 메뉴
