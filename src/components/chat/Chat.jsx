@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import ChatSessionInputBox from './ChatSessionInputBox.jsx';
 import ChatMessages from './ChatMessages.jsx';
 import * as storage from '../../lib/storage.jsx'
+import * as utils from '../../lib/utils.jsx'
 import {Div} from './chat.styled.jsx'
 
 function Chat({uiState, chatCommand, setChatCommand}) {
@@ -74,7 +75,7 @@ function Chat({uiState, chatCommand, setChatCommand}) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ messages: messages })
+      body: utils.stringifyJson({ messages: messages })
     });
 
     try {

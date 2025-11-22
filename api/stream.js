@@ -98,7 +98,6 @@ export default async function handler(req, res) {
           this.push(enc.encode(JSON.stringify({ sessionId: sessionId })));
         }
         if (isApiError === true) {
-          console.log(output);
           let error = JSON.stringify(output,["error", "status", "code"]);
           this.push(enc.encode(error));
           this.push(null);
