@@ -1,13 +1,7 @@
 import { useState } from "react";
-import styled from 'styled-components'
+import {StyledSessionInput, StyledHomeInput} from './chat.styled.jsx'
 
-let StyledInput = styled.input`
-    width: 90%;
-    margin = 10px auto 10px auto;
-    border-radius: 16px;
-`;
-
-function ChatInputBox({sendPrompt}) {
+function ChatInputBox({sendPrompt, uiState}) {
     const [input, setInput] = useState("");
     
     const activeEnter = (e) => {
@@ -16,18 +10,29 @@ function ChatInputBox({sendPrompt}) {
             setInput("");
         }
     }
-
     const activeClick = () => {
         sendPrompt(input);
         setInput("");
     }
     
-    return (
-        <div>
-            <StyledInput type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
-            <button type="button" onClick={activeClick}>전송</button>
-        </div>
-    );
+    const Main = () => {
+        switch (uiState.mode) {
+            case "home":
+                return (<div>
+                            <StyledHomeInput type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
+                            <button type="button" onClick={activeClick}>전송</button>
+                        </div>);
+            case "session":
+                return (<div>
+                            <StyledSessionInput type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
+                            <button type="button" onClick={activeClick}>전송</button>
+                        </div>);
+            default:
+                return null;
+        }
+    };
+    
+    return <Main/>
 }   
 
 export default ChatInputBox;

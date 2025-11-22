@@ -36,7 +36,6 @@ function App() {
   //갱신 로직
   useEffect(() => {
     const obj = utils.parseText(sessionStorage.getItem("uiState"));
-    console.log(obj);
     if(obj){
       setUiState(obj);
     } else {
@@ -50,7 +49,6 @@ function App() {
   useEffect(() => {
     (async () => {
       const list = await storage.loadSessionList();  
-      console.log("sessionList: ", list);
       setChatList(list);
     })();
     setAppIsLoading(false);
@@ -77,9 +75,9 @@ function App() {
   const Main = () => {
     switch (uiState.mode) {
       case "home":
-        return <ChatHome/>;
+        return <ChatHome setChatList={setChatList} setUiState={setUiState}/>;
       case "session":
-        return <Chat/>;
+        return <Chat uiState={uiState}/>;
       default:
         return <LoadingScreen/>;
     }

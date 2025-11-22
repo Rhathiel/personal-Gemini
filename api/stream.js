@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { Readable } from 'stream';
+import * as utils from './utils'
 
 function initAI(history, showThoughts) {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -41,10 +42,7 @@ async function createOutput(chat, prompt) {
   }
 }
 
-export default async function handler(req, res) { //fetch 이후 동작
-  const enc = new TextEncoder(); 
-  const dec = new TextDecoder("utf-8");
-  //문자열 암호화, 복호화
+export default async function handler(req, res) {
 
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
@@ -52,10 +50,9 @@ export default async function handler(req, res) { //fetch 이후 동작
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
   const headers = {
-      ...corsHeaders,
-      "Content-Type": "application/json",
-      "Cache-Control": "no-cache",
-      "Connection": "keep-alive"
+    ...corsHeaders,
+    "Content-Type": "application/json",
+    "Cache-Control": "no-cache"
   };  
 
   if (req.method === "OPTIONS"){
@@ -74,40 +71,23 @@ export default async function handler(req, res) { //fetch 이후 동작
     res.status(405).end( "Method Not Allowed" );
     return;
   } //주소로 바로 접근하는 경우 차단
-
-  console.log("Processing POST request");
-
-  let body = "";
-  for await (const chunk of req) {
-    body += dec.decode(chunk, { stream: true });
-  }
-  const { prompt, isNewSession } = JSON.parse(body);
-
-  let history = [];
-  let sessionId = "";
-  if(isNewSession){
-    history = [{role, parts: [{ text: prompt }]}];
-    sessionId = crypto.randomUUID();
-    await Redis.set(`session:${sessionId}`, JSON.stringify(history));
-  } else {
     
-  }
-
-  const chat = initAI(history, false);
-
-  console.log("Received request");
-  console.log("Prompt:", prompt);
-
   for (const key in headers){
     res.setHeader(key, headers[key]);
     console.log("key, headers[key]: ", key, headers[key]);
   }
 
+  const { messages } = utils.streamToJson(req);
+  const prompt = messages[messages.length - 1];
+  const history = [
+    ...messages.slice(0, messages.length - 1)
+  ]
+  const chat = initAI(history, false);
+
   const output = await createOutput(chat, prompt);
+
   let isApiError = false;
-  
   if(typeof output?.[Symbol.asyncIterator] !== "function"){
-  //output이 asyncIterator가 아닌 경우(ApiError인 경우)
     isApiError = true;
   }
 

@@ -14,7 +14,6 @@ export async function saveMessages(sessionId, messages) {
     body: utils.stringifyJson(obj)
   });
 
-  console.log("messages has saved.", response.status);
   return response.status;
 }
 
@@ -49,7 +48,6 @@ export async function saveSessionList(sessionList) {
   body: utils.stringifyJson(obj)
   });
 
-  console.log("sessioList has saved.", response.status);
   return response.status;
 }
 
