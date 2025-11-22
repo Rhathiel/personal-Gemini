@@ -94,9 +94,6 @@ export default async function handler(req, res) {
   const stream = new Readable({
     read() {
       (async () => {
-        if(isNewSession){
-          this.push(enc.encode(JSON.stringify({ sessionId: sessionId })));
-        }
         if (isApiError === true) {
           let error = JSON.stringify(output,["error", "status", "code"]);
           this.push(enc.encode(error));

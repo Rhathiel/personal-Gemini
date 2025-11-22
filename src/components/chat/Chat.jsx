@@ -66,6 +66,7 @@ function Chat({uiState, chatCommand, setChatCommand}) {
     if (!prompt) return;
 
     const userMsg = {role: "user", parts: [{ text: prompt}]};
+
     setMessages(prev => [...prev, userMsg]);
 
     setIsDone(false);
@@ -117,7 +118,6 @@ function Chat({uiState, chatCommand, setChatCommand}) {
     }
   }
 
-  //끝나고 sessionChanged false로 끄기, 버퍼 
   if(chatCommand.isSessionChanged && chatCommand.prompt){
     (async () => {
       await sendPrompt(chatCommand.prompt)
