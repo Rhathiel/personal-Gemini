@@ -1,5 +1,5 @@
 import {Div} from './chat.styled.jsx'
-import {ChatHomeInputBox} from './ChatHomeInputBox.jsx'
+import ChatHomeInputBox from './ChatHomeInputBox.jsx'
 import * as storage from '../../lib/storage.jsx'
 
 function ChatHome({setChatList, setUiState, setChatCommand}) {
