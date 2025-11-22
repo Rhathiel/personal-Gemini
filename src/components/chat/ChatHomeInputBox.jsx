@@ -1,7 +1,7 @@
 import { useState } from "react";
-import {StyledSessionInput} from './chat.styled.jsx'
+import {StyledHomeInput} from './chat.styled.jsx'
 
-function ChatSessionInputBox({sendPrompt}) {
+function ChatHomeInputBox({sendPrompt}) {
     const [input, setInput] = useState("");
     
     const activeEnter = (e) => {
@@ -17,10 +17,10 @@ function ChatSessionInputBox({sendPrompt}) {
     
     return (
         <div>
-            <StyledSessionInput type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
+            <StyledHomeInput type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
             <button type="button" onClick={activeClick}>전송</button>
         </div>
     );
 }   
 
-export default ChatSessionInputBox;
+export default ChatHomeInputBox;

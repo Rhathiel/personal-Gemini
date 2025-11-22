@@ -4,19 +4,23 @@ import ChatMessages from './ChatMessages.jsx';
 import * as storage from '../../lib/storage.jsx'
 import {Div} from './chat.styled.jsx'
 
-function Chat({uiState}) {
+function Chat({uiState, chatCommand, setChatCommand}) {
   const [isChatLoading, setChatIsLoading] = useState(true);
   const [isDone, setIsDone] = useState(true);
   const [messages, setMessages] = useState([]);
 
   //세션 갱신
   useEffect (() => {
+    if(chatCommand.isSessionChanged === false){
+      return;
+    }
+    setIsDone(true);
     (async () => {
       const list = await storage.loadMessages(uiState.sessionId);
       setMessages(list);
     })();
     setChatIsLoading(false);
-  }, []);
+  }, [chatCommand.isSessionChanged]);
 
   //세션 저장
   useEffect (() => {
@@ -27,6 +31,17 @@ function Chat({uiState}) {
       await storage.saveMessages(uiState.sessionId, messages);
     })();
   }, [messages]);
+
+  //끝나고 sessionChanged false로 끄기, 버퍼 
+  if(chatCommand.isSessionChanged && chatCommand.prompt){
+    (async () => {
+      await sendPrompt(chatCommand.prompt)
+      setChatCommand({
+        messages: "",
+        isSessionChanged: false
+      })
+    })(); 
+  }
 
   //전달받은 decoded를 buffer객체에 담아서 갱신과 동시에 출력함.
   const printMessage = (decoded, buffer) => {

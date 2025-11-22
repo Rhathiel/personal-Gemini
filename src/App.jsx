@@ -28,7 +28,10 @@ function App() {
   });
   const [chatList, setChatList] = useState([]);
   
-  const [chatCommand, setChatCommand] = useState("");
+  const [chatCommand, setChatCommand] = useState({
+    prompt: "",
+    isSessionChanged: false
+  });
 
   //버전
   useEffect(() => {
