@@ -38,6 +38,7 @@ let StyledSideBar = styled.div`
         transform: translateX(0px);
     }
 `;
+
 let StyledNewChatButton = styled.button`
     display: block;
     height: 50px;
@@ -118,13 +119,13 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
       sessionId: sessionId,
       isSelected: true
     });
-  }
+  };
 
   const chatListSync = async () => {
     const list = await storage.loadSessionList();  
     console.log("sessionList: ", list);
     setChatList(list);
-  }
+  };
 
   const activeEnter = (e, sessionId) => {
     if(e.key === "Enter"){
@@ -132,7 +133,7 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
       setEditing({ sessionId: null, isEditing: false });
       setInput("");
     }
-  }
+  };
 
   const editTitle = async (input, sessionId) => {
     const list = await storage.loadSessionList();
@@ -143,7 +144,7 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
     };
     setChatList(list);
     await storage.saveSessionList(list);
-  }
+  };
 
   const isOpened = (e, sessionId, title) => {
     const rect = e.target.getBoundingClientRect();
@@ -154,7 +155,7 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
       sessionId: sessionId,
       title: title
     })
-  }
+  };
 
   const onClose = (e) => {
     setMenu({
@@ -164,11 +165,18 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
       sessionId: null,
       title: null
     })
-  }
+  };
 
-  const onRemove = () => {
-
-  } 
+  const onRemove = async (sessionId) => {
+    if(sessionId === isSelectedSession.sessionId){
+      setHome(true);
+    }
+    const list = await storage.loadSessionList();
+    const index = list.findIndex(item => item.sessionId === sessionId);
+    list.splice(index, 1);
+    setChatList(list);
+    await storage.saveSessionList(list);
+  };
 
   return (
     <>
@@ -180,11 +188,13 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
           {chatList.map((chat) => (
             <StyledChatListItem key={chat.sessionId} $isHover={interaction.isHover} $onClick={interaction.onClick} $selectedSessionId={isSelectedSession.sessionId}
              $currentSessionId={chat.sessionId} $interactionSessionId={interaction.sessionId}>
-              {!(editing.isEditing && editing.sessionId === chat.sessionId) && <StyledButton onClick={() => 
+              {!(editing.isEditing && editing.sessionId === chat.sessionId) && <StyledButton onClick={() => {
                 setSelectedSession({
                   sessionId: chat.sessionId,
                   isSelected: true
-                })} 
+                });
+                setHome(false);
+              }} 
                 onMouseEnter={() => setInteraction(prev => ({
                   ...prev,
                   isHover: true,

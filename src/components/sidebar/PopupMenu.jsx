@@ -29,12 +29,15 @@ return(
     <MenuWrapper x={menu.x} y={menu.y}>
       <button onClick={(e) => {
         setInput(menu.title);
-        setEditing({sessionId: menu.sessionId, isEditing: true})
-        onClose(e)
+        setEditing({sessionId: menu.sessionId, isEditing: true});
+        onClose(e);
       }}>
         수정
       </button>
-      <button onClick={onRemove}>
+      <button onClick={(e) => {
+        onRemove(menu.sessionId);
+        onClose(e);
+      }}>
         삭제
       </button> 
     </MenuWrapper>
