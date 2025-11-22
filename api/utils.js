@@ -54,7 +54,6 @@ export async function streamToJson(stream) {
     for await (const chunk of stream){
       body += decodeText(chunk);
     }
-    console.log(body);
     return await parseText(body);
   } catch (err) {
     return null // fallback
