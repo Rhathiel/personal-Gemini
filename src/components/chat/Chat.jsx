@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import ChatInputBox from './ChatInputBox.jsx';
+import ChatSessionInputBox from './ChatSessionInputBox.jsx';
 import ChatMessages from './ChatMessages.jsx';
 import * as storage from '../../lib/storage.jsx'
 import {Div} from './chat.styled.jsx'
@@ -116,7 +116,7 @@ function Chat({uiState}) {
   return (
     <Div>
       <ChatMessages messages={messages} isDone={isDone}/>
-      <ChatInputBox sendPrompt={sendPrompt} uiState={uiState}/>
+      <ChatSessionInputBox sendPrompt={sendPrompt}/>
     </Div>
   )
 }
