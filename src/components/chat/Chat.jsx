@@ -32,18 +32,6 @@ function Chat({uiState, chatCommand, setChatCommand}) {
     })();
   }, [messages]);
 
-  //끝나고 sessionChanged false로 끄기, 버퍼 
-  if(chatCommand.isSessionChanged && chatCommand.prompt){
-    (async () => {
-      await sendPrompt(chatCommand.prompt)
-      setChatCommand({
-        messages: "",
-        isSessionChanged: false
-      })
-    })(); 
-  }
-
-  //전달받은 decoded를 buffer객체에 담아서 갱신과 동시에 출력함.
   const printMessage = (decoded, buffer) => {
     if(decoded?.error){
       console.log("API Error");
@@ -126,6 +114,17 @@ function Chat({uiState, chatCommand, setChatCommand}) {
         printMessage(decoded, buffer);
       }
     }
+  }
+
+  //끝나고 sessionChanged false로 끄기, 버퍼 
+  if(chatCommand.isSessionChanged && chatCommand.prompt){
+    (async () => {
+      await sendPrompt(chatCommand.prompt)
+      setChatCommand({
+        messages: "",
+        isSessionChanged: false
+      })
+    })(); 
   }
 
   return (
