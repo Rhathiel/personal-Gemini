@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { Readable } from 'stream';
-import * as utils from './utils'
+import * as utils from './utils.js'
 
 function initAI(history, showThoughts) {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
