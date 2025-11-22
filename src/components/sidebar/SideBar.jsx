@@ -1,6 +1,5 @@
 import { useState, useEffect} from 'react';
-import styled from 'styled-components'
-import * as storage from '../../lib/storage.jsx'
+import styled from 'styled-components';
 import PopupMenu from './PopupMenu.jsx';
 
 const Overlay = styled.div`
@@ -12,6 +11,27 @@ const Overlay = styled.div`
   z-index: 9998;
 `;
 
+const StyledOpenButton = styled.button`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #151515;
+  border: none;
+  color: white;
+  cursor: pointer;
+  position: fixed;
+  top: 17px;
+  left: 17px;
+  z-index: 9999;
+  font-size: 15px;
+  &:hover {
+    background: #2a2a2a;
+  }
+  &:active {
+    background: #000000;
+  }
+`;
+
 const StyledInput = styled.input`
   position: absolute;
   z-index: 9999;
@@ -20,23 +40,14 @@ const StyledInput = styled.input`
 let StyledSideBar = styled.div`
     left: 0;
     top: 0;
-    transform: ${({$menu_visiable, $is_editing}) => {
-      if($menu_visiable === false && $is_editing === false){
-        return("translateX(-150px)")
-      }else{
-        return("translateX(0px)")
-      }
-    }};
-    width: 200px;
+    width: 250px;
     height: 100%;
     background: #151515ff;
     position: fixed;
     overflow-y: auto;
     transition: transform 0.6s;
 
-    &:hover {
-        transform: translateX(0px);
-    }
+    transform: ${({$isOpened}) => ($isOpened ? 'translateX(0px)' : 'translateX(-170px)')};
 `;
 
 let StyledNewChatButton = styled.button`
@@ -82,73 +93,62 @@ let StyledChatListItem = styled.div`
 `;
 
 
-function SideBar({setSelectedSession, isSelectedSession, setHome}) {
-  const [chatList, setChatList] = useState([]);
+function SideBar({uiState, setUiState, chatList, setChatList}) {
   const [input, setInput] = useState("");
-  const [interaction, setInteraction] = useState({
+  const [interactionListItemState, setInteractionListItemState] = useState({
     isHover: false,
     onClick: false,
-    sessionId: null
+    sessionId: null,
   });
-  const [editing, setEditing] = useState({
+  const [editState, setEditState] = useState({
     sessionId: null,
     isEditing: false
   });
-  const [menu, setMenu] = useState({
+  const [menuState, setMenuState] = useState({
     x: 0, y: 0, visiable: false, sessionId: null, title: null
   });
 
-  useEffect(() => {
-    chatListSync()
-  }, []);
-
   const activeClick = async () => {
-    setHome(true); 
-    const sessionId = crypto.randomUUID();
+    setUiState(prev => ({
+      ...prev,
+      mode: "home"
+    }))
+
     const newChat = {
-      sessionId: sessionId,
-      title: "새 채팅"
+      title: "웅히히",
+      sessionId: crypto.randomUUID()
     }
 
-    const list = await storage.loadSessionList();
-    list.push(newChat);
-    setChatList(list);
-    await storage.saveSessionList(list);
-
-    setSelectedSession({
-      sessionId: sessionId,
-      isSelected: true
-    });
-  };
-
-  const chatListSync = async () => {
-    const list = await storage.loadSessionList();  
-    console.log("sessionList: ", list);
-    setChatList(list);
+    setChatList(prev => {
+      const list = [...prev];
+      list.push(newChat);
+      return list;
+    })
   };
 
   const activeEnter = (e, sessionId) => {
     if(e.key === "Enter"){
       editTitle(input, sessionId);
-      setEditing({ sessionId: null, isEditing: false });
+      setEditState({ sessionId: null, isEditing: false });
       setInput("");
     }
   };
 
   const editTitle = async (input, sessionId) => {
-    const list = await storage.loadSessionList();
-    const index = list.findIndex(item => item.sessionId === sessionId);
-    list[index] = {
-      title: input,
-      sessionId: sessionId
-    };
-    setChatList(list);
-    await storage.saveSessionList(list);
+    setChatList(prev => {
+      const list = [...prev];
+      const index = list.findIndex(item => item.sessionId === sessionId)
+      list[index] = {
+        title: input,
+        sessionId: sessionId
+      };
+      return list
+    })
   };
 
-  const isOpened = (e, sessionId, title) => {
+  const onOpen = (e, sessionId, title) => {
     const rect = e.target.getBoundingClientRect();
-    setMenu({
+    setMenuState({
       x: rect.left,
       y: rect.bottom,
       visiable: true,
@@ -158,7 +158,7 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
   };
 
   const onClose = (e) => {
-    setMenu({
+    setMenuState({
       x: 0,
       y: 0,
       visiable: false,
@@ -168,73 +168,90 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
   };
 
   const onRemove = async (sessionId) => {
-    if(sessionId === isSelectedSession.sessionId){
-      setHome(true);
+    if(sessionId === uiState.sessionId){
+      setUiState({
+        ...prev,
+        mode: "home",
+        sessionId: null,
+      })
     }
-    const list = await storage.loadSessionList();
-    const index = list.findIndex(item => item.sessionId === sessionId);
-    list.splice(index, 1);
-    setChatList(list);
-    await storage.saveSessionList(list);
+    setChatList(prev => {
+      const list = [...prev];
+      const index = list.findIndex(item => item.sessionId === sessionId);
+      list.splice(index, 1);
+      return list;
+    })
   };
 
   return (
     <>
-      <StyledSideBar $menu_visiable={menu.visiable} $is_editing={editing.isEditing}>
+      <StyledOpenButton onClick={() => setUiState(prev => ({
+        ...prev,
+        sideIsOpened: !prev.sideIsOpened
+      }))}>
+        ☰
+      </StyledOpenButton>
+      <StyledSideBar $isOpened={uiState.sideIsOpened}>
+
         <StyledNewChatButton type="button" onClick={activeClick}>
           새 채팅
         </StyledNewChatButton>
         <StyledChatList>
           {chatList.map((chat) => (
-            <StyledChatListItem key={chat.sessionId} $isHover={interaction.isHover} $onClick={interaction.onClick} $selectedSessionId={isSelectedSession.sessionId}
-             $currentSessionId={chat.sessionId} $interactionSessionId={interaction.sessionId}>
-              {!(editing.isEditing && editing.sessionId === chat.sessionId) && <StyledButton onClick={() => {
-                setSelectedSession({
+            <StyledChatListItem key={chat.sessionId} 
+            $isHover={interactionListItemState.isHover} 
+            $onClick={interactionListItemState.onClick} 
+            $selectedSessionId={uiState.sessionId} 
+            $currentSessionId={chat.sessionId} 
+            $interactionSessionId={interactionListItemState.sessionId}>
+              {!(editState.isEditing && editState.sessionId === chat.sessionId) && 
+              <StyledButton onClick={() => {
+                setUiState(prev => ({
+                  ...prev,
                   sessionId: chat.sessionId,
-                  isSelected: true
-                });
-                setHome(false);
+                  mode: "session"
+                }))
               }} 
-                onMouseEnter={() => setInteraction(prev => ({
+                onMouseEnter={() => setInteractionListItemState(prev => ({
                   ...prev,
                   isHover: true,
                   sessionId: chat.sessionId
                 }))}
-                onMouseLeave={() => setInteraction(prev => ({
+                onMouseLeave={() => setInteractionListItemState(prev => ({
                   ...prev,
                   isHover: false,
                   sessionId: null
                 }))}
-                onMouseDown={() => setInteraction(prev => ({
+                onMouseDown={() => setInteractionListItemState(prev => ({
                   ...prev,
                   onClick: true,
                   sessionId: chat.sessionId
                 }))}                
-                onMouseUp={() => setInteraction(prev => ({
+                onMouseUp={() => setInteractionListItemState(prev => ({
                   ...prev,
                   onClick: false,
                   sessionId: null
                 }))}>                
                 {chat.title}
               </StyledButton>}
-              {(editing.isEditing && editing.sessionId === chat.sessionId) &&           
+              {(editState.isEditing && editState.sessionId === chat.sessionId) &&           
                 <>
                   <Overlay onClick={() => {
-                    setEditing({sessionId: null, isEditing: false});
+                    setEditState({sessionId: null, isEditing: false});
                   }}/>
                   <StyledInput type="text" value={input} onChange={(e) => setInput(e.target.value)} 
                   onKeyDown={(e) => activeEnter(e, chat.sessionId)}/>
                 </>
               }
-              <button onClick={(e) => {isOpened(e, chat.sessionId, chat.title)}}>
+              <button onClick={(e) => {onOpen(e, chat.sessionId, chat.title)}}>
                 메뉴
               </button>
             </StyledChatListItem>
           ))}
         </StyledChatList>
       </StyledSideBar>
-      {menu.visiable && (<PopupMenu onClose={onClose}
-      setEditing={setEditing} setInput={setInput} menu={menu} onRemove={onRemove}/>)}
+      {menuState.visiable && (<PopupMenu onClose={onClose}
+      setEditState={setEditState} setInput={setInput} menuState={menuState} onRemove={onRemove}/>)}
     </>
   );
 }

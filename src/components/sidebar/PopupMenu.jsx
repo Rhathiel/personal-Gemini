@@ -21,21 +21,21 @@ const Overlay = styled.div`
   z-index: 9998;
 `;
 
-function PopupMenu ({onClose, setEditing, setInput, menu, onRemove}){
+function PopupMenu ({onClose, setEditState, setInput, menuState, onRemove}){
 
 return(
   <>
     <Overlay onClick={onClose}/>
-    <MenuWrapper x={menu.x} y={menu.y}>
+    <MenuWrapper x={menuState.x} y={menuState.y}>
       <button onClick={(e) => {
-        setInput(menu.title);
-        setEditing({sessionId: menu.sessionId, isEditing: true});
+        setInput(menuState.title);
+        setEditState({sessionId: menuState.sessionId, isEditing: true});
         onClose(e);
       }}>
         수정
       </button>
       <button onClick={(e) => {
-        onRemove(menu.sessionId);
+        onRemove(menuState.sessionId);
         onClose(e);
       }}>
         삭제

@@ -8,12 +8,11 @@ const Div = styled.div`
   position: fixed;
   top: 5%;
   bottom: 5%;
-  left: 240px;  
+  left: 200px;  
   right: 470px;    
   background: #705454ff;
   z-index: 10;
 `;
-
 
 function Chat({isNewChat, setSelectedSession, isSelectedSession}) {
 
