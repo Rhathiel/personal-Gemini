@@ -137,11 +137,12 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
   }
 
   const onClose = (e) => {
-    const rect = e.target.getBoundingClientRect();
     setMenu({
-      x: rect.left,
-      y: rect.bottom,
+      x: 0,
+      y: 0,
       visiable: false,
+      sessionId: null,
+      title: null
     })
   }
 
@@ -163,11 +164,11 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
               </div>}
               {(editing.isEditing && editing.sessionId === chat.sessionId) &&           
                 <>
-                  <StyledInput type="text" value={input} onChange={(e) => setInput(e.target.value)} 
-                  onKeyDown={(e) => activeEnter(e, chat.sessionId)}/>
                   <Overlay onClick={() => {
                     setEditing({sessionId: null, isEditing: false});
                   }}/>
+                  <StyledInput type="text" value={input} onChange={(e) => setInput(e.target.value)} 
+                  onKeyDown={(e) => activeEnter(e, chat.sessionId)}/>
                 </>
               }
               <button onClick={(e) => {isOpened(e, chat.sessionId, chat.title)}}>

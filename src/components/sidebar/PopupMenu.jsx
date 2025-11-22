@@ -23,8 +23,10 @@ const Overlay = styled.div`
 `;
 
 function PopupMenu ({onClose, setEditing, setInput, menu}){
+
+return(
   <>
-    <Closer onClick={onClose}/>
+    <Overlay onClick={onClose}/>
     <MenuWrapper x={menu.x} y={menu.y}>
       <button onClick={(e) => {
         setInput(menu.title);
@@ -39,6 +41,6 @@ function PopupMenu ({onClose, setEditing, setInput, menu}){
       </button> 
     </MenuWrapper>
   </>
-}
+)}
 
 export default PopupMenu;
