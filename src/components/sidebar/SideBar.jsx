@@ -103,7 +103,7 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
   }, []);
 
   const activeClick = async () => {
-    setHome(false); 
+    setHome(true); 
     const sessionId = crypto.randomUUID();
     const newChat = {
       sessionId: sessionId,
