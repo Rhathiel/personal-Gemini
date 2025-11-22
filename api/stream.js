@@ -97,7 +97,7 @@ export default async function handler(req, res) {
       (async () => {
         if (isApiError === true) {
           let error = JSON.stringify(output,["error", "status", "code"]);
-          this.push(enc.encode(error));
+          this.push(utils.decodeText(error));
           this.push(null);
           return;
         }
@@ -109,9 +109,9 @@ export default async function handler(req, res) {
               (Buffer.isBuffer(chunk) && chunk.length === 0) //empty buffer
             ){ 
             let error = {error: {code: "100", status: "INVALID_CHUNK", message: "완전하지 않은 청크."}};
-            this.push(enc.encode(JSON.stringify(error)));
+            this.push(utils.encodeText(utils.stringifyJson(error)));
           } else{
-            this.push(enc.encode(JSON.stringify(chunk)));
+            this.push(utils.encodeText(utils.stringifyJson(chunk)));
           }
         }
         this.push(null);
