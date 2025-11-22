@@ -169,11 +169,11 @@ function SideBar({uiState, setUiState, chatList, setChatList}) {
 
   const onRemove = async (sessionId) => {
     if(sessionId === uiState.sessionId){
-      setUiState({
+      setUiState(prev => ({
         ...prev,
         mode: "home",
         sessionId: null,
-      })
+      }))
     }
     setChatList(prev => {
       const list = [...prev];
