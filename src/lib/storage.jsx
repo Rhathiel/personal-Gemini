@@ -13,6 +13,7 @@ export async function saveMessages(sessionId, messages) {
     },
     body: utils.stringifyJson(obj)
   });
+  console.log("succesfully responsed:", response.status);
 
   return response.status;
 }
@@ -30,7 +31,9 @@ export async function loadMessages(sessionId) {
   body: utils.stringifyJson(obj)
   });
 
+  console.log(response);
   const output = await utils.responseToJson(response)
+  console.log("output:" + output);
 
   return output ? output : [];
 }

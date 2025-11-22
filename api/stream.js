@@ -97,6 +97,7 @@ export default async function handler(req, res) {
       (async () => {
         if (isApiError === true) {
           let error = JSON.stringify(output,["error", "status", "code"]);
+          console.log("테스트테스트테스트테스트");
           this.push(utils.decodeText(error));
           this.push(null);
           return;

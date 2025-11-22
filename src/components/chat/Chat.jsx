@@ -4,11 +4,15 @@ import ChatMessages from './ChatMessages.jsx';
 import * as storage from '../../lib/storage.jsx'
 import * as utils from '../../lib/utils.jsx'
 import {Div} from './chat.styled.jsx'
+import { StaticElement } from 'three/examples/jsm/transpiler/AST.js';
 
 function Chat({uiState, chatCommand, setChatCommand}) {
-  const [isChatLoading, setChatIsLoading] = useState(true);
-  const [isDone, setIsDone] = useState(true);
   const [messages, setMessages] = useState([]);
+  const [state, setState] = useState({
+    isFetching: false,
+    isChatLoading: false,
+    isDone: true
+  })
 
   //세션 갱신
   useEffect (() => {
@@ -21,88 +25,79 @@ function Chat({uiState, chatCommand, setChatCommand}) {
       setMessages(list);
     })();
     setChatIsLoading(false);
-  }, [chatCommand.isSessionChanged]);
+  }, [chatCommand.isSessionChanged, uiState.sessionId]);
 
   //세션 저장
   useEffect (() => {
     (async () => {
-      if(isChatLoading === true){
+      if(state.isChatLoading === true){
         return;
       }
       await storage.saveMessages(uiState.sessionId, messages);
     })();
-  }, [messages]);
+  }, [messages, state.isChatLoading, uiState.sessionId]);
 
-  const printMessage = (decoded, buffer) => {
-    if(decoded?.error){
-      console.log("API Error");
-      buffer.sumText = buffer.sumText + "\n" + "Status: " + decoded.error.status + "\n" + "Code: " + decoded.error.code; 
-      setMessages(prev => {
-        let newMessages = [...prev];
-        newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: buffer.sumText }]};
-        return newMessages; 
+  //response 받기
+  useEffect (() => {
+    (async () => {
+      if(state.isDone && !state.isFetching){
+        return;
+      }//이후 messages 갱신부터 effect가 실행되는걸 막아줌
+
+      const response = await fetch("https://personal-gemini.vercel.app/api/stream", {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: utils.stringifyJson({ messages: messages }) 
       });
-    } else if(decoded?.candidates?.[0]?.content?.parts?.[0]?.text?.trim()){
-      const { role, parts } = decoded.candidates[0].content; 
-      buffer.sumText = buffer.sumText + parts[0].text;
-      setMessages(prev => {
-        let newMessages = [...prev];
-        newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer.sumText }]};
-        return newMessages;
-      }); 
-      if (decoded?.candidates?.[0]?.finishReason === "MAX_TOKENS"){
-        setMessages(prev => {
-          let newMessages = [...prev];
-          newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer.sumText + "토큰이 최대에 도달했습니다. 다시 시도해주세요." }]};
-          return newMessages;
-        }); 
+
+      setState(prev => ({
+        ...prev,
+        isFetching: false
+      }))
+
+      try {
+        await streaming(response);
+      } catch(e){
+        console.error(e);
       }
-    }
-  }
+      finally { 
+        setState(prev => ({
+          ...prev,
+          isDone: true
+        }))
+      }
+    })();
+  }, [messages, state]);
 
+ //effect trigger
   const sendPrompt = async (prompt) => {
-
-    if (!isDone) return;
+    if (!state.isDone) return;
     if (!prompt) return;
 
     const userMsg = {role: "user", parts: [{ text: prompt}]};
-
     setMessages(prev => [...prev, userMsg]);
 
-    setIsDone(false);
-
-    const response = await fetch("https://personal-gemini.vercel.app/api/stream", {
-      method: "POST", 
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: utils.stringifyJson({ messages: messages })
-    });
-
-    try {
-      await streaming(response);
-    } catch(e){
-      console.error(e);
-    }
-    finally { 
-      setIsDone(true);
-    }
+    setState(prev => ({
+      ...prev,
+      isDone: false,
+      isFetching: true
+    }))
   }
-
+ 
   const streaming = async(response) => {
-    const dec = new TextDecoder("utf-8"); 
-    let buffer = {sumText: ""};
+    let buffer = "";
     let queue = "";
     let decoded = {}; 
-    setMessages(prev => [...prev, null]);
+    setMessages(prev => [...prev, null]); //갱신됐지만 조건분기해서 use에 안걸림
     for await (const chunk of response.body){
       try{
-        queue += dec.decode(chunk, { stream: true });
+        queue += utils.decodeText(chunk);
         if(queue.includes("}{")){
           queue = "[" + queue.split("}{").join("},{") + "]";
         }
-        decoded = JSON.parse(queue); 
-        console.log(decoded);
+        decoded = utils.parseText(queue); 
         queue = "";
       } catch(e) {
         console.error(e);
@@ -118,6 +113,35 @@ function Chat({uiState, chatCommand, setChatCommand}) {
     }
   }
 
+  const printMessage = (decoded, buffer) => {
+    if(decoded?.error){
+      console.log("API Error");
+      buffer = buffer + "\n" + "Status: " + decoded.error.status + "\n" + "Code: " + decoded.error.code; 
+      setMessages(prev => {
+        let newMessages = [...prev];
+        newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: buffer }]};
+        return newMessages; 
+      });
+    } else if(decoded?.candidates?.[0]?.content?.parts?.[0]?.text?.trim()){
+      const { role, parts } = decoded.candidates[0].content; 
+      buffer = buffer + parts[0].text;
+      setMessages(prev => {
+        let newMessages = [...prev];
+        newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer }]};
+        return newMessages;
+      }); 
+      if (decoded?.candidates?.[0]?.finishReason === "MAX_TOKENS"){
+        setMessages(prev => {
+          let newMessages = [...prev];
+          newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer + "토큰이 최대에 도달했습니다. 다시 시도해주세요." }]};
+          return newMessages;
+        }); 
+      }
+    }
+  }
+
+
+
   if(chatCommand.isSessionChanged && chatCommand.prompt){
     (async () => {
       await sendPrompt(chatCommand.prompt)
@@ -130,7 +154,7 @@ function Chat({uiState, chatCommand, setChatCommand}) {
 
   return (
     <Div>
-      <ChatMessages messages={messages} isDone={isDone}/>
+      <ChatMessages messages={messages} isDone={state.isDone}/>
       <ChatSessionInputBox sendPrompt={sendPrompt}/>
     </Div>
   )
