@@ -78,6 +78,7 @@ export default async function handler(req, res) {
   }
 
   const { messages } = await utils.streamToJson(req);
+  console.log(messages);
   const prompt = messages[messages.length - 1];
   const history = [
     ...messages.slice(0, messages.length - 1)
