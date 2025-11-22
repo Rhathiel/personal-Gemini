@@ -3,10 +3,6 @@ import Chat from './components/chat/Chat.jsx'
 import ChatHome from './components/chat/ChatHome.jsx';
 import SideBar from './components/sidebar/SideBar.jsx';
 import Monitor from './components/monitor/Monitor.jsx';
-import styled from 'styled-components';
-
-const Div = styled.div`
-`;
 
 function App() {
   useEffect(() => {
@@ -21,7 +17,7 @@ function App() {
   });
   
   return (
-    <Div>
+    <>
       <SideBar 
       setSelectedSession={setSelectedSession}
       isSelectedSession={isSelectedSession}
@@ -35,7 +31,7 @@ function App() {
         />
       }
       <Monitor />
-    </Div>
+    </>
   )
 }
 

@@ -3,16 +3,12 @@ import styled from 'styled-components'
 import * as storage from '../../lib/storage.jsx'
 import PopupMenu from './PopupMenu.jsx';
 
-let Div = styled.div`
-`;
-
 const Overlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5)
   z-index: 9998;
 `;
 
@@ -42,7 +38,7 @@ let StyledSideBar = styled.div`
         transform: translateX(0px);
     }
 `;
-let StyledNewChatButton1 = styled.button`
+let StyledNewChatButton = styled.button`
     display: block;
     height: 50px;
     width: 90%;
@@ -59,16 +55,40 @@ let StyledNewChatButton1 = styled.button`
         background: #3636363f;
     }
 `;
+
+let StyledButton = styled.button`
+    display: block;
+    width: 90%;
+    border-radius: 50px;
+    border: 0px;
+    background: rgba(0, 0, 0, 0);
+`;
+
 let StyledChatList = styled.div`
 `;
+
 let StyledChatListItem = styled.div`
-  background: #151515ff;
-  background: ${(props) => (props.isSelected ? '#6c6c6c3f' : '#151515ff')};
+  background: ${({$currentSessionId, $selectedSessionId, $isHover, $onClick, $interactionSessionId}) => 
+    ($currentSessionId === $selectedSessionId? 
+      '#6c6c6c3f' 
+      : (($onClick) && ($currentSessionId === $interactionSessionId) ? 
+        '#3636363f' 
+        : (($isHover) && ($currentSessionId === $interactionSessionId) ? 
+          '#6c6c6c3f' 
+          : '#151515ff'))    
+    )
+  };
 `;
+
 
 function SideBar({setSelectedSession, isSelectedSession, setHome}) {
   const [chatList, setChatList] = useState([]);
   const [input, setInput] = useState("");
+  const [interaction, setInteraction] = useState({
+    isHover: false,
+    onClick: false,
+    sessionId: null
+  });
   const [editing, setEditing] = useState({
     sessionId: null,
     isEditing: false
@@ -146,22 +166,47 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
     })
   }
 
+  const onRemove = () => {
+
+  } 
+
   return (
-    <Div>
+    <>
       <StyledSideBar $menu_visiable={menu.visiable} $is_editing={editing.isEditing}>
-        <StyledNewChatButton1 type="button" onClick={activeClick}>
+        <StyledNewChatButton type="button" onClick={activeClick}>
           새 채팅
-        </StyledNewChatButton1>
+        </StyledNewChatButton>
         <StyledChatList>
           {chatList.map((chat) => (
-            <StyledChatListItem key={chat.sessionId} $isSelected={isSelectedSession.sessionId === chat.sessionId}>
-              {!(editing.isEditing && editing.sessionId === chat.sessionId) && <div onClick={() => {
+            <StyledChatListItem key={chat.sessionId} $isHover={interaction.isHover} $onClick={interaction.onClick} $selectedSessionId={isSelectedSession.sessionId}
+             $currentSessionId={chat.sessionId} $interactionSessionId={interaction.sessionId}>
+              {!(editing.isEditing && editing.sessionId === chat.sessionId) && <StyledButton onClick={() => 
                 setSelectedSession({
                   sessionId: chat.sessionId,
                   isSelected: true
-                });}}>
+                })} 
+                onMouseEnter={() => setInteraction(prev => ({
+                  ...prev,
+                  isHover: true,
+                  sessionId: chat.sessionId
+                }))}
+                onMouseLeave={() => setInteraction(prev => ({
+                  ...prev,
+                  isHover: false,
+                  sessionId: null
+                }))}
+                onMouseDown={() => setInteraction(prev => ({
+                  ...prev,
+                  onClick: true,
+                  sessionId: chat.sessionId
+                }))}                
+                onMouseUp={() => setInteraction(prev => ({
+                  ...prev,
+                  onClick: false,
+                  sessionId: null
+                }))}>                
                 {chat.title}
-              </div>}
+              </StyledButton>}
               {(editing.isEditing && editing.sessionId === chat.sessionId) &&           
                 <>
                   <Overlay onClick={() => {
@@ -179,8 +224,8 @@ function SideBar({setSelectedSession, isSelectedSession, setHome}) {
         </StyledChatList>
       </StyledSideBar>
       {menu.visiable && (<PopupMenu onClose={onClose}
-      setEditing={setEditing} setInput={setInput} menu={menu}/>)}
-    </Div>
+      setEditing={setEditing} setInput={setInput} menu={menu} onRemove={onRemove}/>)}
+    </>
   );
 }
 

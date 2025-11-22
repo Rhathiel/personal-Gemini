@@ -18,11 +18,10 @@ const Overlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5)
   z-index: 9998;
 `;
 
-function PopupMenu ({onClose, setEditing, setInput, menu}){
+function PopupMenu ({onClose, setEditing, setInput, menu, onRemove}){
 
 return(
   <>
@@ -35,8 +34,7 @@ return(
       }}>
         수정
       </button>
-      <button onClick={() => {
-      }}>
+      <button onClick={onRemove}>
         삭제
       </button> 
     </MenuWrapper>
