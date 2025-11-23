@@ -37,7 +37,7 @@ function Monitor() {
                     target={[0, 10, 0]} // 모델 중심 쪽으로 맞추고 싶으면 여기 값 조정
                     />
                 <Suspense fallback={null}>
-                    <MmdModel url="/personal-Gemini/model/PMX/maguro.pmx"/>
+                    <MmdModel url="/personal-Gemini/model/PMX/zundamon.pmx"/>
                 </Suspense>
             </Canvas>
         </Div>
