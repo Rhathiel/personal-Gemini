@@ -4,43 +4,54 @@ import ChatMessages from './ChatMessages.jsx';
 import * as storage from '../../lib/storage.jsx'
 import * as utils from '../../lib/utils.jsx'
 import {Div} from './chat.styled.jsx'
-import { StaticElement } from 'three/examples/jsm/transpiler/AST.js';
 
 function Chat({uiState, chatCommand, setChatCommand}) {
   const [messages, setMessages] = useState([]);
   const [state, setState] = useState({
     isFetching: false,
     isChatLoading: false,
-    isDone: true
+    isDone: true,
+    isSaving: false
   })
+
+  //isDone은 sessionChanged보다 강하면 안됨. 
+
+  //세션 변경
+  useEffect (() => {
+    if(state.isSessionChanged === true){
+      setState(prev ({
+        ...prev,
+        isDone: true,
+
+      }))
+    }
+  }, [chatCommand.isSessionChanged]);
 
   //세션 갱신
   useEffect (() => {
-    if(chatCommand.isSessionChanged === false){
-      return;
-    }
-    setIsDone(true);
     (async () => {
       const list = await storage.loadMessages(uiState.sessionId);
       setMessages(list);
     })();
-    setChatIsLoading(false);
-  }, [chatCommand.isSessionChanged, uiState.sessionId]);
+    setState(prev => ({
+      ...prev,
+      isChatLoading: false
+    }))
+  }, [uiState.sessionId]);
 
   //세션 저장
   useEffect (() => {
     (async () => {
-      if(state.isChatLoading === true){
+      if(state.isSaving !== true){
         return;
       }
       await storage.saveMessages(uiState.sessionId, messages);
     })();
   }, [messages, state.isChatLoading, uiState.sessionId]);
 
-  //response 받기
   useEffect (() => {
     (async () => {
-      if(state.isDone && !state.isFetching){
+      if(!state.isFetching){ //isDone -> 응답 초기 시작, 이후 응답 완전히 끝날때까지 
         return;
       }//이후 messages 갱신부터 effect가 실행되는걸 막아줌
 
@@ -69,13 +80,10 @@ function Chat({uiState, chatCommand, setChatCommand}) {
         }))
       }
     })();
-  }, [messages, state]);
+  }, [messages, state.isFetching]);
 
  //effect trigger
   const sendPrompt = async (prompt) => {
-    if (!state.isDone) return;
-    if (!prompt) return;
-
     const userMsg = {role: "user", parts: [{ text: prompt}]};
     setMessages(prev => [...prev, userMsg]);
 
@@ -90,7 +98,7 @@ function Chat({uiState, chatCommand, setChatCommand}) {
     let buffer = "";
     let queue = "";
     let decoded = {}; 
-    setMessages(prev => [...prev, null]); //갱신됐지만 조건분기해서 use에 안걸림
+    setMessages(prev => [...prev, {role: "model", parts: [{ text: "" }]}]);
     for await (const chunk of response.body){
       try{
         queue += utils.decodeText(chunk);
@@ -140,22 +148,10 @@ function Chat({uiState, chatCommand, setChatCommand}) {
     }
   }
 
-
-
-  if(chatCommand.isSessionChanged && chatCommand.prompt){
-    (async () => {
-      await sendPrompt(chatCommand.prompt)
-      setChatCommand({
-        messages: "",
-        isSessionChanged: false
-      })
-    })(); 
-  }
-
   return (
     <Div>
       <ChatMessages messages={messages} isDone={state.isDone}/>
-      <ChatSessionInputBox sendPrompt={sendPrompt}/>
+      <ChatSessionInputBox sendPrompt={sendPrompt} state={state}/>
     </Div>
   )
 }

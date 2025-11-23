@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {StyledSessionInput} from './chat.styled.jsx'
 
-function ChatSessionInputBox({sendPrompt}) {
+function ChatSessionInputBox({sendPrompt, state}) {
     const [input, setInput] = useState(() => {
         return sessionStorage.getItem("input") ?? "";
     });
@@ -10,21 +10,23 @@ function ChatSessionInputBox({sendPrompt}) {
         sessionStorage.setItem("input", input);
     }, [input]);
     
-    const activeEnter = (e) => {
-        if(e.key === "Enter"){
-            sendPrompt(input);
-            setInput("");
-        }
-    }
-    const activeClick = () => {
+    const active = () => {
         sendPrompt(input);
         setInput("");
     }
-    
+
     return (
         <div>
-            <StyledSessionInput type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => activeEnter(e)}/>
-            <button type="button" onClick={activeClick}>전송</button>
+            <StyledSessionInput type="text" value={input} onChange={(e) => setInput(e.target.value)} 
+            onKeyDown={(e) => {
+                if(e.key === "Enter"){
+                    if(!state.isDone || !input) {
+                        return;
+                    }
+                    active(e);
+                }
+            }}/>
+            <button disabled={!state.isDone || !input} type="button" onClick={active}>전송</button>
         </div>
     );
 }   
