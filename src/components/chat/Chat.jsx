@@ -41,11 +41,11 @@ function Chat({uiState, chatCommand, setChatCommand}) {
   useEffect (() => {
 
     const interval = setInterval(() => {
-
+      
     }, 8000);
 
 
-  }, []), 
+  }, [messages, uiState.sessionId]), 
 
   useEffect (() => {
     (async () => {
