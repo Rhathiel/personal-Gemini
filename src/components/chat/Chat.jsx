@@ -14,15 +14,12 @@ function Chat({uiState, chatCommand, setChatCommand}) {
     isSaving: false
   })
 
-  //isDone은 sessionChanged보다 강하면 안됨. 
-
   //세션 변경
   useEffect (() => {
     if(state.isSessionChanged === true){
       setState(prev ({
         ...prev,
         isDone: true,
-
       }))
     }
   }, [chatCommand.isSessionChanged]);
@@ -40,6 +37,27 @@ function Chat({uiState, chatCommand, setChatCommand}) {
   }, [uiState.sessionId]);
 
   //세션 저장
+
+  useEffect (() => {
+
+    const interval = setInterval(() => {
+
+    }, 8000);
+
+
+  }, []), 
+
+  useEffect (() => {
+    (async () => {
+      if(state.isSaving !== true){
+        return;
+      }
+      await storage.saveMessages(uiState.sessionId, messages);
+    })();
+  }, [messages, state.isChatLoading, uiState.sessionId, state.isSaving]);
+
+
+  //세션 변경 시 저 
   useEffect (() => {
     (async () => {
       if(state.isSaving !== true){
@@ -82,6 +100,7 @@ function Chat({uiState, chatCommand, setChatCommand}) {
     })();
   }, [messages, state.isFetching]);
 
+  
  //effect trigger
   const sendPrompt = async (prompt) => {
     const userMsg = {role: "user", parts: [{ text: prompt}]};
