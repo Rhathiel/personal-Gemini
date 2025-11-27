@@ -17,7 +17,7 @@ function Chat({uiState, chatCommand, setChatCommand}) {
   //세션 변경
   useEffect (() => {
     if(state.isSessionChanged === true){
-      setState(prev ({
+      setState(prev => ({
         ...prev,
         isDone: true,
       }))
