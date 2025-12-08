@@ -9,7 +9,7 @@ import {
   StyledButton,
   StyledChatList,
   StyledChatListItem,
-} from "./sidebar.styled.jsx";
+} from "./Sidebar.styled.jsx";
 
 function SideBar({uiState, setUiState, chatList, setChatList}) {
   const [input, setInput] = useState("");

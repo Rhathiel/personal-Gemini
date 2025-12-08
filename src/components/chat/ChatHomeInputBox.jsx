@@ -1,15 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {StyledHomeInput} from './Chat.styled.jsx'
 
 function ChatHomeInputBox({sendPrompt}) {
 
     const [input, setInput] = useState(() => {
-        return sessionStorage.getItem("input") ?? "";
+        return sessionStorage.getItem("chathomeinput") ?? "";
     });
 
     useEffect(() => {
-    sessionStorage.setItem("input", input);
+        sessionStorage.setItem("chathomeinput", input);
     }, [input]);
+    //input 갱신마다 setItem 해줌. 새로고침하면 바로 불러옴. input이 
     
     const activeEnter = (e) => {
         if(e.key === "Enter"){

@@ -3,11 +3,11 @@ import {StyledSessionInput} from './Chat.styled.jsx'
 
 function ChatSessionInputBox({sendPrompt, state}) {
     const [input, setInput] = useState(() => {
-        return sessionStorage.getItem("input") ?? "";
+        return sessionStorage.getItem("chatsessioninput") ?? "";
     });
 
     useEffect(() => {
-        sessionStorage.setItem("input", input);
+        sessionStorage.setItem("chatsessioninput", input);
     }, [input]);
     
     const active = () => {

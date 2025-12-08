@@ -19,7 +19,11 @@ const Overlay = styled.div`
 
 function App() {
 
-  const [isAppLoading, setAppIsLoading] = useState(true);
+  const [isUiStateRender, setIsUiStateRender] = useState(true);
+  //sessionStorage inistial render 방지 flag
+
+  const [isSessionListRender, setIsSessionListRender] = useState(true);
+  //sessionStorage inistial render 방지 flag
 
   const [uiState, setUiState] = useState({
     mode: null,
@@ -50,30 +54,31 @@ function App() {
         sideIsOpened: false
       })
     }
+    setIsUiStateRender(false);
   }, []); 
   useEffect(() => {
     (async () => {
       const list = await storage.loadSessionList();  
       setChatList(list);
     })();
-    setAppIsLoading(false);
+    setIsSessionListRender(false);
   }, []);
 
   //저장 로직
   useEffect(() => {
-    if(isAppLoading === true){
+    if(isUiStateRender === true){
       return;
     }
+    //아직 Ui가 로딩중이면 저장하지 않음.
     sessionStorage.setItem("uiState", utils.stringifyJson(uiState));
   }, [uiState]); 
   useEffect(() => {
     (async () => {
-      if(isAppLoading === true){
+      if(isSessionListRender === true){
         return;
       }
       await storage.saveSessionList(chatList);
     })();
-
   }, [chatList])
 
   //Main Renderer
@@ -90,7 +95,7 @@ function App() {
 
   return (
     <>
-      {isAppLoading && <Overlay />}
+      {isUiStateRender && <Overlay />}
       <SideBar uiState={uiState} setUiState={setUiState} chatList={chatList} setChatList={setChatList}/>
       <Main/>
       <Monitor />

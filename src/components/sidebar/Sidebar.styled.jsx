@@ -56,6 +56,8 @@ const StyledNewChatButton = styled.button`
     border-radius: 50px;
     border: 0px;
     background: #151515ff;  
+    textcolor: white;
+    color: white;
 
     &:hover {
         background: #6c6c6c3f;    
