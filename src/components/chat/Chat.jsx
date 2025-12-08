@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import ChatSessionInputBox from './ChatSessionInputBox.jsx';
 import ChatMessages from './ChatMessages.jsx';
 import * as storage from '../../lib/storage.jsx'
@@ -6,6 +6,7 @@ import * as utils from '../../lib/utils.jsx'
 import {Div} from './Chat.styled.jsx'
 
 function Chat({uiState}) {
+  const messagesRef = useRef(null);
   const [messages, setMessages] = useState([]);
   const [state, setState] = useState({
     isMessagesRender: true,
@@ -26,6 +27,10 @@ function Chat({uiState}) {
     })();
   }, [uiState.sessionId]);
 
+  useEffect(() => {
+    messagesRef.current = messages; // always latest
+  }, [messages]);
+
   //세션 저장, 트리거는 sendPrompt면 될거같음. flag로 처리하면 될듯?
   //사실 flag도 필요 없고, 어짜피 새로고침마다 불러오는거니까
   //첫 시행 때 갱신 로직이 실행 될거고, flag 필요할듯?
@@ -35,9 +40,9 @@ function Chat({uiState}) {
       if(state.isMessagesRender === true){
         return;
       }
-      await storage.saveMessages(uiState.sessionId, messages);
+      await storage.saveMessages(uiState.sessionId, messagesRef.current);
     })();
-  }, [messages, state.isMessagesRender]); 
+  }, [state.isMessagesRender]); 
   //첫 시도, 혹은 messages 배열의 갱신마다 처리되도록 함.
   //즉, 모든 messages의 DB저장은  Ui update가 선행되어야함.
 
@@ -52,7 +57,7 @@ function Chat({uiState}) {
         headers: {
           "Content-Type": "application/json"
         },
-        body: utils.stringifyJson({messages: messages})
+        body: utils.stringifyJson({messages: messagesRef.current})
       });
 
       try {
@@ -62,12 +67,12 @@ function Chat({uiState}) {
       } finally {
         setState(prev => ({
           ...prev,
-          isDone: true
+          isDone: true,
         }))
       }
     })();
-  }, [messages, state.isDone])
-  
+  }, [state.isDone])
+
  //effect trigger
   const sendPrompt = async (prompt) => {
     const userMsg = {role: "user", parts: [{ text: prompt}]};
