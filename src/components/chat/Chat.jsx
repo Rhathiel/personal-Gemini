@@ -5,101 +5,67 @@ import * as storage from '../../lib/storage.jsx'
 import * as utils from '../../lib/utils.jsx'
 import {Div} from './Chat.styled.jsx'
 
-function Chat({uiState, chatCommand, setChatCommand}) {
+function Chat({uiState}) {
   const [messages, setMessages] = useState([]);
   const [state, setState] = useState({
-    isFetching: false,
-    isChatLoading: false,
+    isMessagesRender: true,
     isDone: true,
-    isSaving: false
   })
 
-  //세션 변경
-  useEffect (() => {
-    if(state.isSessionChanged === true){
-      setState(prev => ({
-        ...prev,
-        isDone: true,
-      }))
-    }
-  }, [chatCommand.isSessionChanged]);
-
+  //세션 변경 -> 새로고침, 변경마다 실행되어야함. session저장은 전달마다 수행되게 해야함.
+  //즉, flag를 사용하는게 좋아보임. 일단 동기화는 flag
   //세션 갱신
   useEffect (() => {
     (async () => {
       const list = await storage.loadMessages(uiState.sessionId);
       setMessages(list);
+      setState(prev => ({
+        ...prev,
+        isMessagesRender: false
+      }));
     })();
-    setState(prev => ({
-      ...prev,
-      isChatLoading: false
-    }))
   }, [uiState.sessionId]);
 
-  //세션 저장
-
-  useEffect (() => {
-
-    const interval = setInterval(() => {
-      
-    }, 8000);
-
-
-  }, [messages, uiState.sessionId]), 
-
+  //세션 저장, 트리거는 sendPrompt면 될거같음. flag로 처리하면 될듯?
+  //사실 flag도 필요 없고, 어짜피 새로고침마다 불러오는거니까
+  //첫 시행 때 갱신 로직이 실행 될거고, flag 필요할듯?
+  //그러면 , 
   useEffect (() => {
     (async () => {
-      if(state.isSaving !== true){
+      if(state.isMessagesRender === true){
         return;
       }
       await storage.saveMessages(uiState.sessionId, messages);
     })();
-  }, [messages, state.isChatLoading, uiState.sessionId, state.isSaving]);
+  }, [messages]); 
+  //첫 시도, 혹은 messages 배열의 갱신마다 처리되도록 함.
+  //즉, 모든 messages의 DB저장은  Ui update가 선행되어야함.
 
-
-  //세션 변경 시 저 
   useEffect (() => {
     (async () => {
-      if(state.isSaving !== true){
+      if(state.isDone === true){
         return;
       }
-      await storage.saveMessages(uiState.sessionId, messages);
-    })();
-  }, [messages, state.isChatLoading, uiState.sessionId]);
-
-  useEffect (() => {
-    (async () => {
-      if(!state.isFetching){ //isDone -> 응답 초기 시작, 이후 응답 완전히 끝날때까지 
-        return;
-      }//이후 messages 갱신부터 effect가 실행되는걸 막아줌
-
       const response = await fetch("https://personal-gemini.vercel.app/api/stream", {
         method: "POST", 
         headers: {
           "Content-Type": "application/json"
         },
-        body: utils.stringifyJson({ messages: messages }) 
+        body: utils.stringifyJson(messages)
       });
 
-      setState(prev => ({
-        ...prev,
-        isFetching: false
-      }))
-
       try {
-        await streaming(response);
+        streaming(response)
       } catch(e){
         console.error(e);
-      }
-      finally { 
+      } finally {
         setState(prev => ({
           ...prev,
           isDone: true
         }))
       }
     })();
-  }, [messages, state.isFetching]);
-
+  }, [state.isDone])
   
  //effect trigger
   const sendPrompt = async (prompt) => {
@@ -108,8 +74,7 @@ function Chat({uiState, chatCommand, setChatCommand}) {
 
     setState(prev => ({
       ...prev,
-      isDone: false,
-      isFetching: true
+      isDone: false
     }))
   }
  
@@ -169,7 +134,7 @@ function Chat({uiState, chatCommand, setChatCommand}) {
 
   return (
     <Div>
-      <ChatMessages messages={messages} isDone={state.isDone}/>
+      <ChatMessages messages={messages} state={state}/>
       <ChatSessionInputBox sendPrompt={sendPrompt} state={state}/>
     </Div>
   )

@@ -1,6 +1,6 @@
 import ReactMarkdown from "react-markdown";
 
-function ChatMessages({messages, isDone}) {
+function ChatMessages({messages, state}) {
 
   return (
     <div>
@@ -11,7 +11,7 @@ function ChatMessages({messages, isDone}) {
           </ReactMarkdown>
         </div>
       ))}
-      {(isDone) ? null : <div>...</div>}
+      {(state.isDone) ? null : <div>...</div>}
     </div>
   );
 }   
