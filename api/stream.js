@@ -77,7 +77,7 @@ export default async function handler(req, res) {
     console.log("key, headers[key]: ", key, headers[key]);
   }
 
-  const { messages } = await utils.streamToJson(req);
+  const { messages } = await utils.parseText(req.body);
   console.log(messages);
   const prompt = messages[messages.length - 1];
   const history = [

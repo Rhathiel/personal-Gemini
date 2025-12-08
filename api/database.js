@@ -52,7 +52,6 @@ export default async function handler(req, res) {
 
   //load message
   else if(input.request === 2){
-    console.log(await redis.get(input.sessionId));
     const output = utils.parseText(await redis.get(input.sessionId));
     res.status(200).json(output);
     return;

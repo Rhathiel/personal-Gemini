@@ -66,7 +66,7 @@ function App() {
     }
     //아직 Ui가 로딩중이면 저장하지 않음.
     sessionStorage.setItem("uiState", utils.stringifyJson(uiState));
-  }, [uiState]); 
+  }, [uiState, isUiStateRender]); 
   useEffect(() => {
     (async () => {
       if(isSessionListRender === true){
@@ -74,7 +74,7 @@ function App() {
       }
       await storage.saveSessionList(chatList);
     })();
-  }, [chatList])
+  }, [chatList, isUiStateRender])
 
   //Main Renderer
   const Main = () => {

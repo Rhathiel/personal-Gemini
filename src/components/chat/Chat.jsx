@@ -37,7 +37,7 @@ function Chat({uiState}) {
       }
       await storage.saveMessages(uiState.sessionId, messages);
     })();
-  }, [messages]); 
+  }, [messages, state.isMessagesRender]); 
   //첫 시도, 혹은 messages 배열의 갱신마다 처리되도록 함.
   //즉, 모든 messages의 DB저장은  Ui update가 선행되어야함.
 
@@ -46,12 +46,13 @@ function Chat({uiState}) {
       if(state.isDone === true){
         return;
       }
+
       const response = await fetch("https://personal-gemini.vercel.app/api/stream", {
         method: "POST", 
         headers: {
           "Content-Type": "application/json"
         },
-        body: utils.stringifyJson(messages)
+        body: utils.stringifyJson({messages: messages})
       });
 
       try {
@@ -65,7 +66,7 @@ function Chat({uiState}) {
         }))
       }
     })();
-  }, [state.isDone])
+  }, [messages, state.isDone])
   
  //effect trigger
   const sendPrompt = async (prompt) => {
