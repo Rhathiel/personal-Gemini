@@ -3,7 +3,7 @@ import ChatSessionInputBox from './ChatSessionInputBox.jsx';
 import ChatMessages from './ChatMessages.jsx';
 import * as storage from '../../lib/storage.jsx'
 import * as utils from '../../lib/utils.jsx'
-import {Div} from './chat.styled.jsx'
+import {Div} from './Chat.styled.jsx'
 
 function Chat({uiState, chatCommand, setChatCommand}) {
   const [messages, setMessages] = useState([]);

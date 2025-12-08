@@ -1,8 +1,15 @@
 import { useState } from "react";
-import {StyledHomeInput} from './chat.styled.jsx'
+import {StyledHomeInput} from './Chat.styled.jsx'
 
 function ChatHomeInputBox({sendPrompt}) {
-    const [input, setInput] = useState("");
+
+    const [input, setInput] = useState(() => {
+        return sessionStorage.getItem("input") ?? "";
+    });
+
+    useEffect(() => {
+    sessionStorage.setItem("input", input);
+    }, [input]);
     
     const activeEnter = (e) => {
         if(e.key === "Enter"){

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import {StyledSessionInput} from './chat.styled.jsx'
+import {StyledSessionInput} from './Chat.styled.jsx'
 
 function ChatSessionInputBox({sendPrompt, state}) {
     const [input, setInput] = useState(() => {
