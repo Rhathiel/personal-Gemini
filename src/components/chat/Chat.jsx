@@ -13,9 +13,6 @@ function Chat({uiState}) {
     isDone: true,
   })
 
-  //세션 변경 -> 새로고침, 변경마다 실행되어야함. session저장은 전달마다 수행되게 해야함.
-  //즉, flag를 사용하는게 좋아보임. 일단 동기화는 flag
-  //세션 갱신
   useEffect (() => {
     (async () => {
       const list = await storage.loadMessages(uiState.sessionId);
@@ -31,20 +28,14 @@ function Chat({uiState}) {
     messagesRef.current = messages; // always latest
   }, [messages]);
 
-  //세션 저장, 트리거는 sendPrompt면 될거같음. flag로 처리하면 될듯?
-  //사실 flag도 필요 없고, 어짜피 새로고침마다 불러오는거니까
-  //첫 시행 때 갱신 로직이 실행 될거고, flag 필요할듯?
-  //그러면 , 
   useEffect (() => {
     (async () => {
       if(state.isMessagesRender === true){
         return;
       }
-      await storage.saveMessages(uiState.sessionId, messagesRef.current);
+      await storage.saveMessages(uiState.sessionId, messages);
     })();
-  }, [state.isMessagesRender]); 
-  //첫 시도, 혹은 messages 배열의 갱신마다 처리되도록 함.
-  //즉, 모든 messages의 DB저장은  Ui update가 선행되어야함.
+  }, [messages, state.isMessagesRender]); 
 
   useEffect (() => {
     (async () => {
