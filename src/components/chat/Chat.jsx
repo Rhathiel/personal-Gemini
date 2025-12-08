@@ -25,6 +25,7 @@ function Chat({uiState}) {
   }, [uiState.sessionId]);
 
   useEffect(() => {
+    console.log("알라랄라랄ㄹ:", messages);
     messagesRef.current = messages; // always latest
   }, [messages]);
 
@@ -64,7 +65,6 @@ function Chat({uiState}) {
     })();
   }, [state.isDone])
 
- //effect trigger
   const sendPrompt = async (prompt) => {
     const userMsg = {role: "user", parts: [{ text: prompt}]};
     setMessages(prev => [...prev, userMsg]);
