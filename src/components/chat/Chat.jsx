@@ -6,63 +6,15 @@ import * as utils from '../../lib/utils.jsx'
 import {Div} from './Chat.styled.jsx'
 
 function Chat({uiState}) {
-  const messagesRef = useRef(null);
   const [messages, setMessages] = useState([]);
-  const [state, setState] = useState({
-    isMessagesRender: true,
-    isDone: true,
-  })
+  const [isDone, setIsDone] = useState(true);
 
   useEffect (() => {
     (async () => {
       const list = await storage.loadMessages(uiState.sessionId);
       setMessages(list);
-      setState(prev => ({
-        ...prev,
-        isMessagesRender: false
-      }));
     })();
   }, [uiState.sessionId]);
-
-  useEffect(() => {
-    messagesRef.current = messages; // always latest
-  }, [messages]);
-
-  useEffect (() => {
-    (async () => {
-      if(state.isMessagesRender === true){
-        return;
-      }
-      await storage.saveMessages(uiState.sessionId, messages);
-    })();
-  }, [messages, state.isMessagesRender]); 
-
-  useEffect (() => {
-    (async () => {
-      if(state.isDone === true){
-        return;
-      }
-
-      const response = await fetch("https://personal-gemini.vercel.app/api/stream", {
-        method: "POST", 
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: utils.stringifyJson({messages: messagesRef.current})
-      });
-
-      try {
-        streaming(response)
-      } catch(e){
-        console.error(e);
-      } finally {
-        setState(prev => ({
-          ...prev,
-          isDone: true,
-        }))
-      }
-    })();
-  }, [state.isDone])
 
   //즉, usState 변경 시 
   //왜 이전 state의 메시지가 초기화되니까
@@ -70,11 +22,27 @@ function Chat({uiState}) {
   const sendPrompt = async (prompt) => {
     const userMsg = {role: "user", parts: [{ text: prompt}]};
     setMessages(prev => [...prev, userMsg]);
+    storage.appendMessages(userMsg);
 
-    setState(prev => ({
-      ...prev,
-      isDone: false
-    }))
+    if(isDone === true){
+      return;
+    }
+
+    const response = await fetch("https://personal-gemini.vercel.app/api/stream", {
+      method: "POST", 
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: utils.stringifyJson({userMsg: userMsg})
+    });
+
+    try {
+      streaming(response)
+    } catch(e){
+      console.error(e);
+    } finally {
+      setIsDone(true);
+    }
   }
  
   const streaming = async(response) => {

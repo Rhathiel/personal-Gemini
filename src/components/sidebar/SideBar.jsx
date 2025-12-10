@@ -24,7 +24,7 @@ function SideBar({uiState, setUiState, sessionList, setSessionList}) {
     isEditing: false
   });
   const [menuState, setMenuState] = useState({
-    x: 0, y: 0, visiable: false, sessionId: null, title: null
+    x: 0, y: 0, visiable: false, data: null
   });
 
   const activeClick = async () => {
@@ -35,34 +35,35 @@ function SideBar({uiState, setUiState, sessionList, setSessionList}) {
     }))
   };
 
-  const activeEnter = (e, sessionId) => {
+  const activeEnter = (e, data) => {
     if(e.key === "Enter"){
-      editTitle(input, sessionId);
+      editTitle(input, data);
       setEditState({ sessionId: null, isEditing: false });
       setInput("");
     }
   };
 
-  const editTitle = async (input, sessionId) => {
+  const editTitle = async (input, oldData) => {
+    const newData = {
+      ...oldData,
+      title: input
+    }
+    editSession(oldData, newData)
     setSessionList(prev => {
       const list = [...prev];
-      const index = list.findIndex(item => item.sessionId === sessionId)
-      list[index] = {
-        title: input,
-        sessionId: sessionId
-      };
+      const idx = list.findIndex(item => item.sessionId === oldData.sessionId);
+      list[idx] = newData;
       return list
     })
   };
 
-  const onOpen = (e, sessionId, title) => {
+  const onOpen = (e, data) => {
     const rect = e.target.getBoundingClientRect();
     setMenuState({
       x: rect.left,
       y: rect.bottom,
       visiable: true,
-      sessionId: sessionId,
-      title: title
+      data: data
     })
   };
 
@@ -71,28 +72,26 @@ function SideBar({uiState, setUiState, sessionList, setSessionList}) {
       x: 0,
       y: 0,
       visiable: false,
-      sessionId: null,
-      title: null
+      data: null
     })
   };
 
-  const onRemove = async (sessionId) => {
-    if(sessionId === uiState.sessionId){
+  const onRemove = async (data) => {
+    if(data.sessionId === uiState.sessionId){
       setUiState(prev => ({
         ...prev,
         mode: "home",
         sessionId: null,
       }))
     }
+    storage.deleteSession(data);
+    storage.deleteMessages(data.sessionId);
     setSessionList(prev => {
       const list = [...prev];
-      const index = list.findIndex(item => item.sessionId === sessionId);
+      const index = list.findIndex(item => item.sessionId === data.sessionId);
       list.splice(index, 1);
       return list;
     })
-
-    //sessionId에 해당하는 messages도
-    storage.deleteSession(sessionId);
   };
 
   return (
@@ -109,25 +108,25 @@ function SideBar({uiState, setUiState, sessionList, setSessionList}) {
           새 채팅
         </StyledNewChatButton>
         <StyledChatList>
-          {sessionList.map((chat) => (
-            <StyledChatListItem key={chat.sessionId} 
+          {sessionList.map((data) => (
+            <StyledChatListItem key={data.sessionId} 
             $isHover={interactionListItemState.isHover} 
             $onClick={interactionListItemState.onClick} 
             $selectedSessionId={uiState.sessionId} 
-            $currentSessionId={chat.sessionId} 
+            $currentSessionId={data.sessionId} 
             $interactionSessionId={interactionListItemState.sessionId}>
-              {!(editState.isEditing && editState.sessionId === chat.sessionId) && 
+              {!(editState.isEditing && editState.sessionId === data.sessionId) && 
               <StyledButton onClick={() => {
                 setUiState(prev => ({
                   ...prev,
-                  sessionId: chat.sessionId,
+                  sessionId: data.sessionId,
                   mode: "session"
                 }))
               }} 
                 onMouseEnter={() => setInteractionListItemState(prev => ({
                   ...prev,
                   isHover: true,
-                  sessionId: chat.sessionId
+                  sessionId: data.sessionId
                 }))}
                 onMouseLeave={() => setInteractionListItemState(prev => ({
                   ...prev,
@@ -137,25 +136,25 @@ function SideBar({uiState, setUiState, sessionList, setSessionList}) {
                 onMouseDown={() => setInteractionListItemState(prev => ({
                   ...prev,
                   onClick: true,
-                  sessionId: chat.sessionId
+                  sessionId: data.sessionId
                 }))}                
                 onMouseUp={() => setInteractionListItemState(prev => ({
                   ...prev,
                   onClick: false,
                   sessionId: null
                 }))}>                
-                {chat.title}
+                {data.title}
               </StyledButton>}
-              {(editState.isEditing && editState.sessionId === chat.sessionId) &&           
+              {(editState.isEditing && editState.sessionId === data.sessionId) &&           
                 <>
                   <Overlay onClick={() => {
                     setEditState({sessionId: null, isEditing: false});
                   }}/>
                   <StyledInput type="text" value={input} onChange={(e) => setInput(e.target.value)} 
-                  onKeyDown={(e) => activeEnter(e, chat.sessionId)}/>
+                  onKeyDown={(e) => activeEnter(e, data)}/>
                 </>
               }
-              <button onClick={(e) => {onOpen(e, chat.sessionId, chat.title)}}>
+              <button onClick={(e) => {onOpen(e, data)}}>
                 메뉴
               </button>
             </StyledChatListItem>

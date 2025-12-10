@@ -7,14 +7,14 @@ return(
     <Overlay onClick={onClose}/>
     <MenuWrapper x={menuState.x} y={menuState.y}>
       <button onClick={(e) => {
-        setInput(menuState.title);
-        setEditState({sessionId: menuState.sessionId, isEditing: true});
+        setInput(menuState.data.title);
+        setEditState({sessionId: menuState.data.sessionId, isEditing: true});
         onClose(e);
       }}>
         수정
       </button>
       <button onClick={(e) => {
-        onRemove(menuState.sessionId);
+        onRemove(menuState.data);
         onClose(e);
       }}>
         삭제

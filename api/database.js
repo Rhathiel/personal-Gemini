@@ -35,47 +35,62 @@ export default async function handler(req, res) {
   } 
 
   //input 받음
-  const input = await utils.streamToJson(req);
-  console.log("input: ", input);
+  const { body } = req;
 
   for (const key in headers){
     res.setHeader(key, headers[key]);
     console.log("key, headers[key]: ", key, headers[key]);
   }
 
-  //save message
-  if(input.request === 1){
-    await redis.set(input.sessionId, utils.stringifyJson(input.messages));
-    res.status(200).json({ ok: true })
-    return;
-  } 
-
-  //load message
-  else if(input.request === 2){
-    const output = utils.parseText(await redis.get(input.sessionId));
-    res.status(200).json(output);
-    return;
-  }
-
-  //save sessionList
-  else if(input.request === 3){
-    await redis.set("sessionList", utils.stringifyJson(input.sessionList));
-    res.status(200).json({ ok: true })
-    return;
-  }
-
-  //load sessionList
-  else if(input.request === 4){
-    const output = await redis.get("sessionList");
-    res.status(200).json(output);
-    return;
-  }
-
-  //delete session
-  else if(input.request === 5){
-    await redis.del(input.sessionId);
-    console.log(input.sessionId, "session 삭제됨.");
-    res.status(200).json({ ok: true });
-    return;
+  switch (body.request) {
+    case 1: {
+      //append message
+      await redis.rpush(`messages:${body.sessionId}`, utils.stringifyJson(body.data));
+      res.status(200).json({ ok: true })
+      return;
+    }
+    case 2: {
+      //del message
+      await redis.del(`messages:${body.sessionId}`);
+      res.status(200).json({ ok: true });
+      return;
+    }
+    case 3: {
+      //load message
+      const raw = await redis.lrange(`messages:${body.sessionId}`, 0, -1);
+      const list = raw.map(str => utils.parseText(str));
+      res.status(200).json(list);
+      return;
+    }
+    case 4: {
+      //append sessionList
+      await redis.rpush("sessionList", utils.stringifyJson(body.data));
+      res.status(200).json({ ok: true })
+      return;
+    }
+    case 5: {
+      //delete sessionList
+      await redis.lrem("sessionList", 0, utils.stringifyJson(body.data));
+      res.status(200).json({ ok: true })
+      return;
+    }
+    case 6: {
+      //edit sessionList
+      const idx = await redis.lpos("sessionList", utils.stringifyJson(body.oldData));
+      await redis.lset("sessionList", idx, utils.stringifyJson(body.newData));
+      res.status(200).json({ ok: true })
+      return;
+    }
+    case 7: {
+      //load sessionList
+      const raw = await redis.lrange("sessionList", 0, -1);
+      const list = raw.map(str => utils.parseText(str));
+      res.status(200).json(list);
+      return;
+    }
+    default: {
+      res.status(405).json({ ok: false });
+      return;
+    }
   }
 }

@@ -4,14 +4,10 @@ import ChatHome from './components/chat/ChatHome.jsx';
 import LoadingScreen from './components/chat/LoadingScreeen.jsx'
 import SideBar from './components/sidebar/SideBar.jsx';
 import Monitor from './components/monitor/Monitor.jsx';
-import styled from 'styled-components';
 import * as storage from './lib/storage.jsx'
 import * as utils from './lib/utils.jsx'
 
 function App() {
-
-  const isSessionListRender = useRef(false);
-  //sessionStorage inistial render 방지 flag
 
   const [uiState, setUiState] = useState(() => {
     const obj = utils.parseText(sessionStorage.getItem("uiState"));
@@ -28,34 +24,23 @@ function App() {
   });
   const [sessionList, setSessionList] = useState([]);
 
-
   //버전
   useEffect(() => {
     console.log("version: 1.2.3");
   }, []);
 
-  //갱신 로직
+  //SessionList 갱신 로직
   useEffect(() => {
     (async () => {
       const list = await storage.loadSessionList();  
       setSessionList(list);
     })();
-    isSessionListRender.current = true; 
   }, []);
 
-  //저장 로직
+  //uiState 저장 로직
   useEffect(() => {
     sessionStorage.setItem("uiState", utils.stringifyJson(uiState));
   }, [uiState]); 
-  useEffect(() => {
-    (async () => {
-      if(isSessionListRender.current === false){
-        console.log("세션리스트저장실패!")
-        return;
-      }
-      await storage.saveSessionList(sessionList);
-    })();
-  }, [sessionList])
 
   //Main Renderer
   const Main = () => {
