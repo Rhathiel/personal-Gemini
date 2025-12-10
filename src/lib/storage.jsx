@@ -70,3 +70,19 @@ export async function loadSessionList() {
 
   return output ? output : [];
 }
+
+export async function deleteSession(sessionId) {
+  const obj = {
+    sessionId: sessionId,
+    request: 5
+  }
+  const response = await fetch("https://personal-gemini.vercel.app/api/database", {
+  method: "POST", 
+  headers: {
+      "Content-Type": "application/json"
+  },
+  body: utils.stringifyJson(obj)
+  });
+
+  return response.status;
+}

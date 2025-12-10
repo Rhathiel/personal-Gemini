@@ -10,6 +10,7 @@ import {
   StyledChatList,
   StyledChatListItem,
 } from "./Sidebar.styled.jsx";
+import * as storage from "../../lib/storage.jsx"
 
 function SideBar({uiState, setUiState, chatList, setChatList}) {
   const [input, setInput] = useState("");
@@ -89,6 +90,7 @@ function SideBar({uiState, setUiState, chatList, setChatList}) {
       list.splice(index, 1);
       return list;
     })
+    storage.deleteSession(sessionId);
   };
 
   return (

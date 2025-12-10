@@ -70,4 +70,11 @@ export default async function handler(req, res) {
     res.status(200).json(output);
     return;
   }
+
+  //kill session
+  else if(input.request === 5){
+    await redis.del(input.sessionId);
+    res.status(200).json({ ok: true});
+    return;
+  }
 }
