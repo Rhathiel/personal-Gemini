@@ -33,10 +33,6 @@ function Chat({uiState}) {
       if(state.isMessagesRender === true){
         return;
       }
-      console.log("DB 제거됨");
-      console.log(uiState.sessionId);
-      //조건 분기했는데 DB가 꺼짐
-      //왜지
       await storage.saveMessages(uiState.sessionId, messages);
     })();
   }, [messages, state.isMessagesRender]); 
