@@ -71,10 +71,11 @@ export default async function handler(req, res) {
     return;
   }
 
-  //kill session
+  //delete session
   else if(input.request === 5){
     await redis.del(input.sessionId);
-    res.status(200).json({ ok: true});
+    console.log(input.sessionId, "session 삭제됨.");
+    res.status(200).json({ ok: true });
     return;
   }
 }
