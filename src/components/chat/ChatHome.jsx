@@ -2,7 +2,7 @@ import {Div} from './Chat.styled.jsx'
 import ChatHomeInputBox from './ChatHomeInputBox.jsx'
 import * as storage from '../../lib/storage.jsx'
 
-function ChatHome({setChatList, setUiState}) {
+function ChatHome({setSessionList, setUiState}) {
 
     const sendPrompt = async (prompt) => {
         if (!prompt) return;
@@ -16,7 +16,7 @@ function ChatHome({setChatList, setUiState}) {
         //selectedSession같은 flag를 통해 그때마다 messages 배열에 동기화하는게 좋아보임. 
 
         //chat이 켜질때마다 load하는거로 결정.
-        setChatList(prev => {
+        setSessionList(prev => {
             const list = [...prev];
             list.push({
                 sessionId: sessionId,

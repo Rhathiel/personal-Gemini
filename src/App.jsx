@@ -8,29 +8,26 @@ import styled from 'styled-components';
 import * as storage from './lib/storage.jsx'
 import * as utils from './lib/utils.jsx'
 
-const Overlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 9999;
-`;
-
 function App() {
 
-  const [isUiStateRender, setIsUiStateRender] = useState(true);
+  const isSessionListRender = useRef(false);
   //sessionStorage inistial render 방지 flag
 
-  const [isSessionListRender, setIsSessionListRender] = useState(true);
-  //sessionStorage inistial render 방지 flag
+  const [uiState, setUiState] = useState(() => {
+    const obj = utils.parseText(sessionStorage.getItem("uiState"));
 
-  const [uiState, setUiState] = useState({
-    mode: null,
-    sessionId: null,
-    sideIsOpened: false
+    if(obj){
+      return obj;
+    } else {
+      return {
+        mode: "home",
+        sessionId: "null",
+        sideIsOpened: false
+      }
+    }
   });
-  const [chatList, setChatList] = useState([]);
+  const [sessionList, setSessionList] = useState([]);
+
 
   //버전
   useEffect(() => {
@@ -39,48 +36,32 @@ function App() {
 
   //갱신 로직
   useEffect(() => {
-    const obj = utils.parseText(sessionStorage.getItem("uiState"));
-    if(obj){
-      setUiState(obj);
-    } else {
-      setUiState({
-        mode: "home",
-        sessionId: "null",
-        sideIsOpened: false
-      })
-    }
-    setIsUiStateRender(false);
-  }, []); 
-  useEffect(() => {
     (async () => {
       const list = await storage.loadSessionList();  
-      setChatList(list);
+      setSessionList(list);
     })();
-    setIsSessionListRender(false);
+    isSessionListRender.current = true; 
   }, []);
 
   //저장 로직
   useEffect(() => {
-    if(isUiStateRender === true){
-      return;
-    }
     sessionStorage.setItem("uiState", utils.stringifyJson(uiState));
-  }, [uiState, isUiStateRender]); 
+  }, [uiState]); 
   useEffect(() => {
     (async () => {
-      if(isSessionListRender === true){
+      if(isSessionListRender.current === false){
+        console.log("세션리스트저장실패!")
         return;
       }
-      await storage.saveSessionList(chatList);
-      
+      await storage.saveSessionList(sessionList);
     })();
-  }, [chatList, isSessionListRender])
+  }, [sessionList])
 
   //Main Renderer
   const Main = () => {
     switch (uiState.mode) {
       case "home":
-        return <ChatHome setChatList={setChatList} setUiState={setUiState} />;
+        return <ChatHome setSessionList={setSessionList} setUiState={setUiState} />;
       case "session":
         return <Chat uiState={uiState} />;
       default:
@@ -90,8 +71,7 @@ function App() {
 
   return (
     <>
-      {isUiStateRender && <Overlay />}
-      <SideBar uiState={uiState} setUiState={setUiState} chatList={chatList} setChatList={setChatList}/>
+      <SideBar uiState={uiState} setUiState={setUiState} sessionList={sessionList} setSessionList={setSessionList}/>
       <Main/>
       <Monitor />
     </>

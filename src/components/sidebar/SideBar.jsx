@@ -12,7 +12,7 @@ import {
 } from "./Sidebar.styled.jsx";
 import * as storage from "../../lib/storage.jsx"
 
-function SideBar({uiState, setUiState, chatList, setChatList}) {
+function SideBar({uiState, setUiState, sessionList, setSessionList}) {
   const [input, setInput] = useState("");
   const [interactionListItemState, setInteractionListItemState] = useState({
     isHover: false,
@@ -44,7 +44,7 @@ function SideBar({uiState, setUiState, chatList, setChatList}) {
   };
 
   const editTitle = async (input, sessionId) => {
-    setChatList(prev => {
+    setSessionList(prev => {
       const list = [...prev];
       const index = list.findIndex(item => item.sessionId === sessionId)
       list[index] = {
@@ -84,14 +84,14 @@ function SideBar({uiState, setUiState, chatList, setChatList}) {
         sessionId: null,
       }))
     }
-    setChatList(prev => {
+    setSessionList(prev => {
       const list = [...prev];
       const index = list.findIndex(item => item.sessionId === sessionId);
       list.splice(index, 1);
       return list;
     })
 
-    //sessionId에 해당하는 messages도 삭제
+    //sessionId에 해당하는 messages도
     storage.deleteSession(sessionId);
   };
 
@@ -109,7 +109,7 @@ function SideBar({uiState, setUiState, chatList, setChatList}) {
           새 채팅
         </StyledNewChatButton>
         <StyledChatList>
-          {chatList.map((chat) => (
+          {sessionList.map((chat) => (
             <StyledChatListItem key={chat.sessionId} 
             $isHover={interactionListItemState.isHover} 
             $onClick={interactionListItemState.onClick} 
