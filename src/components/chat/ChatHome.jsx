@@ -14,7 +14,7 @@ function ChatHome({setChatList, setUiState}) {
         //저장로직
         //일단 messages는 DB에만 저장하고, session이 여러개인 만큼 
         //selectedSession같은 flag를 통해 그때마다 messages 배열에 동기화하는게 좋아보임. 
-        await storage.saveMessages(sessionId, messages); 
+
         //chat이 켜질때마다 load하는거로 결정.
         setChatList(prev => {
             const list = [...prev];

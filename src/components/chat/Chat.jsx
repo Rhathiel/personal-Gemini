@@ -68,6 +68,9 @@ function Chat({uiState}) {
     })();
   }, [state.isDone])
 
+  //즉, usState 변경 시 
+  //왜 이전 state의 메시지가 초기화되니까
+
   const sendPrompt = async (prompt) => {
     const userMsg = {role: "user", parts: [{ text: prompt}]};
     setMessages(prev => [...prev, userMsg]);

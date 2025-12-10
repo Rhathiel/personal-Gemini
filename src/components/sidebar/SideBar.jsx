@@ -90,6 +90,8 @@ function SideBar({uiState, setUiState, chatList, setChatList}) {
       list.splice(index, 1);
       return list;
     })
+
+    //sessionId에 해당하는 messages도 삭제
     storage.deleteSession(sessionId);
   };
 
