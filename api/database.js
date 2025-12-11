@@ -60,6 +60,7 @@ export default async function handler(req, res) {
     case 3: {
       //load message
       const raw = await redis.lrange(`messages:${body.sessionId}`, 0, -1);
+      console.log("lrange output: ", raw);
       const list = raw.map(str => utils.parseText(str));
       res.status(200).json(list);
       return;
