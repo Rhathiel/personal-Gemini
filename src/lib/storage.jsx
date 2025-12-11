@@ -117,5 +117,7 @@ export async function loadSessionList() {
 
   const output = await response.json();
 
+  console.log("아웃풋", output);
+
   return output ? output : [];
 }

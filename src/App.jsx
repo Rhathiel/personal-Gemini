@@ -36,7 +36,9 @@ function App() {
   //SessionList 갱신 로직
   useEffect(() => {
     (async () => {
-      const list = await storage.loadSessionList();  
+      const list = await storage.loadSessionList(); 
+      console.log(list);
+      console.log("으흐흐로드스토리지으흐흐");
       setSessionList(list);
     })();
   }, []);

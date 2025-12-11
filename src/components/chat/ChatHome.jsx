@@ -2,7 +2,7 @@ import {Div} from './Chat.styled.jsx'
 import ChatHomeInputBox from './ChatHomeInputBox.jsx'
 import * as storage from '../../lib/storage.jsx'
 
-function ChatHome({setSessionList, setUiState, newSession, setNewSession}) {
+function ChatHome({setSessionList, setUiState, setNewSession}) {
 
     const sendPrompt = async (prompt) => {
         if (!prompt) return;
