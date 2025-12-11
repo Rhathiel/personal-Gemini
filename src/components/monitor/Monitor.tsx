@@ -22,7 +22,7 @@ interface MmdModelProps {
 }
 
 function MmdModel({ url }: MmdModelProps) {
-    const nodes: any = useLoader(MMDLoader as any, url);
+    const nodes = useLoader(MMDLoader, url);
     return <primitive object={nodes} dispose={null} />
 }
 
