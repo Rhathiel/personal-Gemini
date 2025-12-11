@@ -51,8 +51,6 @@ export async function loadMessages(sessionId) {
   return output ? output : [];
 }
 
-
-
 export async function appendSession(data) {
   const obj = {
       data: data,

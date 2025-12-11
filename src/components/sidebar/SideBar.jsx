@@ -48,7 +48,7 @@ function SideBar({uiState, setUiState, sessionList, setSessionList}) {
       ...oldData,
       title: input
     }
-    editSession(oldData, newData)
+    storage.editSession(oldData, newData)
     setSessionList(prev => {
       const list = [...prev];
       const idx = list.findIndex(item => item.sessionId === oldData.sessionId);

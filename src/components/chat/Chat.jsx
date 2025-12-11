@@ -13,10 +13,15 @@ function Chat({uiState, newSession, setNewSession}) {
     (async () => {
       if(newSession.isNewSession === true){ // 전달된값은 prompt
         await storage.appendMessages(uiState.sessionId, newSession.userMsg);
+        await storage.appendSession({
+          sessionId: uiState.sessionId,
+          title: "새 채팅"
+        });
         setNewSession({
           userMsg: null,
           isNewSession: false
         })  
+        console.log("새 세션 만들어졌다요!"); 
         return;
       }
       if(newSession.isNewSession === false){
