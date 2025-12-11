@@ -1,6 +1,12 @@
 import { GoogleGenAI } from "@google/genai";
 import { Readable } from 'stream';
 import * as utils from './utils.js'
+import { Redis } from '@upstash/redis';
+
+export const redis = new Redis({
+  url: process.env.KV_REST_API_URL,
+  token: process.env.KV_REST_API_TOKEN,
+});
 
 function initAI(history, showThoughts) {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
@@ -77,15 +83,13 @@ export default async function handler(req, res) {
     console.log("key, headers[key]: ", key, headers[key]);
   }
 
-  const { messages } = req.body;
-  console.log(messages);
-  const prompt = messages[messages.length - 1];
-  const history = [
-    ...messages.slice(0, messages.length - 1)
-  ]
+  const { sessionId, userMsg } = req.body;
+  const raw = await redis.lrange(`messages:${sessionId}`, 0, -1);
+  const history = raw.map(str => utils.parseText(str));
+
   const chat = initAI(history, false);
 
-  const output = await createOutput(chat, prompt);
+  const output = await createOutput(chat, userMsg);
 
   let isApiError = false;
   if(typeof output?.[Symbol.asyncIterator] !== "function"){

@@ -17,10 +17,26 @@ export async function appendMessages(sessionId, data) {
   return response.status;
 }
 
-export async function loadMessages(sessionId) {
+export async function deleteMessages(sessionId) {
   const obj = {
       sessionId: sessionId,
       request: 2
+  }
+  const response = await fetch("https://personal-gemini.vercel.app/api/database", {
+  method: "POST", 
+  headers: {
+      "Content-Type": "application/json"
+  },
+  body: utils.stringifyJson(obj)
+  });
+
+  return response.status;
+}
+
+export async function loadMessages(sessionId) {
+  const obj = {
+      sessionId: sessionId,
+      request: 3
   }
   const response = await fetch("https://personal-gemini.vercel.app/api/database", {
   method: "POST", 
@@ -35,21 +51,7 @@ export async function loadMessages(sessionId) {
   return output ? output : [];
 }
 
-export async function deleteMessages(sessionId) {
-  const obj = {
-      sessionId: sessionId,
-      request: 3
-  }
-  const response = await fetch("https://personal-gemini.vercel.app/api/database", {
-  method: "POST", 
-  headers: {
-      "Content-Type": "application/json"
-  },
-  body: utils.stringifyJson(obj)
-  });
 
-  return response.status;
-}
 
 export async function appendSession(data) {
   const obj = {
@@ -113,7 +115,7 @@ export async function loadSessionList() {
   body: utils.stringifyJson(obj)
   });
 
-  const output = response.json();
+  const output = await response.json();
 
   return output ? output : [];
 }

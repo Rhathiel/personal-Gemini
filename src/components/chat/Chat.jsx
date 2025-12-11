@@ -21,19 +21,19 @@ function Chat({uiState}) {
 
   const sendPrompt = async (prompt) => {
     const userMsg = {role: "user", parts: [{ text: prompt}]};
-    setMessages(prev => [...prev, userMsg]);
-    storage.appendMessages(userMsg);
 
     if(isDone === true){
       return;
     }
 
+    setMessages(prev => [...prev, userMsg]); //ui갱신
+    storage.appendMessages(uiState.sessionId, userMsg); //db갱신
     const response = await fetch("https://personal-gemini.vercel.app/api/stream", {
       method: "POST", 
       headers: {
         "Content-Type": "application/json"
       },
-      body: utils.stringifyJson({userMsg: userMsg})
+      body: utils.stringifyJson({sessionId: uiState.sessionId, userMsg: userMsg})
     });
 
     try {
@@ -101,8 +101,8 @@ function Chat({uiState}) {
 
   return (
     <Div>
-      <ChatMessages messages={messages} state={state}/>
-      <ChatSessionInputBox sendPrompt={sendPrompt} state={state}/>
+      <ChatMessages messages={messages} isDone={isDone}/>
+      <ChatSessionInputBox sendPrompt={sendPrompt} isDone={isDone}/>
     </Div>
   )
 }
