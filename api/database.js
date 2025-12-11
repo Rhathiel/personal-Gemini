@@ -59,9 +59,7 @@ export default async function handler(req, res) {
     }
     case 3: {
       //load message
-      const raw = await redis.lrange(`messages:${body.sessionId}`, 0, -1);
-      console.log("lrange output: ", raw);
-      const list = raw.map(str => utils.parseText(str));
+      const list = await redis.lrange(`messages:${body.sessionId}`, 0, -1);
       res.status(200).json(list);
       return;
     }
@@ -86,8 +84,7 @@ export default async function handler(req, res) {
     }
     case 7: {
       //load sessionList
-      const raw = await redis.lrange("sessionList", 0, -1);
-      const list = raw.map(str => utils.parseText(str));
+      const list = await redis.lrange("sessionList", 0, -1);
       res.status(200).json(list);
       return;
     }
