@@ -1,5 +1,5 @@
-import { useState, useEffect} from 'react';
-import PopupMenu from './PopupMenu.jsx';
+import { useState } from 'react';
+import PopupMenu from './PopupMenu.tsx';
 import {
   Overlay,
   StyledOpenButton,
@@ -9,21 +9,43 @@ import {
   StyledButton,
   StyledChatList,
   StyledChatListItem,
-} from "./Sidebar.styled.jsx";
-import * as storage from "../../lib/storage.jsx"
+} from "./Sidebar.styled.js";
+import * as storage from "../../lib/storage.js"
 
-function SideBar({uiState, setUiState, sessionList, setSessionList}) {
-  const [input, setInput] = useState("");
-  const [interactionListItemState, setInteractionListItemState] = useState({
+interface SideBarProps {
+  uiState: UiState;
+  setUiState: React.Dispatch<React.SetStateAction<UiState>>;
+  sessionList: Array<session>;
+  setSessionList: React.Dispatch<React.SetStateAction<Array<session>>>;
+}
+interface InteractionListItemState {
+  isHover: boolean;
+  onClick: boolean;
+  sessionId: string | null;
+}
+interface editState {
+  sessionId: string | null;
+  isEditing: boolean;
+}
+interface menuState {
+  x: number;
+  y: number;
+  visiable: boolean;
+  data: session | null;
+}
+
+function SideBar({uiState, setUiState, sessionList, setSessionList}: SideBarProps) {
+  const [input, setInput] = useState<string>("");
+  const [interactionListItemState, setInteractionListItemState] = useState<InteractionListItemState>({
     isHover: false,
     onClick: false,
     sessionId: null,
   });
-  const [editState, setEditState] = useState({
+  const [editState, setEditState] = useState<editState>({
     sessionId: null,
     isEditing: false
   });
-  const [menuState, setMenuState] = useState({
+  const [menuState, setMenuState] = useState<menuState>({
     x: 0, y: 0, visiable: false, data: null
   });
 
@@ -35,7 +57,7 @@ function SideBar({uiState, setUiState, sessionList, setSessionList}) {
     }))
   };
 
-  const activeEnter = (e, data) => {
+  const activeEnter = (e: React.KeyboardEvent<HTMLInputElement>, data: session) => {
     if(e.key === "Enter"){
       editTitle(input, data);
       setEditState({ sessionId: null, isEditing: false });
@@ -43,7 +65,7 @@ function SideBar({uiState, setUiState, sessionList, setSessionList}) {
     }
   };
 
-  const editTitle = async (input, oldData) => {
+  const editTitle = async (input: string, oldData: session) => {
     const newData = {
       ...oldData,
       title: input
@@ -57,8 +79,8 @@ function SideBar({uiState, setUiState, sessionList, setSessionList}) {
     })
   };
 
-  const onOpen = (e, data) => {
-    const rect = e.target.getBoundingClientRect();
+  const onOpen = (e: React.MouseEvent<HTMLButtonElement>, data: session) => {
+    const rect = e.currentTarget.getBoundingClientRect();
     setMenuState({
       x: rect.left,
       y: rect.bottom,
@@ -67,7 +89,7 @@ function SideBar({uiState, setUiState, sessionList, setSessionList}) {
     })
   };
 
-  const onClose = (e) => {
+  const onClose = (e: React.MouseEvent<HTMLButtonElement>) => {
     setMenuState({
       x: 0,
       y: 0,
@@ -76,7 +98,7 @@ function SideBar({uiState, setUiState, sessionList, setSessionList}) {
     })
   };
 
-  const onRemove = async (data) => {
+  const onRemove = async (data: session) => {
     if(data.sessionId === uiState.sessionId){
       setUiState(prev => ({
         ...prev,

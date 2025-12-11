@@ -1,4 +1,4 @@
-import * as utils from './utils.jsx';
+import * as utils from './utils.tsx';
 
 export async function appendMessages(sessionId, data) {
   const obj = {

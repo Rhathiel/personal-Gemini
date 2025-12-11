@@ -1,4 +1,4 @@
-import {MenuWrapper, Overlay} from './Sidebar.styled.jsx'
+import {MenuWrapper, Overlay} from './Sidebar.styled';
 
 function PopupMenu ({onClose, setEditState, setInput, menuState, onRemove}){
 

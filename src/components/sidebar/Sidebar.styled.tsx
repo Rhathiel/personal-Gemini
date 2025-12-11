@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import { styled } from 'styled-components';
 
 const Overlay = styled.div`
   position: fixed;
@@ -35,7 +35,11 @@ const StyledInput = styled.input`
   z-index: 9999;
 `;
 
-const StyledSideBar = styled.div`
+interface StyledSideBarProps {
+    $isOpened: boolean;
+}
+
+const StyledSideBar = styled.div<StyledSideBarProps>`
     left: 0;
     top: 0;
     width: 250px;
@@ -79,7 +83,15 @@ const StyledButton = styled.button`
 const StyledChatList = styled.div`
 `;
 
-const StyledChatListItem = styled.div`
+interface StyledChatListItemProps {
+    $currentSessionId: string | null;
+    $selectedSessionId: string | null;
+    $isHover: boolean;
+    $onClick: boolean;
+    $interactionSessionId: string | null;
+}
+
+const StyledChatListItem = styled.div<StyledChatListItemProps>`
   background: ${({$currentSessionId, $selectedSessionId, $isHover, $onClick, $interactionSessionId}) => 
     ($currentSessionId === $selectedSessionId? 
       '#6c6c6c3f' 
@@ -92,7 +104,12 @@ const StyledChatListItem = styled.div`
   };
 `;
 
-const MenuWrapper = styled.div`
+interface MenuWrapperProps {
+    x: number;
+    y: number;
+}
+
+const MenuWrapper = styled.div<MenuWrapperProps>`
   position: absolute;
   top: ${({ y }) => y}px;
   left: ${({ x }) => x}px;

@@ -2,10 +2,10 @@ import { useState, useEffect, useRef } from 'react';
 import Chat from './components/chat/Chat.jsx'
 import ChatHome from './components/chat/ChatHome.jsx';
 import LoadingScreen from './components/chat/LoadingScreeen.jsx'
-import SideBar from './components/sidebar/SideBar.jsx';
+import SideBar from './components/sidebar/SideBar.js';
 import Monitor from './components/monitor/Monitor.jsx';
-import * as storage from './lib/storage.jsx'
-import * as utils from './lib/utils.jsx'
+import * as storage from './lib/storage.js'
+import * as utils from './lib/utils.js'
 
 function App() {
 
