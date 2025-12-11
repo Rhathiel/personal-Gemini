@@ -1,21 +1,30 @@
-import {MenuWrapper, Overlay} from './Sidebar.styled';
+import {MenuWrapper, Overlay} from './Sidebar.styled.tsx';
+import type { editState, menuState } from './SideBar.tsx';
 
-function PopupMenu ({onClose, setEditState, setInput, menuState, onRemove}){
+interface PopupMenuProps {
+  onClose: () => void;
+  setEditState: React.Dispatch<React.SetStateAction<editState>>;
+  setInput: React.Dispatch<React.SetStateAction<string>>;
+  menuState: menuState;
+  onRemove: (data: session) => void;
+}
+
+function PopupMenu ({onClose, setEditState, setInput, menuState, onRemove}: PopupMenuProps) {
 
 return(
   <>
     <Overlay onClick={onClose}/>
     <MenuWrapper x={menuState.x} y={menuState.y}>
       <button onClick={(e) => {
-        setInput(menuState.data.title);
-        setEditState({sessionId: menuState.data.sessionId, isEditing: true});
-        onClose(e);
+        setInput(menuState.data!.title);
+        setEditState({sessionId: menuState.data!.sessionId, isEditing: true});
+        onClose();
       }}>
         수정
       </button>
       <button onClick={(e) => {
-        onRemove(menuState.data);
-        onClose(e);
+        onRemove(menuState.data!);
+        onClose();
       }}>
         삭제
       </button> 

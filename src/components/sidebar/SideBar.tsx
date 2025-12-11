@@ -23,11 +23,11 @@ interface InteractionListItemState {
   onClick: boolean;
   sessionId: string | null;
 }
-interface editState {
+export interface editState {
   sessionId: string | null;
   isEditing: boolean;
 }
-interface menuState {
+export interface menuState {
   x: number;
   y: number;
   visiable: boolean;
@@ -89,7 +89,7 @@ function SideBar({uiState, setUiState, sessionList, setSessionList}: SideBarProp
     })
   };
 
-  const onClose = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const onClose = () => {
     setMenuState({
       x: 0,
       y: 0,
