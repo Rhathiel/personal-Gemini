@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { MMDLoader } from 'three/examples/jsm/loaders/MMDLoader';
+import { MMDLoader } from 'three/examples/jsm/loaders/MMDLoader.js';
 import { Suspense } from 'react';
 import { useLoader } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
