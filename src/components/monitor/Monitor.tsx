@@ -17,7 +17,11 @@ const Div = styled.div`
     z-index: 2;
 `;
 
-function MmdModel({ url }) {
+interface MmdModelProps {
+    url: string;
+}
+
+function MmdModel({ url }: MmdModelProps) {
     const nodes = useLoader(MMDLoader, url)
     return <primitive object={nodes} dispose={null} />
 }

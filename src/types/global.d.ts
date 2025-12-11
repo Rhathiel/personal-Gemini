@@ -5,6 +5,7 @@ declare module "*.jpg";
 declare module "*.svg";
 declare module "*.jpeg";
 declare module "*.gif";
+declare module 'three/examples/jsm/loaders/MMDLoader';
 
 interface UiState {
     mode: "home" | "session" | "loading";
