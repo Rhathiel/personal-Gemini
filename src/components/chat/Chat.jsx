@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import ChatSessionInputBox from './ChatSessionInputBox.jsx';
 import ChatMessages from './ChatMessages.jsx';
-import * as storage from '../../lib/storage.jsx'
-import * as utils from '../../lib/utils.jsx'
+import * as storage from '../../lib/storage.ts'
+import * as utils from '../../lib/utils.ts'
 import {Div} from './Chat.styled.jsx'
 
 function Chat({uiState, newSession, setNewSession}) {
