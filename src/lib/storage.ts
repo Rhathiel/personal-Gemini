@@ -1,6 +1,6 @@
-import * as utils from './utils.tsx';
+import * as utils from './utils.ts';
 
-export async function appendMessages(sessionId, data) {
+export async function appendMessages(sessionId: string, data: Array<message>) {
   const obj = {
       sessionId: sessionId,
       data: data,
@@ -17,7 +17,7 @@ export async function appendMessages(sessionId, data) {
   return response.status;
 }
 
-export async function deleteMessages(sessionId) {
+export async function deleteMessages(sessionId: string) {
   const obj = {
       sessionId: sessionId,
       request: 2
@@ -33,7 +33,7 @@ export async function deleteMessages(sessionId) {
   return response.status;
 }
 
-export async function loadMessages(sessionId) {
+export async function loadMessages(sessionId: string) {
   const obj = {
       sessionId: sessionId,
       request: 3
@@ -51,7 +51,7 @@ export async function loadMessages(sessionId) {
   return output ? output : [];
 }
 
-export async function appendSession(data) {
+export async function appendSession(data: session) {
   const obj = {
       data: data,
       request: 4
@@ -67,7 +67,7 @@ export async function appendSession(data) {
   return response.status;
 }
 
-export async function deleteSession(data) {
+export async function deleteSession(data: session) {
   const obj = {
       data: data,
       request: 5
@@ -83,7 +83,7 @@ export async function deleteSession(data) {
   return response.status;
 }
 
-export async function editSession(oldData, newData) {
+export async function editSession(oldData: session, newData: session) {
   const obj = {
       oldData: oldData,
       newData: newData,

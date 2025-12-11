@@ -10,7 +10,7 @@ import {
   StyledChatList,
   StyledChatListItem,
 } from "./Sidebar.styled.js";
-import * as storage from "../../lib/storage.js"
+import * as storage from "../../lib/storage.ts";
 
 interface SideBarProps {
   uiState: UiState;

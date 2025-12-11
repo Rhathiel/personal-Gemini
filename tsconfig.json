@@ -26,5 +26,7 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-  }
+  },
+  "include": ["."],
+  "exclude": ["node_modules"]
 }

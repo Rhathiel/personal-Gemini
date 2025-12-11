@@ -1,4 +1,4 @@
-export function parseText(text) {
+export function parseText(text: string) {
   try {
     return JSON.parse(text);
   } catch (err) {
@@ -7,7 +7,7 @@ export function parseText(text) {
   }
 }
 
-export function encodeText(text) {
+export function encodeText(text: string) {
   try {
     const enc = new TextEncoder();
     return enc.encode(text);
@@ -17,7 +17,7 @@ export function encodeText(text) {
   }
 }
 
-export function decodeText(buffer) {
+export function decodeText(buffer: Uint8Array) {
   try {
     const dec = new TextDecoder("utf-8");
     return dec.decode(buffer, { stream: true });
@@ -27,7 +27,7 @@ export function decodeText(buffer) {
   }
 }
 
-export function stringifyJson(json) {
+export function stringifyJson(json: any) {
   try {
     return JSON.stringify(json);
   } catch (err) {
@@ -36,7 +36,7 @@ export function stringifyJson(json) {
   }
 }
 
-export async function responseToText(response) {
+export async function responseToText(response: Response) {
   try {
     return await response.text();
   } catch (err) {
@@ -45,7 +45,7 @@ export async function responseToText(response) {
   }
 }
 
-export async function responseToJson(response) {
+export async function responseToJson(response: Response) {
   try {
     return await response.json()
   } catch (err) {
