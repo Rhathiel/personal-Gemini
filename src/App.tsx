@@ -1,9 +1,9 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect} from 'react';
 import Chat from './components/chat/Chat.jsx'
 import ChatHome from './components/chat/ChatHome.jsx';
 import LoadingScreen from './components/chat/LoadingScreeen.jsx'
 import SideBar from './components/sidebar/SideBar.js';
-import Monitor from './components/monitor/Monitor.jsx';
+import Monitor from './components/monitor/Monitor.js';
 import * as storage from './lib/storage.js'
 import * as utils from './lib/utils.js'
 
