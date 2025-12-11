@@ -36,6 +36,7 @@ export default async function handler(req, res) {
 
   //input 받음
   const { body } = req;
+  console.log("request: ", body.request);
 
   for (const key in headers){
     res.setHeader(key, headers[key]);

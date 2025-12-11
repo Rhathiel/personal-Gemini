@@ -5,16 +5,26 @@ import * as storage from '../../lib/storage.jsx'
 import * as utils from '../../lib/utils.jsx'
 import {Div} from './Chat.styled.jsx'
 
-function Chat({uiState}) {
+function Chat({uiState, newSession, setNewSession}) {
   const [messages, setMessages] = useState([]);
   const [isDone, setIsDone] = useState(true);
 
   useEffect (() => {
     (async () => {
-      const list = await storage.loadMessages(uiState.sessionId);
-      setMessages(list);
+      if(newSession.isNewSession === true){ // 전달된값은 prompt
+        await storage.appendMessages(uiState.sessionId, newSession.userMsg);
+        setNewSession({
+          userMsg: null,
+          isNewSession: false
+        })  
+        return;
+      }
+      if(newSession.isNewSession === false){
+        const list = await storage.loadMessages(uiState.sessionId);
+        setMessages(list);
+      }
     })();
-  }, [uiState.sessionId]);
+  }, [uiState.sessionId, newSession]);
 
   //즉, usState 변경 시 
   //왜 이전 state의 메시지가 초기화되니까

@@ -23,6 +23,10 @@ function App() {
     }
   });
   const [sessionList, setSessionList] = useState([]);
+  const [newSession, setNewSession] = useState({
+    userMsg: null,
+    isNewSession: false
+  });
 
   //버전
   useEffect(() => {
@@ -46,9 +50,13 @@ function App() {
   const Main = () => {
     switch (uiState.mode) {
       case "home":
-        return <ChatHome setSessionList={setSessionList} setUiState={setUiState} />;
+        return <ChatHome setSessionList={setSessionList} 
+                setUiState={setUiState} 
+                setNewSession={setNewSession}/>;
       case "session":
-        return <Chat uiState={uiState} />;
+        return <Chat uiState={uiState} 
+                newSession={newSession}
+                setNewSession={setNewSession}/>;
       default:
         return <LoadingScreen/>;
     }
