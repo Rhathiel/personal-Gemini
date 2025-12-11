@@ -1,19 +1,20 @@
 import { Redis } from '@upstash/redis';
-import * as utils from './utils.js';
+import * as utils from './utils.ts';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export const redis = new Redis({
   url: process.env.KV_REST_API_URL,
   token: process.env.KV_REST_API_TOKEN,
 });
 
-export default async function handler(req, res) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
 
-  const corsHeaders = {
+  const corsHeaders: Record<string, string> = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
-  const headers = {
+  const headers: Record<string, string> = {
       ...corsHeaders,
       "Content-Type": "application/json",
       "Cache-Control": "no-cache",
@@ -34,14 +35,19 @@ export default async function handler(req, res) {
     return;
   } 
 
+  interface RequestBody {
+    request: number;
+    sessionId?: string;
+    data?: session | Array<message>;
+    oldData?: session;
+    newData?: session;
+  }
+
   //input 받음
-  const { body } = req;
-  console.log("알라라라라라라랄");
-  console.log("request: ", body.request);
+  const body: RequestBody = req.body;
 
   for (const key in headers){
     res.setHeader(key, headers[key]);
-    console.log("key, headers[key]: ", key, headers[key]);
   }
 
   switch (body.request) {
@@ -59,7 +65,8 @@ export default async function handler(req, res) {
     }
     case 3: {
       //load message
-      const list = await redis.lrange(`messages:${body.sessionId}`, 0, -1);
+      const raw = await redis.lrange(`messages:${body.sessionId}`, 0, -1);
+      const list: Array<message> = raw.map(str => utils.parseText(str));
       res.status(200).json(list);
       return;
     }
@@ -77,14 +84,15 @@ export default async function handler(req, res) {
     }
     case 6: {
       //edit sessionList
-      const idx = await redis.lpos("sessionList", utils.stringifyJson(body.oldData));
+      const idx: number = await redis.lpos("sessionList", utils.stringifyJson(body.oldData));
       await redis.lset("sessionList", idx, utils.stringifyJson(body.newData));
       res.status(200).json({ ok: true })
       return;
     }
     case 7: {
       //load sessionList
-      const list = await redis.lrange("sessionList", 0, -1);
+      const raw = await redis.lrange("sessionList", 0, -1);
+      const list: Array<session> = raw.map(str => utils.parseText(str));
       res.status(200).json(list);
       return;
     }

@@ -1,14 +1,16 @@
 import { GoogleGenAI } from "@google/genai";
 import { Readable } from 'stream';
-import * as utils from './utils.js'
+import * as utils from './utils.ts';
 import { Redis } from '@upstash/redis';
+import type { SafetySetting, Chat } from "@google/genai";
+import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export const redis = new Redis({
   url: process.env.KV_REST_API_URL,
   token: process.env.KV_REST_API_TOKEN,
 });
 
-function initAI(history, showThoughts) {
+function initAI(history: Array<message>, showThoughts: boolean) {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
   const chat = ai.chats.create({
@@ -23,39 +25,40 @@ function initAI(history, showThoughts) {
         { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
         { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" },
         { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-      ],
+      ] as SafetySetting[],
       thinkingConfig: {
         thinkingBudget: -1,
         includeThoughts: showThoughts, 
       },
+      tools: [
+        { googleSearch: {} },
+      ],
     },
-    tools: [
-      { googleSearch: {} },
-    ],
   });
   return chat;
 }
 
-async function createOutput(chat, prompt) {
+async function createOutput(chat: Chat, parts: message["parts"]) {
   try{  
     const stream = await chat.sendMessageStream({
-      message: prompt, 
+      message: parts,
     });
-    return stream;}
+    return stream;
+  }
   catch (e){
     console.error(e);
     return e;
   }
 }
 
-export default async function handler(req, res) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
 
-  const corsHeaders = {
+  const corsHeaders: Record<string, string> = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
-  const headers = {
+  const headers: Record<string, string> = {
     ...corsHeaders,
     "Content-Type": "application/json",
     "Cache-Control": "no-cache"
@@ -83,13 +86,18 @@ export default async function handler(req, res) {
     console.log("key, headers[key]: ", key, headers[key]);
   }
 
-  const { sessionId, userMsg } = req.body;
+  interface RequestBody {
+    sessionId: string;
+    userMsg: message;
+  }
+
+  const { sessionId, userMsg }: RequestBody = req.body;
   const raw = await redis.lrange(`messages:${sessionId}`, 0, -1);
-  const history = raw.map(str => utils.parseText(str));
+  const history: Array<message> = raw.map(str => utils.parseText(str));
 
   const chat = initAI(history, false);
 
-  const output = await createOutput(chat, userMsg);
+  const output = await createOutput(chat, userMsg.parts);
 
   let isApiError = false;
   if(typeof output?.[Symbol.asyncIterator] !== "function"){

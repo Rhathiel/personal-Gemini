@@ -1,4 +1,6 @@
-export function parseText(text) {
+export function parseText(text: string | null) {
+  if(text === null) return null;
+
   try {
     return JSON.parse(text);
   } catch (err) {
@@ -7,7 +9,9 @@ export function parseText(text) {
   }
 }
 
-export function encodeText(text) {
+export function encodeText(text: string | null) {
+  if(text === null) return null;
+
   try {
     const enc = new TextEncoder();
     return enc.encode(text);
@@ -17,7 +21,9 @@ export function encodeText(text) {
   }
 }
 
-export function decodeText(buffer) {
+export function decodeText(buffer: Uint8Array | null) {
+  if(buffer === null) return null;
+  
   try {
     const dec = new TextDecoder("utf-8");
     return dec.decode(buffer, { stream: true });
@@ -27,35 +33,11 @@ export function decodeText(buffer) {
   }
 }
 
-export function stringifyJson(json) {
+export function stringifyJson(json: any) {
   try {
     return JSON.stringify(json);
   } catch (err) {
     console.error("[stringifyJson] JSON.stringify failed:", err, "Input:", json);
     return "{}"; 
-  }
-}
-
-export async function streamToText(stream) {
-  try {
-    let body = "";
-    for await (const chunk of stream){
-      body += decodeText(chunk);
-    }
-    return body;
-  } catch (err) {
-    return "" // fallback
-  }
-}
-
-export async function streamToJson(stream) {
-  try {
-    let body = "";
-    for await (const chunk of stream){
-      body += decodeText(chunk);
-    }
-    return await parseText(body);
-  } catch (err) {
-    return null // fallback
   }
 }
