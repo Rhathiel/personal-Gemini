@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { MMDLoader } from 'three/examples/jsm/loaders/MMDLoader';
+import { MMDLoader } from 'three/examples/jsm/loaders/MMDLoader.js';
 import { Suspense } from 'react';
 import { useLoader } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
@@ -22,7 +22,7 @@ interface MmdModelProps {
 }
 
 function MmdModel({ url }: MmdModelProps) {
-    const nodes: any = useLoader(MMDLoader as any, url)
+    const nodes: any = useLoader(MMDLoader as any, url);
     return <primitive object={nodes} dispose={null} />
 }
 
