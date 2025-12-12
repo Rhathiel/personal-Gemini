@@ -1,13 +1,19 @@
-import {Div} from './Chat.styled.jsx'
-import ChatHomeInputBox from './ChatHomeInputBox.jsx'
+import {Div} from './Chat.styled.tsx'
+import ChatHomeInputBox from './ChatHomeInputBox.js'
 
-function ChatHome({setSessionList, setUiState, setNewSession}) {
+interface ChatHomeProps {
+    setSessionList: React.Dispatch<React.SetStateAction<Array<session>>>;
+    setUiState: React.Dispatch<React.SetStateAction<UiState>>;
+    setNewSession: React.Dispatch<React.SetStateAction<NewSession>>;
+}
 
-    const sendPrompt = async (prompt) => {
+function ChatHome({setSessionList, setUiState, setNewSession}: ChatHomeProps) {
+
+    const sendPrompt = (prompt: string) => {
         if (!prompt) return;
         const sessionId = crypto.randomUUID(); //id용 난수 생성
-        const userMsg = {role: "user", parts: [{ text: prompt}]};
-        
+        const userMsg: message = {role: "user", parts: [{ text: prompt}]};
+    
         setNewSession({
             userMsg: userMsg,
             isNewSession: true

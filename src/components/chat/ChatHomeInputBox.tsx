@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import {StyledHomeInput} from './Chat.styled.jsx'
+import {StyledHomeInput} from './Chat.styled.js'
 
-function ChatHomeInputBox({sendPrompt}) {
+function ChatHomeInputBox({sendPrompt}: {sendPrompt: (prompt: string) => void}) {
 
     const [input, setInput] = useState(() => {
         return sessionStorage.getItem("chathomeinput") ?? "";
@@ -12,7 +12,7 @@ function ChatHomeInputBox({sendPrompt}) {
     }, [input]);
     //input 갱신마다 setItem 해줌. 새로고침하면 바로 불러옴. input이 
     
-    const activeEnter = (e) => {
+    const activeEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if(e.key === "Enter"){
             sendPrompt(input);
             //unmount될 시 해당 컴포넌츠가 가지는 모든 정보가 삭제되고, 렌더가 더이상 진행되지 않으므로, 직접적으로 storage에서 제거해줘야함. 

@@ -6,10 +6,15 @@ interface UiState {
 
 interface session {
    title: string;
-   sessionId: string; 
+   sessionId: string | null; 
 }
 
 interface message {
-    role: "user" | "assistant" | "system";
+    role: "user" | "model";
     parts: Array<{ text: string }>;
+}
+
+interface NewSession {
+    userMsg: message | null;
+    isNewSession: boolean;
 }

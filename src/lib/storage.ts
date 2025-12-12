@@ -1,6 +1,6 @@
 import * as utils from './utils.ts';
 
-export async function appendMessages(sessionId: string, data: Array<message>) {
+export async function appendMessages(sessionId: session["sessionId"], data: message | null) {
   const obj = {
       sessionId: sessionId,
       data: data,
@@ -33,7 +33,7 @@ export async function deleteMessages(sessionId: string) {
   return response.status;
 }
 
-export async function loadMessages(sessionId: string) {
+export async function loadMessages(sessionId: session["sessionId"]) {
   const obj = {
       sessionId: sessionId,
       request: 3

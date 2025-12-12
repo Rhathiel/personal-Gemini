@@ -3,11 +3,17 @@ import ChatSessionInputBox from './ChatSessionInputBox.jsx';
 import ChatMessages from './ChatMessages.jsx';
 import * as storage from '../../lib/storage.ts'
 import * as utils from '../../lib/utils.ts'
-import {Div} from './Chat.styled.jsx'
+import {Div} from './Chat.styled.tsx'
 
-function Chat({uiState, newSession, setNewSession}) {
-  const [messages, setMessages] = useState([]);
-  const [isDone, setIsDone] = useState(true);
+interface ChatProps {
+  uiState: UiState;
+  newSession: NewSession;
+  setNewSession: React.Dispatch<React.SetStateAction<NewSession>>;
+}
+
+function Chat({uiState, newSession, setNewSession}: ChatProps) {
+  const [messages, setMessages] = useState<Array<message>>([]);
+  const [isDone, setIsDone] = useState<boolean>(true);
 
   useEffect (() => {
     (async () => {
@@ -34,12 +40,8 @@ function Chat({uiState, newSession, setNewSession}) {
   //즉, usState 변경 시 
   //왜 이전 state의 메시지가 초기화되니까
 
-  const sendPrompt = async (prompt) => {
-    const userMsg = {role: "user", parts: [{ text: prompt}]};
-
-    if(isDone === true){
-      return;
-    }
+  const sendPrompt = async (prompt: string) => {
+    const userMsg: message = {role: "user", parts: [{ text: prompt}]};
 
     setMessages(prev => [...prev, userMsg]); //ui갱신
     storage.appendMessages(uiState.sessionId, userMsg); //db갱신
@@ -51,8 +53,10 @@ function Chat({uiState, newSession, setNewSession}) {
       body: utils.stringifyJson({sessionId: uiState.sessionId, userMsg: userMsg})
     });
 
+    const stream: ReadableStream<Uint8Array<ArrayBuffer>> | null = response.body;
+
     try {
-      streaming(response)
+      streaming(stream)
     } catch(e){
       console.error(e);
     } finally {
@@ -60,14 +64,24 @@ function Chat({uiState, newSession, setNewSession}) {
     }
   }
  
-  const streaming = async(response) => {
+  const streaming = async(stream: ReadableStream<Uint8Array<ArrayBuffer>> | null) => {
+    //예외
+    if(!stream) return;
+
+    //선언부
     let buffer = "";
     let queue = "";
     let decoded = {}; 
-    setMessages(prev => [...prev, {role: "model", parts: [{ text: "" }]}]);
-    for await (const chunk of response.body){
-      try{
-        queue += utils.decodeText(chunk);
+    const reader = stream.getReader();
+    const emptyMessage: message = {role: "model", parts: [{ text: ""}]};
+
+    //연산
+    setMessages(prev => [...prev, emptyMessage]);
+    while (true){
+      const { done, value } = await reader.read();
+      if(done) break;
+      try{  
+        queue += utils.decodeText(value);
         if(queue.includes("}{")){
           queue = "[" + queue.split("}{").join("},{") + "]";
         }
@@ -87,7 +101,7 @@ function Chat({uiState, newSession, setNewSession}) {
     }
   }
 
-  const printMessage = (decoded, buffer) => {
+  const printMessage = (decoded: any, buffer: string) => {
     if(decoded?.error){
       console.log("API Error");
       buffer = buffer + "\n" + "Status: " + decoded.error.status + "\n" + "Code: " + decoded.error.code; 
