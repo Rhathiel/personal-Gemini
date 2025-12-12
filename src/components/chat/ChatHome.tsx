@@ -1,5 +1,5 @@
 import {Div} from './Chat.styled.tsx'
-import ChatHomeInputBox from './ChatHomeInputBox.js'
+import ChatHomeInputBox from './ChatHomeInputBox.tsx'
 
 interface ChatHomeProps {
     setSessionList: React.Dispatch<React.SetStateAction<Array<session>>>;

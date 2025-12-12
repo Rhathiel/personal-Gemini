@@ -17,7 +17,7 @@ export async function appendMessages(sessionId: session["sessionId"], data: mess
   return response.status;
 }
 
-export async function deleteMessages(sessionId: string) {
+export async function deleteMessages(sessionId: session["sessionId"]) {
   const obj = {
       sessionId: sessionId,
       request: 2

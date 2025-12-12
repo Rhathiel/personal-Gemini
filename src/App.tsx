@@ -1,15 +1,15 @@
 import { useState, useEffect} from 'react';
-import Chat from './components/chat/Chat.jsx'
-import ChatHome from './components/chat/ChatHome.jsx';
-import LoadingScreen from './components/chat/LoadingScreeen.jsx'
-import SideBar from './components/sidebar/SideBar.js';
-import Monitor from './components/monitor/Monitor.js';
-import * as storage from './lib/storage.js'
-import * as utils from './lib/utils.js'
+import Chat from './components/chat/Chat.tsx'
+import ChatHome from './components/chat/ChatHome.tsx';
+import LoadingScreen from './components/chat/LoadingScreeen.tsx'
+import SideBar from './components/sidebar/SideBar.tsx';
+import Monitor from './components/monitor/Monitor.tsx';
+import * as storage from './lib/storage.ts'
+import * as utils from './lib/utils.ts'
 
 function App() {
 
-  const [uiState, setUiState] = useState(() => {
+  const [uiState, setUiState] = useState<UiState>(() => {
     const obj = utils.parseText(sessionStorage.getItem("uiState"));
 
     if(obj){
@@ -22,8 +22,8 @@ function App() {
       }
     }
   });
-  const [sessionList, setSessionList] = useState([]);
-  const [newSession, setNewSession] = useState({
+  const [sessionList, setSessionList] = useState<Array<session>>([]);
+  const [newSession, setNewSession] = useState<NewSession>({
     userMsg: null,
     isNewSession: false
   });

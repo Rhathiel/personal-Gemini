@@ -1,5 +1,4 @@
-import styled from 'styled-components';
-import {Div} from './Chat.styled.jsx'
+import {Div} from './Chat.styled.tsx'
 
 function LoadingScreen (){
     return (<Div>

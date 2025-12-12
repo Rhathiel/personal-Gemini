@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
-import {StyledSessionInput} from './Chat.styled.jsx'
+import {StyledSessionInput} from './Chat.styled.tsx'
 
-function ChatSessionInputBox({sendPrompt, isDone}) {
+interface ChatSessionInputBoxProps {
+    sendPrompt: (prompt: string) => void;
+    isDone: boolean;
+}
+
+function ChatSessionInputBox({sendPrompt, isDone}: ChatSessionInputBoxProps) {
     const [input, setInput] = useState(() => {
         return sessionStorage.getItem("chatsessioninput") ?? "";
     });
@@ -23,7 +28,7 @@ function ChatSessionInputBox({sendPrompt, isDone}) {
                     if(!isDone || !input) {
                         return;
                     }
-                    active(e);
+                    active();
                 }
             }}/>
             <button disabled={!isDone || !input} type="button" onClick={active}>전송</button>

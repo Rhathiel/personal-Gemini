@@ -1,6 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import ChatSessionInputBox from './ChatSessionInputBox.jsx';
-import ChatMessages from './ChatMessages.jsx';
+import { useState, useEffect } from 'react';
+import ChatSessionInputBox from './ChatSessionInputBox.tsx';
+import ChatMessages from './ChatMessages.tsx';
 import * as storage from '../../lib/storage.ts'
 import * as utils from '../../lib/utils.ts'
 import {Div} from './Chat.styled.tsx'
