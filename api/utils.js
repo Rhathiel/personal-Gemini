@@ -1,6 +1,4 @@
-export function parseText(text: string | null) {
-  if(text === null) return null;
-
+export function parseText(text) {
   try {
     return JSON.parse(text);
   } catch (err) {
@@ -9,9 +7,7 @@ export function parseText(text: string | null) {
   }
 }
 
-export function encodeText(text: string | null) {
-  if(text === null) return null;
-
+export function encodeText(text) {
   try {
     const enc = new TextEncoder();
     return enc.encode(text);
@@ -21,9 +17,7 @@ export function encodeText(text: string | null) {
   }
 }
 
-export function decodeText(buffer: Uint8Array | null) {
-  if(buffer === null) return null;
-  
+export function decodeText(buffer) {
   try {
     const dec = new TextDecoder("utf-8");
     return dec.decode(buffer, { stream: true });
@@ -33,7 +27,7 @@ export function decodeText(buffer: Uint8Array | null) {
   }
 }
 
-export function stringifyJson(json: any) {
+export function stringifyJson(json) {
   try {
     return JSON.stringify(json);
   } catch (err) {
