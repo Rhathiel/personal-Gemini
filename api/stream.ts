@@ -67,7 +67,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "OPTIONS"){
     for (const key in corsHeaders){
       res.setHeader(key, corsHeaders[key]);
-      console.log("key, corseHeaders[key]: ", key, corsHeaders[key]);
     }
     res.status(204).end();
     return;
@@ -83,15 +82,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     
   for (const key in headers){
     res.setHeader(key, headers[key]);
-    console.log("key, headers[key]: ", key, headers[key]);
   }
 
-  interface RequestBody {
-    sessionId: string;
-    userMsg: message;
-  }
-
-  const { sessionId, userMsg }: RequestBody = req.body;
+  const { sessionId, userMsg }: {sessionId: string; userMsg: message} = req.body;
   const raw = await redis.lrange(`messages:${sessionId}`, 0, -1);
   console.log("raw messages: ", raw);
   const history: Array<message> = raw.map(str => utils.parseText(str));
@@ -100,8 +93,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const output = await createOutput(chat, userMsg.parts);
 
-
-  //여기 부터 해라
   let isApiError = false;
   if(typeof (output as any)?.[Symbol.asyncIterator] !== "function"){
     isApiError = true;
