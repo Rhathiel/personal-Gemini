@@ -1,0 +1,8 @@
+{
+  "buildCommand": "echo skip",
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs18.x"
+    }
+  }
+}
