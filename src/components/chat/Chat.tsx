@@ -18,14 +18,13 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
   useEffect (() => {
     (async () => {
       if(newSession.isNewSession === true){ // 전달된값은 prompt
-        await storage.appendMessages(uiState.sessionId, newSession.userMsg);
         await storage.appendSession({
           sessionId: uiState.sessionId,
           title: "새 채팅"
         });
-        sendPrompt(newSession.userMsg!.parts[0].text);
+        sendPrompt(newSession.prompt!);
         setNewSession({
-          userMsg: null,
+          prompt: null,
           isNewSession: false
         })  
         console.log("새 세션 만들어졌다요!"); 

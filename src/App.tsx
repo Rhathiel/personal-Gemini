@@ -24,7 +24,7 @@ function App() {
   });
   const [sessionList, setSessionList] = useState<Array<session>>([]);
   const [newSession, setNewSession] = useState<NewSession>({
-    userMsg: null,
+    prompt: null,
     isNewSession: false
   });
 

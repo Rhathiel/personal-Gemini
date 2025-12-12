@@ -12,10 +12,9 @@ function ChatHome({setSessionList, setUiState, setNewSession}: ChatHomeProps) {
     const sendPrompt = (prompt: string) => {
         if (!prompt) return;
         const sessionId = crypto.randomUUID(); //id용 난수 생성
-        const userMsg: message = {role: "user", parts: [{ text: prompt}]};
-    
+
         setNewSession({
-            userMsg: userMsg,
+            prompt: prompt,
             isNewSession: true
         })
         setSessionList(prev => {
