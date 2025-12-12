@@ -23,6 +23,7 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
           sessionId: uiState.sessionId,
           title: "새 채팅"
         });
+        sendPrompt(newSession.userMsg!.parts[0].text);
         setNewSession({
           userMsg: null,
           isNewSession: false
