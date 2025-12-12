@@ -86,6 +86,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const { sessionId, userMsg }: {sessionId: string; userMsg: message} = req.body;
   const history: Array<message> = await redis.lrange(`messages:${sessionId}`, 0, -1);
+  console.log("history in stream.ts: ", history);
 
   const chat = initAI(history, false);
 
