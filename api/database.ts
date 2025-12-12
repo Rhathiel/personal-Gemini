@@ -22,7 +22,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "OPTIONS"){
     for (const key in corsHeaders){
       res.setHeader(key, corsHeaders[key]);
-      console.log("key, corseHeaders[key]: ", key, corsHeaders[key]);
     }
     res.status(204).end();
     return;
