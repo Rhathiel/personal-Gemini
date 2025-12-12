@@ -99,8 +99,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const output = await createOutput(chat, userMsg.parts);
 
+
+  //여기 부터 해라
   let isApiError = false;
-  if(typeof output?.[Symbol.asyncIterator] !== "function"){
+  if(typeof (output as any)?.[Symbol.asyncIterator] !== "function"){
     isApiError = true;
   }
 
@@ -109,11 +111,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       (async () => {
         if (isApiError === true) {
           let error = JSON.stringify(output,["error", "status", "code"]);
-          this.push(utils.decodeText(error));
+          this.push(utils.encodeText(error));
           this.push(null);
           return;
         }
-        for await (const chunk of output){ 
+        for await (const chunk of output as AsyncIterable<any>) { 
           if(  !chunk || //undefined,null
               (typeof chunk === "string" && chunk.trim() === "") ||  //empty string
               (Object.getPrototypeOf(chunk) === Object.prototype && Object.keys(chunk).length === 0) || //empty json
