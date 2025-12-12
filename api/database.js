@@ -1,5 +1,5 @@
 import { Redis } from '@upstash/redis';
-import * as utils from './utils.ts';
+import * as utils from './utils.js';
 
 export const redis = new Redis({
   url: process.env.KV_REST_API_URL,

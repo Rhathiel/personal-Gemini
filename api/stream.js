@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import { Readable } from 'stream';
-import * as utils from './utils.ts';
+import * as utils from './utils.js';
 import { Redis } from '@upstash/redis';
 
 export const redis = new Redis({
