@@ -93,6 +93,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const { sessionId, userMsg }: RequestBody = req.body;
   const raw = await redis.lrange(`messages:${sessionId}`, 0, -1);
+  console.log("raw messages: ", raw);
   const history: Array<message> = raw.map(str => utils.parseText(str));
 
   const chat = initAI(history, false);
