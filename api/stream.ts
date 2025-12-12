@@ -97,6 +97,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     isApiError = true;
   }
 
+  let temp: string = "";
+
   const stream = new Readable({
     read() {
       (async () => {
@@ -107,6 +109,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return;
         }
         for await (const chunk of output as AsyncIterable<any>) { 
+          temp += chunk.text()
           if(  !chunk || //undefined,null
               (typeof chunk === "string" && chunk.trim() === "") ||  //empty string
               (Object.getPrototypeOf(chunk) === Object.prototype && Object.keys(chunk).length === 0) || //empty json
@@ -119,6 +122,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             this.push(utils.encodeText(utils.stringifyJson(chunk)));
           }
         }
+        await redis.rpush(`messages:${sessionId}`, utils.stringifyJson({ role: "model", parts: [ { text: temp } ] }));
         this.push(null);
         return;
       })();
