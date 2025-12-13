@@ -90,7 +90,7 @@ export default async function handler(req, res) {
 
   const output = await createOutput(chat, userMsg.parts);
   if(typeof output?.[Symbol.asyncIterator] !== "function"){ 
-    res.status(503).json(JSON.stringify(output,["error", "status", "code"]));
+    res.status(503).json(output);
     return;
   }
 
@@ -104,6 +104,6 @@ export default async function handler(req, res) {
 
     await redis.rpush(`messages:${sessionId}`, utils.stringifyJson({ role: "model", parts: [ { text: temp } ] }));
   });
-  
+  res.statusCode = 200
   stream.pipe(res);
 }

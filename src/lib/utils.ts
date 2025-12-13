@@ -22,7 +22,7 @@ export function encodeText(text: string | null) {
 }
 
 export function decodeText(buffer: Uint8Array | null) {
-  if(buffer === null) return null;
+  if(buffer === null) return "";
   
   try {
     const dec = new TextDecoder("utf-8");

@@ -41,6 +41,7 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
   //왜 이전 state의 메시지가 초기화되니까
 
   const sendPrompt = async (prompt: string) => {
+    setIsDone(false);
     const userMsg: message = {role: "user", parts: [{ text: prompt}]};
 
     setMessages(prev => [...prev, userMsg]); //ui갱신
@@ -53,10 +54,20 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
       body: utils.stringifyJson({sessionId: uiState.sessionId, userMsg: userMsg})
     });
 
-    const stream: ReadableStream<Uint8Array<ArrayBuffer>> | null = response.body;
+    switch (response.status){
+      case 503: {
+        console.error(response.json());
+        setMessages(prev => [...prev, {role: "model", parts: [{ text: "Api Error: The model is currently overloaded. Please try again later."}]}]);
+        setIsDone(true);
+        return;
+      }
+      default: {
+        break;
+      }
+    }
 
     try {
-      streaming(stream)
+      await streaming(response.body)
     } catch(e){
       console.error(e);
     } finally {
@@ -66,12 +77,13 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
  
   const streaming = async(stream: ReadableStream<Uint8Array<ArrayBuffer>> | null) => {
     //예외
-    if(!stream) return;
+    if(!stream) {
+      throw new Error("No stream found");
+    };
 
     //선언부
-    let buffer = "";
     let queue = "";
-    let decoded = {}; 
+    let decoded = null; 
     const reader = stream.getReader();
     const emptyMessage: message = {role: "model", parts: [{ text: ""}]};
 
@@ -79,52 +91,48 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
     setMessages(prev => [...prev, emptyMessage]);
     while (true){
       const { done, value } = await reader.read();
+
       if(done) break;
-      try{  
-        queue += utils.decodeText(value);
-        if(queue.includes("}{")){
-          queue = "[" + queue.split("}{").join("},{") + "]";
-        }
-        decoded = utils.parseText(queue); 
-        queue = "";
-      } catch(e) {
-        console.error(e);
-        continue; 
+
+      queue = utils.decodeText(value);
+      if(queue.includes("}{")){
+        queue = "[" + queue.split("}{").join("},{") + "]";
       }
+      decoded = utils.parseText(queue); 
+
+      if(!decoded) continue;
+
       if(Array.isArray(decoded) === true){
         for(let e of decoded){
-          printMessage(e, buffer);
+          printMessage(e);
         }
       } else {
-        printMessage(decoded, buffer);
+        printMessage(decoded);
       }
     }
   }
 
-  const printMessage = (decoded: any, buffer: string) => {
-    if(decoded?.error){
-      console.log("API Error");
-      buffer = buffer + "\n" + "Status: " + decoded.error.status + "\n" + "Code: " + decoded.error.code; 
+  const printMessage = (decoded: any) => {
+    const { role, parts } = decoded.candidates[0].content; 
+
+    if (decoded?.candidates?.[0]?.finishReason === "MAX_TOKENS"){
       setMessages(prev => {
         let newMessages = [...prev];
-        newMessages[newMessages.length - 1] = {role: "model", parts: [{ text: buffer }]};
-        return newMessages; 
-      });
-    } else if(decoded?.candidates?.[0]?.content?.parts?.[0]?.text?.trim()){
-      const { role, parts } = decoded.candidates[0].content; 
-      buffer = buffer + parts[0].text;
-      setMessages(prev => {
-        let newMessages = [...prev];
-        newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer }]};
+        let buffer = newMessages[newMessages.length - 1].parts[0].text + parts[0].text;
+
+        newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer + "토큰이 최대에 도달했습니다. 나중에 다시 시도해주세요." }]};
+
         return newMessages;
       }); 
-      if (decoded?.candidates?.[0]?.finishReason === "MAX_TOKENS"){
-        setMessages(prev => {
-          let newMessages = [...prev];
-          newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer + "토큰이 최대에 도달했습니다. 다시 시도해주세요." }]};
-          return newMessages;
-        }); 
-      }
+    } else {
+      setMessages(prev => {
+        let newMessages = [...prev];
+        let buffer = newMessages[newMessages.length - 1].parts[0].text + parts[0].text;
+
+        newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer }]};
+
+        return newMessages;
+      }); 
     }
   }
 
