@@ -40,6 +40,8 @@ function Chat({uiState, newSessionStateRef, setSessionList}: ChatProps) {
             sessionId: null,
             prompt: null,
         };
+
+        return;
       }
 
       const list = await storage.loadMessages(uiState.sessionId);
