@@ -24,6 +24,7 @@ function App() {
   });
   const [sessionList, setSessionList] = useState<Array<session>>([]);
   const [newSession, setNewSession] = useState<NewSession>({
+    sessionId: null,
     prompt: null,
     isNewSession: false
   });
@@ -50,13 +51,13 @@ function App() {
   const Main = () => {
     switch (uiState.mode) {
       case "home":
-        return <ChatHome setSessionList={setSessionList} 
-                setUiState={setUiState} 
-                setNewSession={setNewSession}/>;
+        return <ChatHome setNewSession={setNewSession}/>;
       case "session":
         return <Chat uiState={uiState} 
+                setUiState={setUiState}
                 newSession={newSession}
-                setNewSession={setNewSession}/>;
+                setNewSession={setNewSession}
+                setSessionList={setSessionList}/>;
       default:
         return <LoadingScreen/>;
     }

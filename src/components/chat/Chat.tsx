@@ -7,11 +7,13 @@ import {Div} from './Chat.styled.tsx'
 
 interface ChatProps {
   uiState: UiState;
+  setUiState: React.Dispatch<React.SetStateAction<UiState>>;
   newSession: NewSession;
   setNewSession: React.Dispatch<React.SetStateAction<NewSession>>;
+  setSessionList: React.Dispatch<React.SetStateAction<Array<session>>>;
 }
 
-function Chat({uiState, newSession, setNewSession}: ChatProps) {
+function Chat({uiState, setUiState, newSession, setNewSession, setSessionList}: ChatProps) {
   const [messages, setMessages] = useState<Array<message>>([]);
   const [isDone, setIsDone] = useState<boolean>(true);
 
@@ -28,7 +30,24 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
   (async () => {
     await sendPrompt(newSession.prompt!);
 
+    await storage.appendSession({ sessionId: newSession.sessionId, title: "새 채팅" });
+    setSessionList(prev => {
+        const list = [...prev];
+        list.push({
+            sessionId: sessionId,
+            title: "새 채팅"
+        })
+        return list;
+    })
+        
+    setUiState(prev => ({
+        ...prev,
+        sessionId: newSession.sessionId,
+        mode: "session"
+    }))
+
     setNewSession({
+      sessionId: null,
       prompt: null,
       isNewSession: false
     });
@@ -38,18 +57,18 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
   //즉, usState 변경 시 
   //왜 이전 state의 메시지가 초기화되니까
 
-  const sendPrompt = async (prompt: string) => {
+  const sendPrompt = async (sessionId: string, prompt: string) => {
     setIsDone(false);
     const userMsg: message = {role: "user", parts: [{ text: prompt}]};
 
     setMessages(prev => [...prev, userMsg]); //ui갱신
-    storage.appendMessages(uiState.sessionId, userMsg); //db갱신
+    storage.appendMessages(sessionId, userMsg); //db갱신
     const response = await fetch("https://personal-gemini.vercel.app/api/stream", {
       method: "POST", 
       headers: {
         "Content-Type": "application/json"
       },
-      body: utils.stringifyJson({sessionId: uiState.sessionId, userMsg: userMsg})
+      body: utils.stringifyJson({sessionId: sessionId, userMsg: userMsg})
     });
 
     const contentType = response.headers.get("Content-Type") ?? "";
@@ -203,7 +222,7 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
   return (
     <Div>
       <ChatMessages messages={messages} isDone={isDone}/>
-      <ChatSessionInputBox sendPrompt={sendPrompt} isDone={isDone}/>
+      <ChatSessionInputBox uiState={uiState} sendPrompt={sendPrompt} isDone={isDone}/>
     </Div>
   )
 }

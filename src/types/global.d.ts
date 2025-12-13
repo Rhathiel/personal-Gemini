@@ -15,6 +15,7 @@ interface message {
 }
 
 interface NewSession {
+    sessionId: string | null;
     prompt: string | null;
     isNewSession: boolean;
 }
