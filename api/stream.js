@@ -36,13 +36,6 @@ function initAI(history, showThoughts) {
   return chat;
 }
 
-async function createOutput(chat, parts) {
-  const stream = await chat.sendMessageStream({
-    message: parts,
-  });
-  return stream;
-}
-
 export default async function handler(req, res) {
 
   const corsHeaders = {
@@ -50,7 +43,12 @@ export default async function handler(req, res) {
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
-  const headers = {
+  const streamHeaders = {
+    ...corsHeaders,
+    "Content-Type": "application/x-ndjson",
+    "Cache-Control": "no-cache"
+  };  
+  const jsonHeaders = {
     ...corsHeaders,
     "Content-Type": "application/json",
     "Cache-Control": "no-cache"
@@ -72,31 +70,37 @@ export default async function handler(req, res) {
     return;
   } //주소로 바로 접근하는 경우 차단
     
-  for (const key in headers){
-    res.setHeader(key, headers[key]);
-  }
-
   const { sessionId, userMsg } = req.body;
   const history = await redis.lrange(`messages:${sessionId}`, 0, -1);
-
   const chat = initAI(history, false);
 
-  const output = await createOutput(chat, userMsg.parts);
-  if(typeof output?.[Symbol.asyncIterator] !== "function"){ 
-    res.status(200).json(output);
-    return;
-  }
+  try {
+    const geminiStream = await chat.sendMessageStream({ //stream or json
+      message: userMsg.parts,
+    });
 
-  const stream = Readable.from((async function* () {
-    let temp = "";
-    
-    for await (const x of output){ 
-      temp += (x.candidates[0]?.content?.parts[0]?.text) ?? "";
-      yield utils.encodeText(utils.stringifyJson(x));
+    for (const key in streamHeaders){
+      res.setHeader(key, streamHeaders[key]);
     }
+    res.statusCode = 200
 
-    await redis.rpush(`messages:${sessionId}`, utils.stringifyJson({ role: "model", parts: [ { text: temp } ] }));
-  })());
-  res.statusCode = 200
-  stream.pipe(res);
+    const nodeStream = Readable.from((async function* () {
+      let temp = "";
+      
+      for await (const x of geminiStream){ 
+        temp += (x.candidates[0]?.content?.parts[0]?.text) ?? "";
+        yield utils.encodeText(utils.stringifyJson(x));
+      }
+
+      await redis.rpush(`messages:${sessionId}`, utils.stringifyJson({ role: "model", parts: [ { text: temp } ] }));
+    })());
+
+    nodeStream.pipe(res);
+  }
+  catch (e) {
+    for (const key in jsonHeaders){
+      res.setHeader(key, jsonHeaders[key]);
+    }
+    res.status(200).json({error: {code: e.code, message: e.message, status: e.status}});
+  }
 }

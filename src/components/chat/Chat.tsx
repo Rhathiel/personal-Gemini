@@ -54,6 +54,7 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
       body: utils.stringifyJson({sessionId: uiState.sessionId, userMsg: userMsg})
     });
 
+    if(await response.json().ok === false){
     switch (response.status){
       case 503: {
         console.error(await response.json());
