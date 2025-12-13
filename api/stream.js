@@ -89,18 +89,21 @@ export default async function handler(req, res) {
   const chat = initAI(history, false);
 
   const output = await createOutput(chat, userMsg.parts);
-  if(typeof output?.[Symbol.asyncIterator] !== "function"){
+  if(typeof output?.[Symbol.asyncIterator] !== "function"){ 
     res.status(503).json(JSON.stringify(output,["error", "status", "code"]));
     return;
   }
 
   const stream = Readable.from(async function* () {
     let temp = "";
+    
     for await (const x of output){ 
       temp += (x.candidates[0]?.content?.parts[0]?.text) ?? "";
       yield utils.encodeText(utils.stringifyJson(x));
     }
+
     await redis.rpush(`messages:${sessionId}`, utils.stringifyJson({ role: "model", parts: [ { text: temp } ] }));
   });
+  
   stream.pipe(res);
 }
