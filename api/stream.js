@@ -103,7 +103,7 @@ export default async function handler(req, res) {
     }
 
     await redis.rpush(`messages:${sessionId}`, utils.stringifyJson({ role: "model", parts: [ { text: temp } ] }));
-  }))();
+  })());
   res.statusCode = 200
   stream.pipe(res);
 }
