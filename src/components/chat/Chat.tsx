@@ -19,7 +19,11 @@ function Chat({uiState, newSessionStateRef, setSessionList}: ChatProps) {
     (async () => {
       if(newSessionStateRef.current.sessionId && newSessionStateRef.current.prompt) {
 
+        console.log("New session detected in Chat component.");
+
         await sendPrompt(newSessionStateRef.current.sessionId!, newSessionStateRef.current.prompt!);
+
+        console.log("Appending new session to storage.");
 
         await storage.appendSession({ sessionId: newSessionStateRef.current.sessionId, title: "새 채팅" });
 
@@ -47,6 +51,8 @@ function Chat({uiState, newSessionStateRef, setSessionList}: ChatProps) {
   //왜 이전 state의 메시지가 초기화되니까
 
   const sendPrompt = async (sessionId: string, prompt: string) => {
+    console.log("sendPrompt called");
+
     setIsDone(false);
     const userMsg: message = {role: "user", parts: [{ text: prompt}]};
 
@@ -131,9 +137,9 @@ function Chat({uiState, newSessionStateRef, setSessionList}: ChatProps) {
       await storage.appendMessages(sessionId, { role: "model", parts: [{ text: error.status }] });
       setIsDone(true);
     } 
-
     else {
       try {
+        console.log("Starting streaming...");
         await streaming(response.body)
       } 
       catch(e) {
@@ -171,6 +177,8 @@ function Chat({uiState, newSessionStateRef, setSessionList}: ChatProps) {
       decoded = utils.parseText(queue); 
 
       if(!decoded) continue;
+
+      console.log("decoded:", decoded);
 
       if(Array.isArray(decoded) === true){
         for(let e of decoded){
