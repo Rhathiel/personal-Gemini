@@ -139,6 +139,7 @@ function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
         }
       }
 
+      await storage.appendMessages(sessionId, { role: "model", parts: [{ text: error.status }] });
       setIsDone(true);
     } 
 
