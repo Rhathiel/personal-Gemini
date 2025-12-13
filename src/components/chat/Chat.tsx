@@ -18,14 +18,12 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
     (async () => {
       if(newSessionStateRef.current.sessionId && newSessionStateRef.current.prompt) {
           
-        setMessages([]);
-
-        await sendPrompt(newSessionStateRef.current.sessionId!, newSessionStateRef.current.prompt!);
-
+        addSession( { sessionId: newSessionStateRef.current.sessionId, title: "새 채팅" } );
         await storage.appendSession({ sessionId: newSessionStateRef.current.sessionId, title: "새 채팅" });
 
-        addSession( { sessionId: newSessionStateRef.current.sessionId, title: "새 채팅" } );
-            
+        setMessages([]);
+        await sendPrompt(newSessionStateRef.current.sessionId!, newSessionStateRef.current.prompt!);
+
         newSessionStateRef.current = { sessionId: null, prompt: null };
 
         return; 
