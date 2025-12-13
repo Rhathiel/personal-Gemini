@@ -13,6 +13,7 @@ import {
 import * as storage from "../../lib/storage.ts";
 import { useUiStateStore } from '../../stores/uiStateStore.ts';
 import { useSessionStore } from '../../stores/sessionStore.ts';
+import { useMessageStore } from '../../stores/messageStore.ts';
 
 interface InteractionListItemState {
   isHover: boolean;
@@ -33,6 +34,7 @@ export interface menuState {
 function SideBar() {
   const { uiState, setUiState, toggleSideIsOpened } = useUiStateStore();
   const { sessionList, setSessions, remSessionById, editSessionById } = useSessionStore();
+  const { setMessages } = useMessageStore();
   const [input, setInput] = useState<string>("");
   const [interactionListItemState, setInteractionListItemState] = useState<InteractionListItemState>({
     isHover: false,
@@ -98,6 +100,7 @@ function SideBar() {
   const onRemove = async (data: session) => {
     if(data.sessionId === uiState.sessionId){
       setUiState({ mode: "home", sessionId: null });
+      setMessages([]);
     }
     storage.deleteSession(data);
     storage.deleteMessages(data.sessionId);
