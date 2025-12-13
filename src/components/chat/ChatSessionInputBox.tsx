@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import {StyledSessionInput} from './Chat.styled.tsx'
 
 interface ChatSessionInputBoxProps {
-    sendPrompt: (prompt: string) => void;
+    sendPrompt: (prompt: string) => Promise<void>;
     isDone: boolean;
 }
 

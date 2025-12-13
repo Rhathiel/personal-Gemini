@@ -17,24 +17,23 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
 
   useEffect (() => {
     (async () => {
-      if(newSession.isNewSession === true){ // 전달된값은 prompt
-        await storage.appendSession({
-          sessionId: uiState.sessionId,
-          title: "새 채팅"
-        });
-        await sendPrompt(newSession.prompt!);
-        setNewSession({
-          prompt: null,
-          isNewSession: false
-        })  
-        return;
-      }
-      if(newSession.isNewSession === false){
-        const list = await storage.loadMessages(uiState.sessionId);
-        setMessages(list);
-      }
+      const list = await storage.loadMessages(uiState.sessionId);
+      setMessages(list);
     })();
-  }, [uiState.sessionId, newSession]);
+  }, [uiState.sessionId]);
+
+  useEffect(() => {
+  if (!newSession.isNewSession) return;
+
+  (async () => {
+    await sendPrompt(newSession.prompt!);
+
+    setNewSession({
+      prompt: null,
+      isNewSession: false
+    });
+  })();
+}, [newSession]);
 
   //즉, usState 변경 시 
   //왜 이전 state의 메시지가 초기화되니까
@@ -126,6 +125,7 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
         }
       }
     } 
+
     else {
       try {
         await streaming(response.body)

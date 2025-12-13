@@ -65,7 +65,7 @@ export default async function handler(req, res) {
     res.status(204).end();
     return;
   }
-  
+
   //주소로 바로 접근하는 경우 차단
   if (req.method !== "POST") {
     for (const key in corsHeaders){

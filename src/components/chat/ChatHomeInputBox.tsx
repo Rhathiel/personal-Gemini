@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {StyledHomeInput} from './Chat.styled.tsx'
 
-function ChatHomeInputBox({sendPrompt}: {sendPrompt: (prompt: string) => void}) {
+function ChatHomeInputBox({sendPrompt}: {sendPrompt: (prompt: string) => Promise<void>}) {
 
     const [input, setInput] = useState(() => {
         return sessionStorage.getItem("chathomeinput") ?? "";

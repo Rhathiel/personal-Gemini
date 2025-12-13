@@ -1,5 +1,6 @@
 import {Div} from './Chat.styled.tsx'
 import ChatHomeInputBox from './ChatHomeInputBox.tsx'
+import * as storage from '../../lib/storage.ts'
 
 interface ChatHomeProps {
     setSessionList: React.Dispatch<React.SetStateAction<Array<session>>>;
@@ -9,7 +10,7 @@ interface ChatHomeProps {
 
 function ChatHome({setSessionList, setUiState, setNewSession}: ChatHomeProps) {
 
-    const sendPrompt = (prompt: string) => {
+    const sendPrompt = async (prompt: string) => {
         if (!prompt) return;
         const sessionId = crypto.randomUUID(); //id용 난수 생성
 
@@ -17,6 +18,7 @@ function ChatHome({setSessionList, setUiState, setNewSession}: ChatHomeProps) {
             prompt: prompt,
             isNewSession: true
         })
+        await storage.appendSession({ sessionId: sessionId, title: "새 채팅" });
         setSessionList(prev => {
             const list = [...prev];
             list.push({
