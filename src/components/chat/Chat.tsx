@@ -37,7 +37,7 @@ function Chat({uiState, setUiState, newSession, setNewSession, setSessionList}: 
     await sendPrompt(newSession.sessionId!, newSession.prompt!);
 
     await storage.appendSession({ sessionId: newSession.sessionId, title: "새 채팅" });
-    
+
     setSessionList(prev => {
         const list = [...prev];
         list.push({
@@ -63,7 +63,7 @@ function Chat({uiState, setUiState, newSession, setNewSession, setSessionList}: 
     const userMsg: message = {role: "user", parts: [{ text: prompt}]};
 
     setMessages(prev => [...prev, userMsg]); //ui갱신
-    storage.appendMessages(sessionId, userMsg); //db갱신
+    await storage.appendMessages(sessionId, userMsg); //db갱신
     const response = await fetch("https://personal-gemini.vercel.app/api/stream", {
       method: "POST", 
       headers: {
