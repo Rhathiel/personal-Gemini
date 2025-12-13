@@ -6,9 +6,7 @@ import MainView from './components/MainView.tsx';
 import { useUiStateStore } from './stores/uiStateStore.ts';
 
 function App() {
-  const { uiState, setUiState } = useUiStateStore();
-
-  setUiState({mode: "session"});
+  const { uiState } = useUiStateStore();
 
   //버전
   useEffect(() => {
