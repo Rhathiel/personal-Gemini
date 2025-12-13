@@ -78,7 +78,6 @@ export default async function handler(req, res) {
 
   const { sessionId, userMsg } = req.body;
   const history = await redis.lrange(`messages:${sessionId}`, 0, -1);
-  console.log("history in stream.ts: ", history);
 
   const chat = initAI(history, false);
 
