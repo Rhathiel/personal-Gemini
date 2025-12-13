@@ -24,10 +24,13 @@ function ChatHomeInputBox({sendPrompt}: {sendPrompt: (prompt: string) => Promise
         <div>
             <StyledHomeInput type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => {
                 if(e.key === "Enter"){
+                    if(!input) {
+                        return;
+                    }
                     active();
                 }
             }}/>
-            <button type="button" onClick={active}>전송</button>
+            <button disabled={!input} type="button" onClick={active}>전송</button>
         </div>
     );
 }   

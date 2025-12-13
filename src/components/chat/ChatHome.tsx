@@ -7,7 +7,7 @@ function ChatHome({newSessionStateRef}: {newSessionStateRef: React.MutableRefObj
     const { setUiState } = useUiStateStore();
     const { setMessages } = useMessageStore();
     const sendPrompt = async (prompt: string) => {
-        if (!prompt) return;
+
         const sessionId = crypto.randomUUID(); //id용 난수 생성
 
         newSessionStateRef.current = { //Chat.jsx에 전달해줄 새 session의 정보
