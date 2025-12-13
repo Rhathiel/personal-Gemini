@@ -175,12 +175,14 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
   }
 
   const printMessage = (decoded: any) => {
+
+    //content 객체 구조분해
     const { role, parts } = decoded.candidates[0].content; 
 
-    if (decoded?.candidates?.[0]?.finishReason === "MAX_TOKENS"){
+    if (decoded?.candidates?.[0]?.finishReason === "MAX_TOKENS"){ //응답 중에 토큰이 만료된 경우
       let buffer = getLastMessage()!.parts[0].text + parts[0].text + "\n\n[최대 토큰 수 도달]";
       editLastMessage({ role, parts: [{ text: buffer }] })
-    } else {
+    } else { 
       let buffer = getLastMessage()!.parts[0].text + parts[0].text;
       editLastMessage({ role, parts: [{ text: buffer }] })
     }
