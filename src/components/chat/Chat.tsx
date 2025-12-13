@@ -7,7 +7,6 @@ import {Div} from './Chat.styled.tsx'
 import { useUiStateStore } from '../../stores/uiStateStore.ts';
 import { useSessionStore } from '../../stores/sessionStore.ts';
 import { useMessageStore } from '../../stores/messageStore.ts';
-import { add } from 'three/webgpu';
 
 function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObject<NewSessionState> }) {
   const [ isDone, setIsDone ] = useState<boolean>(true);
