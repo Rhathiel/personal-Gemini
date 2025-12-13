@@ -19,7 +19,7 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
     (async () => {
       if(newSessionStateRef.current.sessionId && newSessionStateRef.current.prompt) {
         
-        addSession( { sessionId: newSessionStateRef.current.sessionId, title: "새 채팅" } );
+        addSession({ sessionId: newSessionStateRef.current.sessionId, title: "새 채팅" });
 
         await storage.appendSession({ sessionId: newSessionStateRef.current.sessionId, title: "새 채팅" });
         await sendPrompt(newSessionStateRef.current.sessionId!, newSessionStateRef.current.prompt!);
