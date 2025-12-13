@@ -17,6 +17,8 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
   useEffect(() => {
     (async () => {
       if(newSessionStateRef.current.sessionId && newSessionStateRef.current.prompt) {
+          
+        setMessages([]);
 
         await sendPrompt(newSessionStateRef.current.sessionId!, newSessionStateRef.current.prompt!);
 
