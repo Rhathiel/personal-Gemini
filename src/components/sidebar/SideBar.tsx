@@ -56,6 +56,7 @@ function SideBar() {
   }, []);
 
   const activeClick = async () => {
+    console.log("어흐어흐");
     setUiState({ mode: "home", sessionId: null })
   };
 

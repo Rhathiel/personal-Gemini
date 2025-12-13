@@ -3,7 +3,7 @@ import ChatHomeInputBox from './ChatHomeInputBox.tsx'
 import { useUiStateStore } from '../../stores/uiStateStore.ts';
 
 function ChatHome({newSessionStateRef}: {newSessionStateRef: React.MutableRefObject<NewSessionState>}) {
-    const setUiState = useUiStateStore(s => s.setUiState);
+    const { setUiState } = useUiStateStore();
 
     const sendPrompt = async (prompt: string) => {
         if (!prompt) return;
