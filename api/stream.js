@@ -170,8 +170,6 @@ export default async function handler(req, res) {
         yield utils.encodeText(utils.stringifyJson(x));
       }
 
-      console.log(temp);
-
       await redis.rpush(`messages:${sessionId}`, utils.stringifyJson({ role: "model", parts: [ { text: temp } ] }));
     })());
 
