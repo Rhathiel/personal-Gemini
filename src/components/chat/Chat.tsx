@@ -140,7 +140,7 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
 
       if(done) break;
 
-      queue = utils.decodeText(value);
+      queue += utils.decodeText(value);
       if(queue.includes("}{")){
         queue = "[" + queue.split("}{").join("},{") + "]";
       }
