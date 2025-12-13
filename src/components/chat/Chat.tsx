@@ -19,6 +19,7 @@ function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
   useEffect(() => {
     (async () => {
       if(newSession.sessionId && newSession.prompt) {
+        
         await sendPrompt(newSession.sessionId!, newSession.prompt!);
 
         await storage.appendSession({ sessionId: newSession.sessionId, title: "새 채팅" });
