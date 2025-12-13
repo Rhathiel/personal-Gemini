@@ -7,9 +7,10 @@ import {Div} from './Chat.styled.tsx'
 import { useUiStateStore } from '../../stores/uiStateStore.ts';
 import { useSessionStore } from '../../stores/sessionStore.ts';
 import { useMessageStore } from '../../stores/messageStore.ts';
+import { useFlagStore } from '../../stores/flagStore.ts';
 
 function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObject<NewSessionState> }) {
-  const [ isDone, setIsDone ] = useState<boolean>(true);
+  const { setIsResponseDone } = useFlagStore();
   const { addSession } = useSessionStore();
   const { addMessage, setMessages, getLastMessage, editLastMessage } = useMessageStore();
   const { uiState } = useUiStateStore();
@@ -39,7 +40,7 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
   const sendPrompt = async (sessionId: string, prompt: string) => {
     
     //초기화
-    setIsDone(false);
+    setIsResponseDone(false);
     const userMsg: message = {role: "user", parts: [{ text: prompt}]};
 
     //갱신
@@ -104,7 +105,7 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
       }
 
       await storage.appendMessages(sessionId, { role: "model", parts: [{ text: error.status }] });
-      setIsDone(true);
+      setIsResponseDone(true);
     } 
 
     else {
@@ -115,7 +116,7 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
         console.error(e);
       } 
       finally {
-        setIsDone(true);
+        setIsResponseDone(true);
       }
     }
   }
@@ -171,8 +172,8 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
 
   return (
     <Div>
-      <ChatMessages isDone={isDone}/>
-      <ChatSessionInputBox sendPrompt={sendPrompt} isDone={isDone}/>
+      <ChatMessages />
+      <ChatSessionInputBox sendPrompt={sendPrompt} />
     </Div>
   )
 }

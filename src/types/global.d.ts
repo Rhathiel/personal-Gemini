@@ -40,3 +40,8 @@ interface messageStore {
     getLastMessage: () => message | undefined;
     editLastMessage: (msg: message) => void;
 }
+
+interface flagStore {
+    isResponseDone: boolean;
+    setIsResponseDone: (isResponseDone: boolean) => void;
+}

@@ -1,8 +1,10 @@
 import ReactMarkdown from "react-markdown";
 import { useMessageStore } from "../../stores/messageStore.ts";
+import { useFlagStore } from "../../stores/flagStore.ts";
 
-function ChatMessages({isDone}: {isDone: boolean}) {
+function ChatMessages() {
   const { messages } = useMessageStore();
+  const { isResponseDone } = useFlagStore(); 
 
   return (
     <div>
@@ -13,7 +15,7 @@ function ChatMessages({isDone}: {isDone: boolean}) {
           </ReactMarkdown>
         </div>
       ))}
-      {(isDone) ? null : <div>...</div>}
+      {(isResponseDone) ? null : <div>...</div>}
     </div>
   );
 }   
