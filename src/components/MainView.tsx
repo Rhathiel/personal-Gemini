@@ -12,7 +12,7 @@ function MainView() {
     });
 
     switch (mode) {
-        case "home":
+        case "home":            
         return ( <ChatHome newSessionStateRef={newSessionStateRef}/> );
         case "session":
         return ( <Chat newSessionStateRef={newSessionStateRef}/> );
