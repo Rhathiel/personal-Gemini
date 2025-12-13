@@ -37,16 +37,10 @@ function initAI(history, showThoughts) {
 }
 
 async function createOutput(chat, parts) {
-  try{  
-    const stream = await chat.sendMessageStream({
-      message: parts,
-    });
-    return stream;
-  }
-  catch (e){
-    console.error(e);
-    return e;
-  }
+  const stream = await chat.sendMessageStream({
+    message: parts,
+  });
+  return stream;
 }
 
 export default async function handler(req, res) {
