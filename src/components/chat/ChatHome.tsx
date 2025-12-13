@@ -10,12 +10,12 @@ function ChatHome({newSessionStateRef}: {newSessionStateRef: React.MutableRefObj
         if (!prompt) return;
         const sessionId = crypto.randomUUID(); //id용 난수 생성
 
-        newSessionStateRef.current = {
+        newSessionStateRef.current = { //Chat.jsx에 전달해줄 새 session의 정보
             sessionId: sessionId,
             prompt: prompt,
         };
 
-        setMessages([]);
+        setMessages([]); //session의 변경을 야기하므로 messages를 지워줌. (안지우면 기존 messages에 추가됨)
         setUiState({
             mode: "session",
             sessionId: sessionId

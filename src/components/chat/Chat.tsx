@@ -20,6 +20,7 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
       if(newSessionStateRef.current.sessionId && newSessionStateRef.current.prompt) {
         
         await sendPrompt(newSessionStateRef.current.sessionId!, newSessionStateRef.current.prompt!);
+        //sendPrompt가 db저장도 수행함.
         addSession({ sessionId: newSessionStateRef.current.sessionId, title: "새 채팅" });
 
         await storage.appendSession({ sessionId: newSessionStateRef.current.sessionId, title: "새 채팅" });
