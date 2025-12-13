@@ -120,10 +120,7 @@ export default async function handler(req, res) {
             this.push(utils.encodeText(utils.stringifyJson(chunk)));
           }
         }
-        if(temp){
-          await redis.rpush(`messages:${sessionId}`, utils.stringifyJson({ role: "model", parts: [ { text: temp } ] }));
-          temp = "";
-        }
+        await redis.rpush(`messages:${sessionId}`, utils.stringifyJson({ role: "model", parts: [ { text: temp } ] }));
         this.push(null);
         return;
       })();
