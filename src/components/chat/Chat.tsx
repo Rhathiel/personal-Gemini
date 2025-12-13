@@ -19,6 +19,15 @@ function Chat({uiState, newSessionStateRef, setSessionList}: ChatProps) {
     (async () => {
       if(newSessionStateRef.current.sessionId && newSessionStateRef.current.prompt) {
 
+        setSessionList(prev => {
+          const list = [...prev];
+          list.push({
+              sessionId: newSessionStateRef.current.sessionId,
+              title: "새 채팅"
+          })
+          return list;
+        })
+
         console.log("New session detected in Chat component.");
 
         await sendPrompt(newSessionStateRef.current.sessionId!, newSessionStateRef.current.prompt!);
@@ -26,22 +35,13 @@ function Chat({uiState, newSessionStateRef, setSessionList}: ChatProps) {
         console.log("Appending new session to storage.");
 
         await storage.appendSession({ sessionId: newSessionStateRef.current.sessionId, title: "새 채팅" });
-
-        setSessionList(prev => {
-            const list = [...prev];
-            list.push({
-                sessionId: newSessionStateRef.current.sessionId,
-                title: "새 채팅"
-            })
-            return list;
-        })
             
         newSessionStateRef.current = {
-            sessionId: null,
-            prompt: null,
+          sessionId: null,
+          prompt: null,
         };
 
-        return;
+        return; 
       }
 
       const list = await storage.loadMessages(uiState.sessionId);
