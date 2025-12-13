@@ -61,7 +61,6 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
 
     if(contentType.includes("application/json")){
       const { error } = await response.json();
-      console.log(error.status);
       const errorMsg: message = { role: "model", parts: [{ text: error.status }] }
 
       switch (error.code){
@@ -148,8 +147,6 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
       decoded = utils.parseText(queue); 
 
       if(!decoded) continue;
-
-      console.log("decoded:", decoded);
 
       if(Array.isArray(decoded) === true){
         for(let e of decoded){
