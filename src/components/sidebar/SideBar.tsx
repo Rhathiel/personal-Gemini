@@ -32,7 +32,7 @@ export interface menuState {
 
 function SideBar() {
   const { uiState, setUiState, toggleSideIsOpened } = useUiStateStore();
-  const { sessionList, setSessions, remSessionById } = useSessionStore();
+  const { sessionList, setSessions, remSessionById, editSessionById } = useSessionStore();
   const [input, setInput] = useState<string>("");
   const [interactionListItemState, setInteractionListItemState] = useState<InteractionListItemState>({
     isHover: false,
@@ -73,12 +73,7 @@ function SideBar() {
       title: input
     }
     storage.editSession(oldData, newData)
-    setSessionList(prev => {
-      const list = [...prev];
-      const idx = list.findIndex(item => item.sessionId === oldData.sessionId);
-      list[idx] = newData;
-      return list
-    })
+    editSessionById(oldData.sessionId!, newData);
   };
 
   const onOpen = (e: React.MouseEvent<HTMLButtonElement>, data: session) => {
@@ -129,11 +124,7 @@ function SideBar() {
             $interactionSessionId={interactionListItemState.sessionId}>
               {!(editState.isEditing && editState.sessionId === data.sessionId) && 
               <StyledButton onClick={() => {
-                setUiState(prev => ({
-                  ...prev,
-                  sessionId: data.sessionId,
-                  mode: "session"
-                }))
+                setUiState({ mode: "session", sessionId: data.sessionId })
               }} 
                 onMouseEnter={() => setInteractionListItemState(prev => ({
                   ...prev,

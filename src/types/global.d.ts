@@ -20,10 +20,11 @@ interface NewSessionState {
 }
 
 interface SessionStore {
-  sessionList: session[];
-  addSession: (s: session) => void;
-  setSessions: (list: session[]) => void;
-  remSessionById: (sessionId: string) => void;
+    sessionList: session[];
+    addSession: (s: session) => void;
+    setSessions: (list: session[]) => void;
+    remSessionById: (sessionId: string) => void;
+    editSessionById: (sessionId: string, newData: session) => void;
 }
 
 interface UiStateStore {
