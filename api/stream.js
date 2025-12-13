@@ -150,6 +150,7 @@ export default async function handler(req, res) {
   const { sessionId, userMsg } = req.body;
   const history = await redis.lrange(`messages:${sessionId}`, 0, -1);
   const chat = initAI(history, false);
+  const DELIM = "\u001E";
 
   console.log("으헤으헤헤");
 
@@ -169,7 +170,7 @@ export default async function handler(req, res) {
       
       for await (const x of geminiStream){ 
         temp += (x.candidates[0]?.content?.parts[0]?.text) ?? "";
-        yield utils.encodeText(utils.stringifyJson(x));
+        yield utils.encodeText(utils.stringifyJson(x) + DELIM);
       }
 
       await redis.rpush(`messages:${sessionId}`, utils.stringifyJson({ role: "model", parts: [ { text: temp } ] }));
