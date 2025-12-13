@@ -24,6 +24,9 @@ function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
 
   useEffect(() => {
     (async () => {
+      const list = await storage.loadMessages(uiState.sessionId);
+      setMessages(list);
+
       if(newSession.sessionId || newSession.prompt) {
         await sendPrompt(newSession.sessionId!, newSession.prompt!);
 
@@ -42,10 +45,6 @@ function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
           sessionId: null,
           prompt: null,
         });
-      }
-      else {
-        const list = await storage.loadMessages(uiState.sessionId);
-        setMessages(list);
       }
     })();
   }, [uiState.sessionId, newSession]);
