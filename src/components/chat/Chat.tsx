@@ -56,7 +56,7 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
 
     switch (response.status){
       case 503: {
-        console.error(response.json());
+        console.error(await response.json());
         setMessages(prev => [...prev, {role: "model", parts: [{ text: "Api Error: The model is currently overloaded. Please try again later."}]}]);
         setIsDone(true);
         return;
