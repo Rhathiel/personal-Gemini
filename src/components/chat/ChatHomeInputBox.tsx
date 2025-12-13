@@ -6,12 +6,13 @@ function ChatHomeInputBox({sendPrompt}: {sendPrompt: (prompt: string) => Promise
     const [input, setInput] = useState(() => {
         return sessionStorage.getItem("chathomeinput") ?? "";
     });
+    //새로고침 되어도 input 값이 유지되게 함
 
     useEffect(() => {
         sessionStorage.setItem("chathomeinput", input);
     }, [input]);
-    //input 갱신마다 setItem 해줌. 새로고침하면 바로 불러옴. input이 
-    
+    //input과 sessionStorage를 동기화
+
     const active = () => {
         sendPrompt(input);
         //unmount될 시 해당 컴포넌츠가 가지는 모든 정보가 삭제되고, 렌더가 더이상 진행되지 않으므로, 직접적으로 storage에서 제거해줘야함. 
