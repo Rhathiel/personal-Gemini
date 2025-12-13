@@ -90,7 +90,7 @@ export default async function handler(req, res) {
 
   const output = await createOutput(chat, userMsg.parts);
   if(typeof output?.[Symbol.asyncIterator] !== "function"){ 
-    res.status(503).json(output);
+    res.status(429).json(output);
     return;
   }
 
