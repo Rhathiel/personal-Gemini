@@ -1,10 +1,11 @@
 import {Div} from './Chat.styled.tsx'
 import ChatHomeInputBox from './ChatHomeInputBox.tsx'
 import { useUiStateStore } from '../../stores/uiStateStore.ts';
+import { useMessageStore } from '../../stores/messageStore.ts';
 
 function ChatHome({newSessionStateRef}: {newSessionStateRef: React.MutableRefObject<NewSessionState>}) {
     const { setUiState } = useUiStateStore();
-
+    const { setMessages } = useMessageStore();
     const sendPrompt = async (prompt: string) => {
         if (!prompt) return;
         const sessionId = crypto.randomUUID(); //id용 난수 생성
@@ -14,6 +15,7 @@ function ChatHome({newSessionStateRef}: {newSessionStateRef: React.MutableRefObj
             prompt: prompt,
         };
 
+        setMessages([]);
         setUiState({
             mode: "session",
             sessionId: sessionId
