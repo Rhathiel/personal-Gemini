@@ -38,6 +38,7 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
   //왜 이전 state의 메시지가 초기화되니까
 
   const sendPrompt = async (sessionId: string, prompt: string) => {
+    if (isResponseDone === false) return;
     
     //초기화
     setIsResponseDone(false);
