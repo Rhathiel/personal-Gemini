@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { useUiStateStore } from '../stores/uiStateStore.ts';
 import Chat from './chat/Chat.tsx';
 import ChatHome from './chat/ChatHome.tsx';
-import LoadingScreen from './chat/LoadingScreeen.tsx'
+import LoadingScreen from './chat/LoadingScreen.tsx'
 
 function MainView() {
     const mode = useUiStateStore(s => s.uiState.mode);
