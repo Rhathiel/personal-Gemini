@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PopupMenu from './PopupMenu.tsx';
 import {
   Overlay,
@@ -11,13 +11,9 @@ import {
   StyledChatListItem,
 } from "./Sidebar.styled.js";
 import * as storage from "../../lib/storage.ts";
+import { useUiStateStore } from '../../stores/uiStateStore.ts';
+import { useSessionStore } from '../../stores/sessionStore.ts';
 
-interface SideBarProps {
-  uiState: UiState;
-  setUiState: React.Dispatch<React.SetStateAction<UiState>>;
-  sessionList: Array<session>;
-  setSessionList: React.Dispatch<React.SetStateAction<Array<session>>>;
-}
 interface InteractionListItemState {
   isHover: boolean;
   onClick: boolean;
@@ -34,7 +30,9 @@ export interface menuState {
   data: session | null;
 }
 
-function SideBar({uiState, setUiState, sessionList, setSessionList}: SideBarProps) {
+function SideBar() {
+  const { uiState, setUiState } = useUiStateStore();
+  const { sessionList, setSessions } = useSessionStore();
   const [input, setInput] = useState<string>("");
   const [interactionListItemState, setInteractionListItemState] = useState<InteractionListItemState>({
     isHover: false,
@@ -49,12 +47,16 @@ function SideBar({uiState, setUiState, sessionList, setSessionList}: SideBarProp
     x: 0, y: 0, visiable: false, data: null
   });
 
+  //SessionList 갱신 로직
+  useEffect(() => {
+    (async () => {
+      const list = await storage.loadSessionList(); 
+      setSessions(list);
+    })();
+  }, []);
+
   const activeClick = async () => {
-    setUiState(prev => ({
-      ...prev,
-      mode: "home",
-      sessionId: null
-    }))
+    setUiState({ mode: "home", sessionId: null })
   };
 
   const activeEnter = (e: React.KeyboardEvent<HTMLInputElement>, data: session) => {

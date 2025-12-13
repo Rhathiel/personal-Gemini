@@ -23,6 +23,7 @@ interface SessionStore {
   sessionList: session[];
   addSession: (s: session) => void;
   setSessions: (list: session[]) => void;
+  remSessionById: (sessionId: string) => void;
 }
 
 interface UiStateStore {
