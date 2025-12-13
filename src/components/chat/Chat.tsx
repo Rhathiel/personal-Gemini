@@ -62,6 +62,7 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
     if(contentType.includes("application/json")){
       const { error } = await response.json();
       const errorMsg: message = { role: "model", parts: [{ text: error.status }] }
+      setIsResponseDone(true);
 
       switch (error.code){
         case 400: {
@@ -105,7 +106,6 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
       }
 
       await storage.appendMessages(sessionId, { role: "model", parts: [{ text: error.status }] });
-      setIsResponseDone(true);
     } 
 
     else {
