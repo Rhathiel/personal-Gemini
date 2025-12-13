@@ -9,10 +9,12 @@ function ChatSessionInputBox({ sendPrompt }: { sendPrompt: (sessionId: string, p
     const [input, setInput] = useState(() => {
         return sessionStorage.getItem("chatsessioninput") ?? "";
     });
+    //새로고침 되어도 input 값이 유지되게 함
 
     useEffect(() => {
         sessionStorage.setItem("chatsessioninput", input);
     }, [input]);
+    //input과 sessionStorage를 동기화
     
     const active = () => {
         sendPrompt(uiState.sessionId!, input);
