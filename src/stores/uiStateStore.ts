@@ -1,11 +1,8 @@
 import { create } from 'zustand';
+import * as utils from '../lib/utils.ts'
 
 export const useUiStateStore = create<UiStateStore>((set) => ({ 
-    uiState: {
-        mode: "home",
-        sessionId: null,
-        sideIsOpened: false,
-    },
+    uiState: utils.parseText(sessionStorage.getItem("uiState")),
     setUiState: (uiState) => set((prev) => 
         ({uiState: { ...prev.uiState, ...uiState } } )),
     toggleSideIsOpened: () => set((prev) => ({ 
