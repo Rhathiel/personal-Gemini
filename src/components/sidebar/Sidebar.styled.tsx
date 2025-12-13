@@ -73,6 +73,7 @@ const StyledNewChatButton = styled.button`
 `;
 
 const StyledButton = styled.button`
+    color: white;
     display: block;
     width: 90%;
     border-radius: 50px;
