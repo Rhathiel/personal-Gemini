@@ -89,43 +89,18 @@ export default async function handler(req, res) {
   const chat = initAI(history, false);
 
   const output = await createOutput(chat, userMsg.parts);
-
-  let isApiError = false;
   if(typeof output?.[Symbol.asyncIterator] !== "function"){
-    isApiError = true;
+    res.status(503).json(JSON.stringify(output,["error", "status", "code"]));
+    return;
   }
 
-  let temp = "";
-
-  const stream = new Readable({
-    read() {
-      (async () => {
-        if (isApiError === true) {
-          let error = JSON.stringify(output,["error", "status", "code"]);
-          this.push(utils.encodeText(error));
-          this.push(null);
-          return;
-        }
-        for await (const chunk of output) { 
-          temp += (chunk.candidates[0]?.content?.parts[0]?.text) ?? "";
-          if(  !chunk || //undefined,null
-              (typeof chunk === "string" && chunk.trim() === "") ||  //empty string
-              (Object.getPrototypeOf(chunk) === Object.prototype && Object.keys(chunk).length === 0) || //empty json
-              (chunk instanceof Uint8Array && chunk.length === 0) || //empty unit8array
-              (Buffer.isBuffer(chunk) && chunk.length === 0) //empty buffer
-            ){ 
-            let error = {error: {code: "100", status: "INVALID_CHUNK", message: "완전하지 않은 청크."}};
-            this.push(utils.encodeText(utils.stringifyJson(error)));
-          } else{
-            this.push(utils.encodeText(utils.stringifyJson(chunk)));
-          }
-        }
-        await redis.rpush(`messages:${sessionId}`, utils.stringifyJson({ role: "model", parts: [ { text: temp } ] }));
-        this.push(null);
-        return;
-      })();
+  const stream = Readable.from(async function* () {
+    let temp = "";
+    for await (const x of output){ 
+      temp += (x.candidates[0]?.content?.parts[0]?.text) ?? "";
+      yield utils.encodeText(utils.stringifyJson(x));
     }
+    await redis.rpush(`messages:${sessionId}`, utils.stringifyJson({ role: "model", parts: [ { text: temp } ] }));
   });
-
   stream.pipe(res);
 }
