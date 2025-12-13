@@ -81,7 +81,6 @@ export default async function handler(req, res) {
     case 7: {
       //load sessionList
       const list = await redis.lrange("sessionList", 0, -1);
-      console.log(list);
       res.status(200).json(list);
       return;
     }
