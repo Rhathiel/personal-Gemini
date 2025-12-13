@@ -121,6 +121,7 @@ export default async function handler(req, res) {
           }
         }
         await redis.rpush(`messages:${sessionId}`, utils.stringifyJson({ role: "model", parts: [ { text: temp } ] }));
+        temp = "";
         this.push(null);
         return;
       })();
