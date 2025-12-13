@@ -129,7 +129,7 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
 
     //선언부
     let queue = "";
-    let decoded = null; 
+    const DELIM = "\u001E";
     const reader = stream.getReader();
     const emptyMessage: message = {role: "model", parts: [{ text: ""}]};
 
@@ -138,22 +138,29 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
     while (true){
       const { done, value } = await reader.read();
 
-      if(done) break;
+      if(value) queue += utils.decodeText(value);
 
-      queue += utils.decodeText(value);
-      if(queue.includes("}{")){
-        queue = "[" + queue.split("}{").join("},{") + "]";
+      const parts = queue.split(DELIM);
+      
+      queue = parts.pop() ?? "";
+
+      for (const raw of parts) {
+        if (!raw) continue;
+
+        const parsed = utils.parseText(raw);
+        if (!parsed) continue;
+
+        printMessage(parsed);
       }
-      decoded = utils.parseText(queue); 
 
-      if(!decoded) continue;
-
-      if(Array.isArray(decoded) === true){
-        for(let e of decoded){
-          printMessage(e);
+      if(done) {
+        if (queue.trim()) {
+          const parsed = utils.parseText(queue); // ✅ 반드시 parse
+          if (parsed) {
+            printMessage(parsed);
+          }
         }
-      } else {
-        printMessage(decoded);
+        break;
       }
     }
   }
