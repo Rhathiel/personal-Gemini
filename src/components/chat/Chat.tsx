@@ -28,9 +28,16 @@ function Chat({uiState, setUiState, newSession, setNewSession, setSessionList}: 
   if (!newSession.isNewSession) return;
 
   (async () => {
+    setUiState(prev => ({
+        ...prev,
+        sessionId: newSession.sessionId,
+        mode: "session"
+    }))
+
     await sendPrompt(newSession.sessionId!, newSession.prompt!);
 
     await storage.appendSession({ sessionId: newSession.sessionId, title: "새 채팅" });
+    
     setSessionList(prev => {
         const list = [...prev];
         list.push({
@@ -40,12 +47,6 @@ function Chat({uiState, setUiState, newSession, setNewSession, setSessionList}: 
         return list;
     })
         
-    setUiState(prev => ({
-        ...prev,
-        sessionId: newSession.sessionId,
-        mode: "session"
-    }))
-
     setNewSession({
       sessionId: null,
       prompt: null,
