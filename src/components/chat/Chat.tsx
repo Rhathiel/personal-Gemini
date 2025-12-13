@@ -144,6 +144,8 @@ function Chat({uiState, setUiState, newSession, setNewSession, setSessionList}: 
           break;
         }
       }
+
+      setIsDone(true);
     } 
 
     else {
