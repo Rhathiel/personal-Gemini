@@ -14,7 +14,7 @@ interface message {
     parts: Array<{ text: string }>;
 }
 
-interface NewSession {
+interface NewSessionState {
     sessionId: string | null;
     prompt: string | null;
 }

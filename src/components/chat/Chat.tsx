@@ -7,42 +7,41 @@ import {Div} from './Chat.styled.tsx'
 
 interface ChatProps {
   uiState: UiState;
-  newSession: NewSession;
-  setNewSession: React.Dispatch<React.SetStateAction<NewSession>>;
+  newSessionStateRef: React.MutableRefObject<NewSessionState>;
   setSessionList: React.Dispatch<React.SetStateAction<Array<session>>>;
 }
 
-function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
+function Chat({uiState, newSessionStateRef, setSessionList}: ChatProps) {
   const [messages, setMessages] = useState<Array<message>>([]);
   const [isDone, setIsDone] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
-      if(newSession.sessionId && newSession.prompt) {
-        
-        await sendPrompt(newSession.sessionId!, newSession.prompt!);
+      if(newSessionStateRef.current.sessionId && newSessionStateRef.current.prompt) {
 
-        await storage.appendSession({ sessionId: newSession.sessionId, title: "새 채팅" });
+        await sendPrompt(newSessionStateRef.current.sessionId!, newSessionStateRef.current.prompt!);
+
+        await storage.appendSession({ sessionId: newSessionStateRef.current.sessionId, title: "새 채팅" });
 
         setSessionList(prev => {
             const list = [...prev];
             list.push({
-                sessionId: newSession.sessionId,
+                sessionId: newSessionStateRef.current.sessionId,
                 title: "새 채팅"
             })
             return list;
         })
             
-        setNewSession({
-          sessionId: null,
-          prompt: null,
-        });
+        newSessionStateRef.current = {
+            sessionId: null,
+            prompt: null,
+        };
       }
 
       const list = await storage.loadMessages(uiState.sessionId);
       setMessages(list);
     })();
-  }, [uiState.sessionId, newSession]);
+  }, [uiState.sessionId]);
 
   //즉, usState 변경 시 
   //왜 이전 state의 메시지가 초기화되니까

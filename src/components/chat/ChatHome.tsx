@@ -3,19 +3,19 @@ import ChatHomeInputBox from './ChatHomeInputBox.tsx'
 
 interface ChatHomeProps {
     setUiState: React.Dispatch<React.SetStateAction<UiState>>;
-    setNewSession: React.Dispatch<React.SetStateAction<NewSession>>;
+    newSessionStateRef: React.MutableRefObject<NewSessionState>;
 }
 
-function ChatHome({setUiState, setNewSession}: ChatHomeProps) {
+function ChatHome({setUiState, newSessionStateRef}: ChatHomeProps) {
 
     const sendPrompt = async (prompt: string) => {
         if (!prompt) return;
         const sessionId = crypto.randomUUID(); //id용 난수 생성
 
-        setNewSession({
+        newSessionStateRef.current = {
             sessionId: sessionId,
             prompt: prompt,
-        });
+        };
 
         setUiState(prev => ({
             ...prev,

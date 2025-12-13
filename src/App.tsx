@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react';
+import { useState, useEffect, useRef} from 'react';
 import Chat from './components/chat/Chat.tsx'
 import ChatHome from './components/chat/ChatHome.tsx';
 import LoadingScreen from './components/chat/LoadingScreeen.tsx'
@@ -23,7 +23,7 @@ function App() {
     }
   });
   const [sessionList, setSessionList] = useState<Array<session>>([]);
-  const [newSession, setNewSession] = useState<NewSession>({
+  const newSessionStateRef = useRef<NewSessionState>({
     sessionId: null,
     prompt: null,
   });
@@ -50,11 +50,10 @@ function App() {
   const Main = () => {
     switch (uiState.mode) {
       case "home":
-        return <ChatHome setUiState={setUiState} setNewSession={setNewSession}/>;
+        return <ChatHome setUiState={setUiState} newSessionStateRef={newSessionStateRef}/>;
       case "session":
         return <Chat uiState={uiState} 
-                newSession={newSession}
-                setNewSession={setNewSession}
+                newSessionStateRef={newSessionStateRef}
                 setSessionList={setSessionList}/>;
       default:
         return <LoadingScreen/>;
