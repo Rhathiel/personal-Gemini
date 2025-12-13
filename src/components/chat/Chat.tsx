@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import ChatSessionInputBox from './ChatSessionInputBox.tsx';
 import ChatMessages from './ChatMessages.tsx';
 import * as storage from '../../lib/storage.ts'
