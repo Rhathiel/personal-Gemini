@@ -1,5 +1,5 @@
 export function parseText(text: string | null) {
-  if(text === null) return null;
+  if(text === null) return {};
 
   try {
     return JSON.parse(text);
