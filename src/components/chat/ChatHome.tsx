@@ -16,7 +16,7 @@ function ChatHome({newSessionStateRef}: {newSessionStateRef: React.MutableRefObj
         };
 
         setMessages([]); //session의 변경을 야기하므로 messages를 지워줌. (안지우면 기존 messages에 추가됨)
-        setUiState({
+        setUiState({ //Ui 변경 트리거(MainViewm, SideBar), 실질적인 새 세션 트리거(Chat.jsx의 useEffect 확인)
             mode: "session",
             sessionId: sessionId
         });
