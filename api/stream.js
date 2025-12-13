@@ -38,42 +38,49 @@ function initAI(history, showThoughts) {
 
 export default async function handler(req, res) {
 
+  //Headers 선언부
   const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
+
   const streamHeaders = {
     ...corsHeaders,
     "Content-Type": "application/x-ndjson",
     "Cache-Control": "no-cache"
   };  
+
   const jsonHeaders = {
     ...corsHeaders,
     "Content-Type": "application/json",
     "Cache-Control": "no-cache"
   };  
 
+  //CORS preflight 요청 처리
   if (req.method === "OPTIONS"){
     for (const key in corsHeaders){
       res.setHeader(key, corsHeaders[key]);
     }
     res.status(204).end();
     return;
-  } //CORS preflight 요청 처리
-
+  }
+  
+  //주소로 바로 접근하는 경우 차단
   if (req.method !== "POST") {
     for (const key in corsHeaders){
       res.setHeader(key, corsHeaders[key]);
     }
     res.status(405).end( "Method Not Allowed" );
     return;
-  } //주소로 바로 접근하는 경우 차단
+  } 
     
+  //선언부
   const { sessionId, userMsg } = req.body;
   const history = await redis.lrange(`messages:${sessionId}`, 0, -1);
   const chat = initAI(history, false);
 
+  //연산
   try {
     const geminiStream = await chat.sendMessageStream({ //stream or json
       message: userMsg.parts,
