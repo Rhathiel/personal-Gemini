@@ -108,6 +108,6 @@ export default async function handler(req, res) {
     for (const key in jsonHeaders){
       res.setHeader(key, jsonHeaders[key]);
     }
-    res.status(200).json(e);
+    res.status(200).json(e.error);
   }
 }
