@@ -8,8 +8,6 @@ import { useUiStateStore } from './stores/uiStateStore.ts';
 function App() {
   const { uiState, setUiState } = useUiStateStore();
 
-  setUiState(utils.parseText(sessionStorage.getItem("uiState")));
-
   //버전
   useEffect(() => {
     console.log("version: 1.2.3");
