@@ -34,18 +34,19 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
     })();
   }, [uiState.sessionId]);
 
-  //즉, usState 변경 시 
-  //왜 이전 state의 메시지가 초기화되니까
-
+  //newSession에 새로운 세션에 대한 정보가 존재하면 해당 정보를 바탕으로 응답 생성, 세션 추가를 시행한다.
+  //messages는 sendPrompt내부에서 바로 렌더링되기 때문에, await sendPrompt 이후 addSession을 해주었다. (messages 이후 sessionList가 렌더되도록)
+  //newSession에 세션 정보가 없는 경우, 일반적인 messages 로더로 사용된다.
+ 
   const sendPrompt = async (sessionId: string, prompt: string) => {
 
     //초기화
-    setIsResponseDone(false);
-    const userMsg: message = {role: "user", parts: [{ text: prompt}]};
+    setIsResponseDone(false); //input box 비활성화,메시지 placeHolder
+    const userMsg: message = {role: "user", parts: [{ text: prompt}]}; //prompt 기반 메시지 객체 생성
 
     //갱신
-    addMessage(userMsg);
-    await storage.appendMessages(sessionId, userMsg); 
+    addMessage(userMsg); //messages ui 갱신
+    await storage.appendMessages(sessionId, userMsg); //messages db 갱신 
 
     //API 요청
     const response = await fetch("https://personal-gemini.vercel.app/api/stream", {
@@ -56,12 +57,18 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
       body: utils.stringifyJson({sessionId: sessionId, userMsg: userMsg})
     });
 
-    //에러 처리
+    //응답 타입 검사 (stream 또는 Json)
     const contentType = response.headers.get("Content-Type") ?? "";
 
+    //서버에서 보낸 Json Error객체인 경우
     if(contentType.includes("application/json")){
+      //구조분해
       const { error } = await response.json();
+      
+      //메시지 객체 생성
       const errorMsg: message = { role: "model", parts: [{ text: error.status }] }
+      
+      //errorMsg 렌더 끝난 후 placeHolder 제거 및 input box 활성화
       setIsResponseDone(true);
 
       switch (error.code){
@@ -105,57 +112,59 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
         }
       }
 
-      await storage.appendMessages(sessionId, { role: "model", parts: [{ text: error.status }] });
+      //에러 메시지는 필요에 따라 db에 저장
+      //나중에 재시작 기능과 함께 구현할것
+      //await storage.appendMessages(sessionId, { role: "model", parts: [{ text: error.status }] });
     } 
 
     else {
       try {
-        await streaming(response.body)
+        await streaming(response.body) //비동기 streaming 시작
       } 
       catch(e) {
-        console.error(e);
+        console.error(e); //streaming 중 error throw 되면 검사
       } 
       finally {
-        setIsResponseDone(true);
+        setIsResponseDone(true); //error throw 되더라도 다음 응답을 진행할 수 있도록 강제
       }
     }
   }
  
   const streaming = async(stream: ReadableStream<Uint8Array<ArrayBuffer>> | null) => {
-    //예외
+    //예외처리
     if(!stream) {
       throw new Error("No stream found");
     };
 
     //선언부
-    let queue = "";
-    const DELIM = "\u001E";
-    const reader = stream.getReader();
-    const emptyMessage: message = {role: "model", parts: [{ text: ""}]};
+    let queue = ""; //큐
+    const DELIM = "\u001E"; //Delimeter
+    const reader = stream.getReader(); //readablestream reader 객체 (read() 메서드를 통해 stream을 소비함)
+    const emptyMessage: message = {role: "model", parts: [{ text: ""}]}; //빈 메시지 객체 생성
 
     //연산
-    addMessage(emptyMessage);
+    addMessage(emptyMessage); //빈 메시지 렌더
     while (true){
-      const { done, value } = await reader.read();
+      const { done, value } = await reader.read(); //대기 중 react가 렌더링을 시도함
 
-      if(value) queue += utils.decodeText(value);
+      queue += utils.decodeText(value!); //함수 내부에서 이미 예외처리 했기 때문에 !로 처리함
 
-      const parts = queue.split(DELIM);
+      const parts = queue.split(DELIM); //Delimeter 기준으로 문자열을 자름. [{stringified json object 1}, {stringified json object 2}, ... ]
       
-      queue = parts.pop() ?? "";
+      queue = parts.pop() ?? ""; //배열의 마지막은 불완전할 가능성이 있으므로 queue에 다시 저장함
 
-      for (const raw of parts) {
-        if (!raw) continue;
+      for (const raw of parts) { 
+        if (!raw) continue; //원소가 비었을 경우 예외처리
 
-        const parsed = utils.parseText(raw);
-        if (!parsed) continue;
+        const parsed = utils.parseText(raw); //stringified json object를 parsing함
+        if (!parsed) continue; //parsed된 원소가 null일 경우 예외처리
 
-        printMessage(parsed);
+        printMessage(parsed); //완전한 Json Object를 전송함.
       }
 
-      if(done) {
+      if(done) { //전송이 끝났음을 체크
         if (queue.trim()) {
-          const parsed = utils.parseText(queue); // ✅ 반드시 parse
+          const parsed = utils.parseText(queue); //queue에 남아있는 경우 체크 
           if (parsed) {
             printMessage(parsed);
           }
