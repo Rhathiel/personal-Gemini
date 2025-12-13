@@ -71,7 +71,7 @@ function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
           // INVALID_ARGUMENT / FAILED_PRECONDITION
           setMessages(prev => [
             ...prev,
-            { role: "model", parts: [{ text: error.status }] }
+            { role: "model", parts: [{ text: error.message }] }
           ]);
           break;
         }
@@ -79,7 +79,7 @@ function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
           // PERMISSION_DENIED
           setMessages(prev => [
             ...prev,
-            { role: "model", parts: [{ text: error.status }] }
+            { role: "model", parts: [{ text: error.message }] }
           ]);
           break;
         }
@@ -87,7 +87,7 @@ function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
           // NOT_FOUND
           setMessages(prev => [
             ...prev,
-            { role: "model", parts: [{ text: error.status }] }
+            { role: "model", parts: [{ text: error.message }] }
           ]);
           break;
         }
@@ -95,7 +95,7 @@ function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
           // RESOURCE_EXHAUSTED
           setMessages(prev => [
             ...prev,
-            { role: "model", parts: [{ text: error.status }] }
+            { role: "model", parts: [{ text: error.message }] }
           ]);
           break;
         }
@@ -103,7 +103,7 @@ function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
           // INTERNAL
           setMessages(prev => [
             ...prev,
-            { role: "model", parts: [{ text: error.status }] }
+            { role: "model", parts: [{ text: error.message }] }
           ]);
           break;
         }
@@ -111,7 +111,7 @@ function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
           // SERVICE_UNAVAILABLE
           setMessages(prev => [
             ...prev,
-            { role: "model", parts: [{ text: error.status }] }
+            { role: "model", parts: [{ text: error.message }] }
           ]);
           break;
         }
@@ -119,21 +119,16 @@ function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
           // DEADLINE_EXCEEDED
           setMessages(prev => [
             ...prev,
-            { role: "model", parts: [{ text: error.status }] }
+            { role: "model", parts: [{ text: error.message }] }
           ]);
           break;
         }
         default: {
-          // 알 수 없는 에러
-          setMessages(prev => [
-            ...prev,
-            { role: "model", parts: [{ text: "UNKNOWN_ERROR" }] }
-          ]);
           break;
         }
       }
 
-      await storage.appendMessages(sessionId, { role: "model", parts: [{ text: error.status }] });
+      await storage.appendMessages(sessionId, { role: "model", parts: [{ text: error.message }] });
       setIsDone(true);
     } 
 
