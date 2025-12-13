@@ -94,7 +94,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  const stream = Readable.from(async function* () {
+  const stream = Readable.from((async function* () {
     let temp = "";
     
     for await (const x of output){ 
@@ -103,7 +103,7 @@ export default async function handler(req, res) {
     }
 
     await redis.rpush(`messages:${sessionId}`, utils.stringifyJson({ role: "model", parts: [ { text: temp } ] }));
-  });
+  }))();
   res.statusCode = 200
   stream.pipe(res);
 }
