@@ -64,7 +64,7 @@ function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
 
     if(contentType.includes("application/json")){
       const error = await response.json();
-      console.log(error);
+      console.log(error.status);
 
       switch (error.code){
         case 400: {
