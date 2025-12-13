@@ -12,17 +12,16 @@ function ChatHome({setUiState, setNewSession}: ChatHomeProps) {
         if (!prompt) return;
         const sessionId = crypto.randomUUID(); //id용 난수 생성
 
+        setNewSession({
+            sessionId: sessionId,
+            prompt: prompt,
+        });
+
         setUiState(prev => ({
             ...prev,
             sessionId: sessionId,
             mode: "session"
-        }))
-        
-        setNewSession({
-            sessionId: sessionId,
-            prompt: prompt,
-            isNewSession: true
-        })
+        }));
     }
 
     return (

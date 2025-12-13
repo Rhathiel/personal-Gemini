@@ -26,7 +26,6 @@ function App() {
   const [newSession, setNewSession] = useState<NewSession>({
     sessionId: null,
     prompt: null,
-    isNewSession: false
   });
 
   //버전
@@ -51,10 +50,9 @@ function App() {
   const Main = () => {
     switch (uiState.mode) {
       case "home":
-        return <ChatHome setNewSession={setNewSession}/>;
+        return <ChatHome setUiState={setUiState} setNewSession={setNewSession}/>;
       case "session":
         return <Chat uiState={uiState} 
-                setUiState={setUiState}
                 newSession={newSession}
                 setNewSession={setNewSession}
                 setSessionList={setSessionList}/>;

@@ -17,39 +17,38 @@ function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
   const [isDone, setIsDone] = useState<boolean>(true);
 
   useEffect (() => {
-    if(newSession.isNewSession) return;
-
     (async () => {
-      const list = await storage.loadMessages(uiState.sessionId);
-      setMessages(list);
+
     })();
-  }, [uiState.sessionId, newSession.isNewSession]);
+  }, [uiState.sessionId]);
 
   useEffect(() => {
-    if (!newSession.isNewSession) return;
-
     (async () => {
+      if(newSession.sessionId || newSession.prompt) {
+        await sendPrompt(newSession.sessionId!, newSession.prompt!);
 
-      await sendPrompt(newSession.sessionId!, newSession.prompt!);
+        await storage.appendSession({ sessionId: newSession.sessionId, title: "새 채팅" });
 
-      await storage.appendSession({ sessionId: newSession.sessionId, title: "새 채팅" });
-
-      setSessionList(prev => {
-          const list = [...prev];
-          list.push({
-              sessionId: newSession.sessionId,
-              title: "새 채팅"
-          })
-          return list;
-      })
-          
-      setNewSession({
-        sessionId: null,
-        prompt: null,
-        isNewSession: false
-      });
+        setSessionList(prev => {
+            const list = [...prev];
+            list.push({
+                sessionId: newSession.sessionId,
+                title: "새 채팅"
+            })
+            return list;
+        })
+            
+        setNewSession({
+          sessionId: null,
+          prompt: null,
+        });
+      }
+      else {
+        const list = await storage.loadMessages(uiState.sessionId);
+        setMessages(list);
+      }
     })();
-  }, [newSession]);
+  }, [uiState.sessionId, newSession]);
 
   //즉, usState 변경 시 
   //왜 이전 state의 메시지가 초기화되니까
