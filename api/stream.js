@@ -179,6 +179,7 @@ export default async function handler(req, res) {
     for (const key in jsonHeaders){
       res.setHeader(key, jsonHeaders[key]);
     }
+    console.log("에!!!!!!!!러!!!!!!!에[에에에에에엥!!!!!!!", e.message);
     res.status(200).json(utils.parseText(e.message));
   }
 }
