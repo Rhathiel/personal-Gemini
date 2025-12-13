@@ -151,6 +151,8 @@ export default async function handler(req, res) {
   const history = await redis.lrange(`messages:${sessionId}`, 0, -1);
   const chat = initAI(history, false);
 
+  console.log("으헤으헤헤");
+
   //연산
   try {
     const geminiStream = await chat.sendMessageStream({ //stream or json
