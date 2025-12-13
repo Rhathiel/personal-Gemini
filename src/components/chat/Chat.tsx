@@ -7,6 +7,7 @@ import {Div} from './Chat.styled.tsx'
 import { useUiStateStore } from '../../stores/uiStateStore.ts';
 import { useSessionStore } from '../../stores/sessionStore.ts';
 import { useMessageStore } from '../../stores/messageStore.ts';
+import { add } from 'three/webgpu';
 
 function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObject<NewSessionState> }) {
   const [ isDone, setIsDone ] = useState<boolean>(true);
@@ -62,62 +63,42 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
     if(contentType.includes("application/json")){
       const { error } = await response.json();
       console.log(error.status);
+      const errorMsg: message = { role: "model", parts: [{ text: error.status }] }
 
       switch (error.code){
         case 400: {
           // INVALID_ARGUMENT / FAILED_PRECONDITION
-          setMessages(prev => [
-            ...prev,
-            { role: "model", parts: [{ text: error.status }] }
-          ]);
+          addMessage(errorMsg);
           break;
         }
         case 403: {
           // PERMISSION_DENIED
-          setMessages(prev => [
-            ...prev,
-            { role: "model", parts: [{ text: error.status }] }
-          ]);
+          addMessage(errorMsg);
           break;
         }
         case 404: {
           // NOT_FOUND
-          setMessages(prev => [
-            ...prev,
-            { role: "model", parts: [{ text: error.status }] }
-          ]);
+          addMessage(errorMsg);
           break;
         }
         case 429: {
           // RESOURCE_EXHAUSTED
-          setMessages(prev => [
-            ...prev,
-            { role: "model", parts: [{ text: error.status }] }
-          ]);
+          addMessage(errorMsg);
           break;
         }
         case 500: {
           // INTERNAL
-          setMessages(prev => [
-            ...prev,
-            { role: "model", parts: [{ text: error.status }] }
-          ]);
+          addMessage(errorMsg);
           break;
         }
         case 503: {
           // SERVICE_UNAVAILABLE
-          setMessages(prev => [
-            ...prev,
-            { role: "model", parts: [{ text: error.status }] }
-          ]);
+          addMessage(errorMsg);
           break;
         }
         case 504: {
           // DEADLINE_EXCEEDED
-          setMessages(prev => [
-            ...prev,
-            { role: "model", parts: [{ text: error.status }] }
-          ]);
+          addMessage(errorMsg);
           break;
         }
         default: {
