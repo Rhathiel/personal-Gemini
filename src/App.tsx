@@ -37,8 +37,6 @@ function App() {
   useEffect(() => {
     (async () => {
       const list = await storage.loadSessionList(); 
-      console.log(list);
-      console.log("으흐흐로드스토리지으흐흐");
       setSessionList(list);
     })();
   }, []);
