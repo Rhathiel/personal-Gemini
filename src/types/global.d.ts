@@ -38,4 +38,5 @@ interface messageStore {
     setMessages: (msgs: message[]) => void;
     addMessage: (msg: message) => void;
     getLastMessage: () => message | undefined;
+    editLastMessage: (msg: message) => void;
 }

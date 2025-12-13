@@ -11,7 +11,7 @@ import { useMessageStore } from '../../stores/messageStore.ts';
 function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObject<NewSessionState> }) {
   const [ isDone, setIsDone ] = useState<boolean>(true);
   const { addSession } = useSessionStore();
-  const { addMessage, setMessages, getLastMessage } = useMessageStore();
+  const { addMessage, setMessages, getLastMessage, editLastMessage } = useMessageStore();
   const { uiState } = useUiStateStore();
 
   useEffect(() => {
@@ -166,7 +166,7 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
 
     if (decoded?.candidates?.[0]?.finishReason === "MAX_TOKENS"){
       let buffer = getLastMessage()!.parts[0].text + parts[0].text + "\n\n[최대 토큰 수 도달]";
-      addMessage({ role, parts: [{ text: buffer }] });
+      editLastMessage({ role, parts: [{ text: buffer }] })
     } else {
       let buffer = getLastMessage()!.parts[0].text + parts[0].text;
       addMessage({ role, parts: [{ text: buffer }] });
