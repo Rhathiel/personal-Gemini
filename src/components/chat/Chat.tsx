@@ -63,7 +63,7 @@ function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
     const contentType = response.headers.get("Content-Type") ?? "";
 
     if(contentType.includes("application/json")){
-      const error = await response.json();
+      const { error } = await response.json();
       console.log(error.status);
 
       switch (error.code){
