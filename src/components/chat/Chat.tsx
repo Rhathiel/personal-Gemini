@@ -27,7 +27,6 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
           prompt: null,
           isNewSession: false
         })  
-        console.log("새 세션 만들어졌다요!"); 
         return;
       }
       if(newSession.isNewSession === false){
@@ -58,6 +57,7 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
 
     if(contentType.includes("application/json")){
       const error = await response.json();
+      console.log(error);
 
       switch (error.code){
         case 400: {
