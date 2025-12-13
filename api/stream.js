@@ -107,6 +107,7 @@ export default async function handler(req, res) {
           return;
         }
         for await (const chunk of output) { 
+          console.log(chunk);
           temp += chunk.text()
           if(  !chunk || //undefined,null
               (typeof chunk === "string" && chunk.trim() === "") ||  //empty string
