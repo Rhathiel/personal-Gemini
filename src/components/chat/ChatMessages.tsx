@@ -1,6 +1,8 @@
 import ReactMarkdown from "react-markdown";
+import { useMessageStore } from "../../stores/messageStore.ts";
 
 function ChatMessages({isDone}: {isDone: boolean}) {
+  const { messages } = useMessageStore();
 
   return (
     <div>
