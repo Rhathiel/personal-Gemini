@@ -1,14 +1,11 @@
 import { useState, useEffect } from "react";
 import {StyledSessionInput} from './Chat.styled.tsx'
 import { useUiStateStore } from "../../stores/uiStateStore.ts";
+import { useFlagStore } from "../../stores/flagStore.ts";
 
-interface ChatSessionInputBoxProps {
-    sendPrompt: (sessionId: string, prompt: string) => Promise<void>;
-    isDone: boolean;
-}
-
-function ChatSessionInputBox({ sendPrompt, isDone }: ChatSessionInputBoxProps) {
+function ChatSessionInputBox({ sendPrompt }: { sendPrompt: (sessionId: string, prompt: string) => Promise<void>; }) {
     const { uiState } = useUiStateStore();
+    const { isResponseDone } = useFlagStore();
     const [input, setInput] = useState(() => {
         return sessionStorage.getItem("chatsessioninput") ?? "";
     });
@@ -27,13 +24,13 @@ function ChatSessionInputBox({ sendPrompt, isDone }: ChatSessionInputBoxProps) {
             <StyledSessionInput type="text" value={input} onChange={(e) => setInput(e.target.value)} 
             onKeyDown={(e) => {
                 if(e.key === "Enter"){
-                    if(!isDone || !input) {
+                    if(!isResponseDone || !input) {
                         return;
                     }
                     active();
                 }
             }}/>
-            <button disabled={!isDone || !input} type="button" onClick={active}>전송</button>
+            <button disabled={!isResponseDone || !input} type="button" onClick={active}>전송</button>
         </div>
     );
 }   
