@@ -152,8 +152,6 @@ export default async function handler(req, res) {
   const chat = initAI(history, false);
   const DELIM = "\u001E";
 
-  console.log("으헤으헤헤");
-
   //연산
   try {
     const geminiStream = await chat.sendMessageStream({ //stream or json
@@ -182,7 +180,6 @@ export default async function handler(req, res) {
     for (const key in jsonHeaders){
       res.setHeader(key, jsonHeaders[key]);
     }
-    console.log("에!!!!!!!!러!!!!!!!에[에에에에에엥!!!!!!!", e.message);
     res.status(200).json(utils.parseText(e.message));
   }
 }
