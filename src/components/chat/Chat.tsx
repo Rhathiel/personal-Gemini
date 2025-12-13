@@ -176,7 +176,7 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
   return (
     <Div>
       <ChatMessages isDone={isDone}/>
-      <ChatSessionInputBox uiState={uiState} sendPrompt={sendPrompt} isDone={isDone}/>
+      <ChatSessionInputBox sendPrompt={sendPrompt} isDone={isDone}/>
     </Div>
   )
 }

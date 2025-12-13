@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import {StyledSessionInput} from './Chat.styled.tsx'
+import { useUiStateStore } from "../../stores/uiStateStore.ts";
 
 interface ChatSessionInputBoxProps {
-    uiState: UiState;
     sendPrompt: (sessionId: string, prompt: string) => Promise<void>;
     isDone: boolean;
 }
 
-function ChatSessionInputBox({uiState, sendPrompt, isDone}: ChatSessionInputBoxProps) {
+function ChatSessionInputBox({ sendPrompt, isDone }: ChatSessionInputBoxProps) {
+    const { uiState } = useUiStateStore();
     const [input, setInput] = useState(() => {
         return sessionStorage.getItem("chatsessioninput") ?? "";
     });
@@ -17,7 +18,7 @@ function ChatSessionInputBox({uiState, sendPrompt, isDone}: ChatSessionInputBoxP
     }, [input]);
     
     const active = () => {
-        sendPrompt(uiState.sessionId, input);
+        sendPrompt(uiState.sessionId!, input);
         setInput("");
     }
 
