@@ -1,5 +1,5 @@
 interface UiState {
-    mode: "home" | "session" | "loading";
+    mode: "home" | "session";
     sessionId: string | null;
     sideIsOpened: boolean;
 }

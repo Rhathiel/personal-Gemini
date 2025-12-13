@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 export const useUiStateStore = create<UiStateStore>((set) => ({ 
     uiState: {
-        mode: "loading",
+        mode: "home",
         sessionId: null,
         sideIsOpened: false,
     },
