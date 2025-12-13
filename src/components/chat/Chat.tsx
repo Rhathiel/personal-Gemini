@@ -7,53 +7,49 @@ import {Div} from './Chat.styled.tsx'
 
 interface ChatProps {
   uiState: UiState;
-  setUiState: React.Dispatch<React.SetStateAction<UiState>>;
   newSession: NewSession;
   setNewSession: React.Dispatch<React.SetStateAction<NewSession>>;
   setSessionList: React.Dispatch<React.SetStateAction<Array<session>>>;
 }
 
-function Chat({uiState, setUiState, newSession, setNewSession, setSessionList}: ChatProps) {
+function Chat({uiState, newSession, setNewSession, setSessionList}: ChatProps) {
   const [messages, setMessages] = useState<Array<message>>([]);
   const [isDone, setIsDone] = useState<boolean>(true);
 
   useEffect (() => {
+    if(newSession.isNewSession) return;
+
     (async () => {
       const list = await storage.loadMessages(uiState.sessionId);
       setMessages(list);
     })();
-  }, [uiState.sessionId]);
+  }, [uiState.sessionId, newSession.isNewSession]);
 
   useEffect(() => {
-  if (!newSession.isNewSession) return;
+    if (!newSession.isNewSession) return;
 
-  (async () => {
-    setUiState(prev => ({
-        ...prev,
-        sessionId: newSession.sessionId,
-        mode: "session"
-    }))
+    (async () => {
 
-    await sendPrompt(newSession.sessionId!, newSession.prompt!);
+      await sendPrompt(newSession.sessionId!, newSession.prompt!);
 
-    await storage.appendSession({ sessionId: newSession.sessionId, title: "새 채팅" });
+      await storage.appendSession({ sessionId: newSession.sessionId, title: "새 채팅" });
 
-    setSessionList(prev => {
-        const list = [...prev];
-        list.push({
-            sessionId: newSession.sessionId,
-            title: "새 채팅"
-        })
-        return list;
-    })
-        
-    setNewSession({
-      sessionId: null,
-      prompt: null,
-      isNewSession: false
-    });
-  })();
-}, [newSession]);
+      setSessionList(prev => {
+          const list = [...prev];
+          list.push({
+              sessionId: newSession.sessionId,
+              title: "새 채팅"
+          })
+          return list;
+      })
+          
+      setNewSession({
+        sessionId: null,
+        prompt: null,
+        isNewSession: false
+      });
+    })();
+  }, [newSession]);
 
   //즉, usState 변경 시 
   //왜 이전 state의 메시지가 초기화되니까
