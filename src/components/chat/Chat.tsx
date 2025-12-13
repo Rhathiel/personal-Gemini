@@ -54,25 +54,88 @@ function Chat({uiState, newSession, setNewSession}: ChatProps) {
       body: utils.stringifyJson({sessionId: uiState.sessionId, userMsg: userMsg})
     });
 
-    if(await response.json().ok === false){
-    switch (response.status){
-      case 503: {
-        console.error(await response.json());
-        setMessages(prev => [...prev, {role: "model", parts: [{ text: "Api Error: The model is currently overloaded. Please try again later."}]}]);
-        setIsDone(true);
-        return;
-      }
-      default: {
-        break;
-      }
-    }
+    const contentType = response.headers.get("Content-Type") ?? "";
 
-    try {
-      await streaming(response.body)
-    } catch(e){
-      console.error(e);
-    } finally {
-      setIsDone(true);
+    if(contentType.includes("application/json")){
+      const error = await response.json();
+
+      switch (error.code){
+        case 400: {
+          // INVALID_ARGUMENT / FAILED_PRECONDITION
+          setMessages(prev => [
+            ...prev,
+            { role: "model", parts: [{ text: error.status }] }
+          ]);
+          break;
+        }
+        case 403: {
+          // PERMISSION_DENIED
+          setMessages(prev => [
+            ...prev,
+            { role: "model", parts: [{ text: error.status }] }
+          ]);
+          break;
+        }
+        case 404: {
+          // NOT_FOUND
+          setMessages(prev => [
+            ...prev,
+            { role: "model", parts: [{ text: error.status }] }
+          ]);
+          break;
+        }
+        case 429: {
+          // RESOURCE_EXHAUSTED
+          setMessages(prev => [
+            ...prev,
+            { role: "model", parts: [{ text: error.status }] }
+          ]);
+          break;
+        }
+        case 500: {
+          // INTERNAL
+          setMessages(prev => [
+            ...prev,
+            { role: "model", parts: [{ text: error.status }] }
+          ]);
+          break;
+        }
+        case 503: {
+          // SERVICE_UNAVAILABLE
+          setMessages(prev => [
+            ...prev,
+            { role: "model", parts: [{ text: error.status }] }
+          ]);
+          break;
+        }
+        case 504: {
+          // DEADLINE_EXCEEDED
+          setMessages(prev => [
+            ...prev,
+            { role: "model", parts: [{ text: error.status }] }
+          ]);
+          break;
+        }
+        default: {
+          // 알 수 없는 에러
+          setMessages(prev => [
+            ...prev,
+            { role: "model", parts: [{ text: "UNKNOWN_ERROR" }] }
+          ]);
+          break;
+        }
+      }
+    } 
+    else {
+      try {
+        await streaming(response.body)
+      } 
+      catch(e) {
+        console.error(e);
+      } 
+      finally {
+        setIsDone(true);
+      }
     }
   }
  
