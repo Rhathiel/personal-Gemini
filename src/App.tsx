@@ -47,26 +47,32 @@ function App() {
   }, [uiState]); 
 
   //Main Renderer
-  const Main = () => {
-    switch (uiState.mode) {
-      case "home":
-        return <ChatHome setUiState={setUiState} newSessionStateRef={newSessionStateRef}/>;
-      case "session":
-        return <Chat uiState={uiState} 
-                newSessionStateRef={newSessionStateRef}
-                setSessionList={setSessionList}/>;
-      default:
-        return <LoadingScreen/>;
-    }
+  switch (uiState.mode) {
+    case "home":
+      return (
+        <>
+          <SideBar uiState={uiState} setUiState={setUiState} sessionList={sessionList} setSessionList={setSessionList}/>
+          <ChatHome setUiState={setUiState} newSessionStateRef={newSessionStateRef}/>
+          <Monitor />
+        </>
+      )
+    case "session":
+      return (  
+        <>
+          <SideBar uiState={uiState} setUiState={setUiState} sessionList={sessionList} setSessionList={setSessionList}/>
+          <Chat uiState={uiState} newSessionStateRef={newSessionStateRef} setSessionList={setSessionList}/>;
+          <Monitor />
+        </>
+      )
+    default:
+        <>
+          <SideBar uiState={uiState} setUiState={setUiState} sessionList={sessionList} setSessionList={setSessionList}/>
+          <LoadingScreen/>;
+          <Monitor />
+        </>
   };
-
-  return (
-    <>
-      <SideBar uiState={uiState} setUiState={setUiState} sessionList={sessionList} setSessionList={setSessionList}/>
-      <Main/>
-      <Monitor />
-    </>
-  )
 }
+
+
 
 export default App
