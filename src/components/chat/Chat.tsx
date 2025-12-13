@@ -169,7 +169,7 @@ function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObje
       editLastMessage({ role, parts: [{ text: buffer }] })
     } else {
       let buffer = getLastMessage()!.parts[0].text + parts[0].text;
-      addMessage({ role, parts: [{ text: buffer }] });
+      editLastMessage({ role, parts: [{ text: buffer }] })
     }
   }
 
