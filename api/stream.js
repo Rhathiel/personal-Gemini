@@ -107,8 +107,7 @@ export default async function handler(req, res) {
           return;
         }
         for await (const chunk of output) { 
-          console.log(chunk);
-          temp += chunk.text()
+          temp += (chunk.candidates[0]?.content?.parts[0]?.text) ?? "";
           if(  !chunk || //undefined,null
               (typeof chunk === "string" && chunk.trim() === "") ||  //empty string
               (Object.getPrototypeOf(chunk) === Object.prototype && Object.keys(chunk).length === 0) || //empty json
