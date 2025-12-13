@@ -32,4 +32,7 @@ function ChatHomeInputBox({sendPrompt}: {sendPrompt: (prompt: string) => Promise
     );
 }   
 
+//value={input} onChange={(e) => setInput(e.target.value)} 
+//state와 input 내부 value를 동기화하는 방법.
+
 export default ChatHomeInputBox;
