@@ -24,8 +24,8 @@ function ChatHome({newSessionStateRef}: {newSessionStateRef: React.MutableRefObj
 
     return (
         <Div>
-            <h1>Welcome to Chat Home</h1>
-            <p>Select a chat session from the sidebar or start a new chat.</p>
+            <h1>personal-Gemini에 어서오세요!</h1>
+            <p>기존의 세션을 선택하거나 새로운 세션을 시작해주세요.</p>
             <ChatHomeInputBox sendPrompt={sendPrompt}/>
         </Div>
     );
