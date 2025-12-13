@@ -1,12 +1,9 @@
 import {Div} from './Chat.styled.tsx'
 import ChatHomeInputBox from './ChatHomeInputBox.tsx'
+import { useUiStateStore } from '../../stores/uiStateStore.ts';
 
-interface ChatHomeProps {
-    setUiState: React.Dispatch<React.SetStateAction<UiState>>;
-    newSessionStateRef: React.MutableRefObject<NewSessionState>;
-}
-
-function ChatHome({setUiState, newSessionStateRef}: ChatHomeProps) {
+function ChatHome({newSessionStateRef}: {newSessionStateRef: React.MutableRefObject<NewSessionState>}) {
+    const setUiState = useUiStateStore(s => s.setUiState);
 
     const sendPrompt = async (prompt: string) => {
         if (!prompt) return;
@@ -17,11 +14,10 @@ function ChatHome({setUiState, newSessionStateRef}: ChatHomeProps) {
             prompt: prompt,
         };
 
-        setUiState(prev => ({
-            ...prev,
-            sessionId: sessionId,
-            mode: "session"
-        }));
+        setUiState({
+            mode: "session",
+            sessionId: sessionId
+        });
     }
 
     return (

@@ -1,11 +1,6 @@
 import ReactMarkdown from "react-markdown";
 
-interface ChatMessagesProps {
-    messages: Array<message>;
-    isDone: boolean;
-}
-
-function ChatMessages({messages, isDone}: ChatMessagesProps) {
+function ChatMessages({isDone}: {isDone: boolean}) {
 
   return (
     <div>

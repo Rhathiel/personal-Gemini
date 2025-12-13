@@ -9,8 +9,8 @@ interface SessionStore {
 export const useSessionStore = create<SessionStore>((set) => ({
   sessionList: [],
   addSession: (s) =>
-    set((state) => ({
-      sessionList: [...state.sessionList, s],
+    set((prev) => ({
+      sessionList: [...prev.sessionList, s],
     })),
   setSessions: (list) => set({ sessionList: list }),
 }));

@@ -4,42 +4,27 @@ import ChatMessages from './ChatMessages.tsx';
 import * as storage from '../../lib/storage.ts'
 import * as utils from '../../lib/utils.ts'
 import {Div} from './Chat.styled.tsx'
+import { useUiStateStore } from '../../stores/uiStateStore.ts';
+import { useSessionStore } from '../../stores/sessionStore.ts';
+import { useMessageStore } from '../../stores/messageStore.ts';
 
-interface ChatProps {
-  uiState: UiState;
-  newSessionStateRef: React.MutableRefObject<NewSessionState>;
-  setSessionList: React.Dispatch<React.SetStateAction<Array<session>>>;
-}
-
-function Chat({uiState, newSessionStateRef, setSessionList}: ChatProps) {
-  const [messages, setMessages] = useState<Array<message>>([]);
-  const [isDone, setIsDone] = useState<boolean>(true);
+function Chat({ newSessionStateRef }: { newSessionStateRef: React.MutableRefObject<NewSessionState> }) {
+  const [ isDone, setIsDone ] = useState<boolean>(true);
+  const { addSession } = useSessionStore();
+  const { addMessage, setMessages, getLastMessage } = useMessageStore();
+  const { uiState } = useUiStateStore();
 
   useEffect(() => {
     (async () => {
       if(newSessionStateRef.current.sessionId && newSessionStateRef.current.prompt) {
 
-        console.log("New session detected in Chat component.");
-
         await sendPrompt(newSessionStateRef.current.sessionId!, newSessionStateRef.current.prompt!);
-
-        console.log("Appending new session to storage.");
 
         await storage.appendSession({ sessionId: newSessionStateRef.current.sessionId, title: "새 채팅" });
 
-        setSessionList(prev => {
-          const list = [...prev];
-          list.push({
-              sessionId: newSessionStateRef.current.sessionId,
-              title: "새 채팅"
-          })
-          return list;
-        })
+        addSession( { sessionId: newSessionStateRef.current.sessionId, title: "새 채팅" } );
             
-        newSessionStateRef.current = {
-          sessionId: null,
-          prompt: null,
-        };
+        newSessionStateRef.current = { sessionId: null, prompt: null };
 
         return; 
       }
@@ -53,13 +38,16 @@ function Chat({uiState, newSessionStateRef, setSessionList}: ChatProps) {
   //왜 이전 state의 메시지가 초기화되니까
 
   const sendPrompt = async (sessionId: string, prompt: string) => {
-    console.log("sendPrompt called");
-
+    
+    //초기화
     setIsDone(false);
     const userMsg: message = {role: "user", parts: [{ text: prompt}]};
 
-    setMessages(prev => [...prev, userMsg]); //ui갱신
-    await storage.appendMessages(sessionId, userMsg); //db갱신
+    //갱신
+    addMessage(userMsg);
+    await storage.appendMessages(sessionId, userMsg); 
+
+    //API 요청
     const response = await fetch("https://personal-gemini.vercel.app/api/stream", {
       method: "POST", 
       headers: {
@@ -68,6 +56,7 @@ function Chat({uiState, newSessionStateRef, setSessionList}: ChatProps) {
       body: utils.stringifyJson({sessionId: sessionId, userMsg: userMsg})
     });
 
+    //에러 처리
     const contentType = response.headers.get("Content-Type") ?? "";
 
     if(contentType.includes("application/json")){
@@ -139,9 +128,9 @@ function Chat({uiState, newSessionStateRef, setSessionList}: ChatProps) {
       await storage.appendMessages(sessionId, { role: "model", parts: [{ text: error.status }] });
       setIsDone(true);
     } 
+
     else {
       try {
-        console.log("Starting streaming...");
         await streaming(response.body)
       } 
       catch(e) {
@@ -166,7 +155,7 @@ function Chat({uiState, newSessionStateRef, setSessionList}: ChatProps) {
     const emptyMessage: message = {role: "model", parts: [{ text: ""}]};
 
     //연산
-    setMessages(prev => [...prev, emptyMessage]);
+    addMessage(emptyMessage);
     while (true){
       const { done, value } = await reader.read();
 
@@ -196,29 +185,17 @@ function Chat({uiState, newSessionStateRef, setSessionList}: ChatProps) {
     const { role, parts } = decoded.candidates[0].content; 
 
     if (decoded?.candidates?.[0]?.finishReason === "MAX_TOKENS"){
-      setMessages(prev => {
-        let newMessages = [...prev];
-        let buffer = newMessages[newMessages.length - 1].parts[0].text + parts[0].text;
-
-        newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer + "토큰이 최대에 도달했습니다. 나중에 다시 시도해주세요." }]};
-
-        return newMessages;
-      }); 
+      let buffer = getLastMessage()!.parts[0].text + parts[0].text + "\n\n[최대 토큰 수 도달]";
+      addMessage({ role, parts: [{ text: buffer }] });
     } else {
-      setMessages(prev => {
-        let newMessages = [...prev];
-        let buffer = newMessages[newMessages.length - 1].parts[0].text + parts[0].text;
-
-        newMessages[newMessages.length - 1] = {role, parts: [{ text: buffer }]};
-
-        return newMessages;
-      }); 
+      let buffer = getLastMessage()!.parts[0].text + parts[0].text;
+      addMessage({ role, parts: [{ text: buffer }] });
     }
   }
 
   return (
     <Div>
-      <ChatMessages messages={messages} isDone={isDone}/>
+      <ChatMessages isDone={isDone}/>
       <ChatSessionInputBox uiState={uiState} sendPrompt={sendPrompt} isDone={isDone}/>
     </Div>
   )

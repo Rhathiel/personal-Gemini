@@ -6,6 +6,7 @@ import SideBar from './components/sidebar/SideBar.tsx';
 import Monitor from './components/monitor/Monitor.tsx';
 import * as storage from './lib/storage.ts'
 import * as utils from './lib/utils.ts'
+import MainView from './components/MainView.tsx';
 
 function App() {
 
@@ -46,31 +47,13 @@ function App() {
     sessionStorage.setItem("uiState", utils.stringifyJson(uiState));
   }, [uiState]); 
 
-  //Main Renderer
-  switch (uiState.mode) {
-    case "home":
-      return (
-        <>
-          <SideBar uiState={uiState} setUiState={setUiState} sessionList={sessionList} setSessionList={setSessionList}/>
-          <ChatHome setUiState={setUiState} newSessionStateRef={newSessionStateRef}/>
-          <Monitor />
-        </>
-      )
-    case "session":
-      return (  
-        <>
-          <SideBar uiState={uiState} setUiState={setUiState} sessionList={sessionList} setSessionList={setSessionList}/>
-          <Chat uiState={uiState} newSessionStateRef={newSessionStateRef} setSessionList={setSessionList}/>;
-          <Monitor />
-        </>
-      )
-    default:
-        <>
-          <SideBar uiState={uiState} setUiState={setUiState} sessionList={sessionList} setSessionList={setSessionList}/>
-          <LoadingScreen/>;
-          <Monitor />
-        </>
-  };
+  return (
+    <>
+      <SideBar/>
+      <MainView/>
+      <Monitor/>
+    </>
+  );
 }
 
 
