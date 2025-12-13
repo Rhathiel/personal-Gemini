@@ -7,6 +7,12 @@ export const useUiStateStore = create<UiStateStore>((set) => ({
         sideIsOpened: false,
     },
     setUiState: (uiState) => set((prev) => 
-        ({uiState: { ...prev.uiState, uiState } } ))
+        ({uiState: { ...prev.uiState, uiState } } )),
+    toggleSideIsOpened: () => set((prev) => ({ 
+        uiState: { 
+            ...prev.uiState, 
+            sideIsOpened: !prev.uiState.sideIsOpened 
+        } 
+    }))
 }));
 

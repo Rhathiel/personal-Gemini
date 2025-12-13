@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-export const useSessionStore = create<SessionStore>((set, get) => ({
+export const useSessionStore = create<SessionStore>((set) => ({
   sessionList: [],
   addSession: (s) =>
     set((prev) => ({

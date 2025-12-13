@@ -31,8 +31,8 @@ export interface menuState {
 }
 
 function SideBar() {
-  const { uiState, setUiState } = useUiStateStore();
-  const { sessionList, setSessions } = useSessionStore();
+  const { uiState, setUiState, toggleSideIsOpened } = useUiStateStore();
+  const { sessionList, setSessions, remSessionById } = useSessionStore();
   const [input, setInput] = useState<string>("");
   const [interactionListItemState, setInteractionListItemState] = useState<InteractionListItemState>({
     isHover: false,
@@ -102,28 +102,16 @@ function SideBar() {
 
   const onRemove = async (data: session) => {
     if(data.sessionId === uiState.sessionId){
-      setUiState(prev => ({
-        ...prev,
-        mode: "home",
-        sessionId: null,
-      }))
+      setUiState({ mode: "home", sessionId: null });
     }
     storage.deleteSession(data);
     storage.deleteMessages(data.sessionId);
-    setSessionList(prev => {
-      const list = [...prev];
-      const index = list.findIndex(item => item.sessionId === data.sessionId);
-      list.splice(index, 1);
-      return list;
-    })
+    remSessionById(data.sessionId!);
   };
 
   return (
     <>
-      <StyledOpenButton onClick={() => setUiState(prev => ({
-        ...prev,
-        sideIsOpened: !prev.sideIsOpened
-      }))}>
+      <StyledOpenButton onClick={toggleSideIsOpened}>
         ☰
       </StyledOpenButton>
       <StyledSideBar $isOpened={uiState.sideIsOpened}>

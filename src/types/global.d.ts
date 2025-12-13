@@ -29,6 +29,7 @@ interface SessionStore {
 interface UiStateStore {
     uiState: UiState;
     setUiState: (uiState: Partial<UiState>) => void; //부분만 받아서 업데이트 가능
+    toggleSideIsOpened: () => void;
 }
 
 interface messageStore {
