@@ -8,10 +8,9 @@ export const redis = new Redis({
   token: process.env.KV_REST_API_TOKEN,
 });
 
-//process.env.GEMINI_API_KEY
 
 function initAI(history, showThoughts) {
-  const ai = new GoogleGenAI({ apiKey: "AIzaSyBXiRWmkBC6Y7ic0Y1doRxeblUhcqQ40Lk" });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
   const chat = ai.chats.create({
     model: "gemini-2.0-flash",
