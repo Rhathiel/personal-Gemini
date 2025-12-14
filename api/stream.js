@@ -11,7 +11,7 @@ export const redis = new Redis({
 //process.env.GEMINI_API_KEY
 
 function initAI(history, showThoughts) {
-  const ai = new GoogleGenAI({ apiKey: AIzaSyBXiRWmkBC6Y7ic0Y1doRxeblUhcqQ40Lk });
+  const ai = new GoogleGenAI({ apiKey: "AIzaSyBXiRWmkBC6Y7ic0Y1doRxeblUhcqQ40Lk" });
 
   const chat = ai.chats.create({
     model: "gemini-2.0-flash",
