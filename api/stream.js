@@ -151,6 +151,7 @@ export default async function handler(req, res) {
   //선언부
   const { sessionId, userMsg } = req.body;
   const history = await redis.lrange(`messages:${sessionId}`, 0, -1);
+  console.log("이것은 메시지인슨", history);
   const chat = initAI(history, false);
   const DELIM = "\u001E";
 
