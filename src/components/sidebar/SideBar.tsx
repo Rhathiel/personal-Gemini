@@ -127,6 +127,7 @@ function SideBar() {
             $interactionSessionId={interactionListItemState.sessionId}>
               {!(editState.isEditing && editState.sessionId === data.sessionId) && 
               <StyledButton onClick={() => {
+                setMessages([]);
                 setUiState({ mode: "session", sessionId: data.sessionId })
               }} 
                 onMouseEnter={() => setInteractionListItemState(prev => ({
